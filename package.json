@@ -17,7 +17,8 @@
     "lint": "eslint \"src/**/*.ts*\"",
     "preview": "qwik build preview && vite preview --open",
     "start": "vite --open --mode ssr",
-    "qwik": "qwik"
+    "qwik": "qwik",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@builder.io/qwik": "0.9.0",
@@ -31,13 +32,16 @@
     "eslint-plugin-qwik": "0.9.0",
     "node-fetch": "3.2.10",
     "prettier": "2.7.1",
+    "prisma": "^4.3.1",
     "typescript": "4.8.3",
     "vite": "3.1.1",
     "vite-tsconfig-paths": "3.5.0"
   },
   "dependencies": {
+    "@next-auth/prisma-adapter": "^1.0.4",
     "cookie": "^0.5.0",
     "next-auth": "^4.10.3",
+    "superjson": "^1.10.0",
     "zod": "^3.19.1"
   }
 }

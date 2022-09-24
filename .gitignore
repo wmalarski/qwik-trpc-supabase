@@ -6,6 +6,8 @@
 
 # Development
 node_modules
+.env
+prisma/dev.db
 
 # Cache
 .cache
