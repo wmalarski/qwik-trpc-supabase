@@ -10,8 +10,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id String @id @default(cuid())
+model Post {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  content     String
+  videoId     String
+  createdById String
+  createdBy   User      @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  comments    Comment[]
+}
+
+model Comment {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  content      String
+  createdById  String
+  createdBy    User     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  replayedToId String
+  replayedTo   Post     @relation(fields: [replayedToId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
@@ -49,6 +65,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  posts         Post[]
+  Comment       Comment[]
 }
 
 model VerificationToken {

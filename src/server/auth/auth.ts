@@ -53,6 +53,18 @@ const QwikNextAuthHandler = async (
   }
   const query = Object.fromEntries(url.searchParams);
 
+  const requestCookies = getCookie(request.headers);
+
+  console.log("QwikNextAuthHandler", {
+    action,
+    providerId,
+    request,
+    params,
+    url,
+    query,
+    requestCookies,
+  });
+
   const res = await NextAuthHandler({
     req: {
       host: process.env.NEXTAUTH_URL,
@@ -60,7 +72,7 @@ const QwikNextAuthHandler = async (
       query,
       headers: request.headers,
       method: request.method,
-      cookies: getCookie(request.headers),
+      cookies: requestCookies,
       action: action as NextAuthAction,
       providerId,
       error: (query.error as string | undefined) ?? providerId,

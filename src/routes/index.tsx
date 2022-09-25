@@ -1,13 +1,37 @@
-import { component$ } from '@builder.io/qwik';
-import type { DocumentHead } from '@builder.io/qwik-city';
-import { Link } from '@builder.io/qwik-city';
+import { component$, Resource } from "@builder.io/qwik";
+import {
+  DocumentHead,
+  Link,
+  RequestHandler,
+  useEndpoint,
+} from "@builder.io/qwik-city";
+
+export const onGet: RequestHandler = async () => {
+  // put your DB access here, we are hard coding a response for simplicity.
+  const response = await fetch("http://localhost:3000/api/auth/session");
+  const json = await response.json();
+  console.log({ json });
+  return json;
+};
+
+// /api/auth/session
 
 export default component$(() => {
+  const productData = useEndpoint();
   return (
     <div>
       <h1>
         Welcome to Qwik <span class="lightning">⚡️</span>
       </h1>
+
+      <a href="/api/auth/signin">SignIn</a>
+
+      <Resource
+        value={productData}
+        onPending={() => <div>Loading...</div>}
+        onRejected={() => <div>Error</div>}
+        onResolved={(product) => <pre>{JSON.stringify(product)}</pre>}
+      />
 
       <ul>
         <li>
@@ -129,5 +153,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: 'Welcome to Qwik',
+  title: "Welcome to Qwik",
 };

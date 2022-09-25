@@ -1,6 +1,7 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { NextAuth } from "~/server/auth/auth";
 import { prisma } from "~/server/db/client";
 import { serverEnv } from "~/server/serverEnv";
 
@@ -12,6 +13,8 @@ export const authOptions: NextAuthOptions = {
       clientSecret: serverEnv.GOOGLE_SECRET,
     }),
   ],
+  debug: true,
+  secret: serverEnv.NEXTAUTH_SECRET,
   callbacks: {
     session({ session, user }) {
       if (session.user) {
@@ -22,4 +25,6 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export default NextAuth(authOptions);
+const nextAuth = NextAuth(authOptions);
+export const onGet = nextAuth.onGet;
+export const onPost = nextAuth.onPost;
