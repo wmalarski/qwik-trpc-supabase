@@ -1,9 +1,8 @@
 import * as trpc from "@trpc/server";
-import { Session } from "next-auth";
 import { prisma } from "../db/client";
 
 type CreateContextOptions = {
-  session: Session | null;
+  session: null;
 };
 
 export const createContextInner = async (opts: CreateContextOptions) => {
