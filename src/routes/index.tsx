@@ -5,13 +5,13 @@ import {
   RequestHandler,
   useEndpoint,
 } from "@builder.io/qwik-city";
+import { getServerSession } from "~/server/auth/auth";
 
-export const onGet: RequestHandler = async () => {
+export const onGet: RequestHandler = async (ev) => {
   // put your DB access here, we are hard coding a response for simplicity.
-  const response = await fetch("http://localhost:3000/api/auth/session");
-  const json = await response.json();
-  console.log({ json });
-  return json;
+  const session = await getServerSession(ev);
+  console.log({ session });
+  return session;
 };
 
 // /api/auth/session

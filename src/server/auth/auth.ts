@@ -14,6 +14,7 @@ import type {
   NextAuthOptions,
   Session,
 } from "next-auth/core/types";
+import { authOptions } from "./options";
 
 const getBody = (formData: FormData | null): Record<string, any> => {
   const data: Record<string, any> = {};
@@ -37,10 +38,7 @@ export const setCookies = (response: ResponseContext, cookies?: Cookie[]) => {
   }
 };
 
-const QwikNextAuthHandler = async (
-  event: RequestEvent,
-  options: NextAuthOptions
-) => {
+const QwikNextAuthHandler = async (event: RequestEvent) => {
   const { request, params, url, response } = event;
   const [action, providerId] = params.nextauth!.split("/");
 
@@ -56,16 +54,12 @@ const QwikNextAuthHandler = async (
   const requestCookies = getCookie(request.headers);
 
   console.log("QwikNextAuthHandler", {
-    action,
-    providerId,
-    request,
-    params,
-    url,
     query,
     requestCookies,
   });
 
   const res = await NextAuthHandler({
+    options: authOptions,
     req: {
       host: process.env.NEXTAUTH_URL,
       body,
@@ -77,7 +71,6 @@ const QwikNextAuthHandler = async (
       providerId,
       error: (query.error as string | undefined) ?? providerId,
     },
-    options,
   });
 
   const { cookies, redirect, headers, status } = res;
@@ -107,11 +100,11 @@ export const getCookie = (headers: Headers) =>
   cookie.parse(headers.get("cookie") || "");
 
 export const getServerSession = async (
-  event: RequestEvent,
-  options: NextAuthOptions
+  event: RequestEvent
 ): Promise<Session | null> => {
   const { request, response } = event;
   const res = await NextAuthHandler({
+    options: authOptions,
     req: {
       host: process.env.NEXTAUTH_URL,
       headers: request.headers,
@@ -119,7 +112,6 @@ export const getServerSession = async (
       cookies: getCookie(request.headers),
       action: "session",
     },
-    options,
   });
   const { body, cookies } = res;
 
@@ -131,11 +123,9 @@ export const getServerSession = async (
   return null;
 };
 
-export const getServerCsrfToken = async (
-  request: RequestContext,
-  options: NextAuthOptions
-) => {
+export const getServerCsrfToken = async (request: RequestContext) => {
   const { body } = await NextAuthHandler({
+    options: authOptions,
     req: {
       host: process.env.NEXTAUTH_URL,
       headers: request.headers,
@@ -143,7 +133,6 @@ export const getServerCsrfToken = async (
       cookies: getCookie(request.headers),
       action: "csrf",
     },
-    options,
   });
   return (body as { csrfToken: string }).csrfToken;
 };
@@ -156,11 +145,9 @@ export type PublicProvider = {
   callbackUrl: string;
 };
 
-export const getServerProviders = async (
-  request: RequestContext,
-  options: NextAuthOptions
-) => {
+export const getServerProviders = async (request: RequestContext) => {
   const { body } = await NextAuthHandler({
+    options: authOptions,
     req: {
       host: process.env.NEXTAUTH_URL,
       headers: request.headers,
@@ -168,7 +155,6 @@ export const getServerProviders = async (
       cookies: getCookie(request.headers),
       action: "providers",
     },
-    options,
   });
   if (body && typeof body !== "string") {
     return body as Record<string, PublicProvider>;
@@ -176,11 +162,12 @@ export const getServerProviders = async (
   return null;
 };
 
-export const NextAuth = (
-  options: NextAuthOptions
-): { onGet: RequestHandler; onPost: RequestHandler } => ({
-  onGet: (event) => QwikNextAuthHandler(event, options),
-  onPost: (event) => QwikNextAuthHandler(event, options),
+export const NextAuth = (): {
+  onGet: RequestHandler;
+  onPost: RequestHandler;
+} => ({
+  onGet: (event) => QwikNextAuthHandler(event),
+  onPost: (event) => QwikNextAuthHandler(event),
 });
 
 export { NextAuthOptions };
