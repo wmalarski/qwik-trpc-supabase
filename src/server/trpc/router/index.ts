@@ -1,8 +1,8 @@
 import { t } from "../trpc";
-import { exampleRouter } from "./example";
+import { authRouter } from "./auth";
 
 export const appRouter = t.router({
-  default: exampleRouter,
+  auth: authRouter,
 });
 
 export type AppRouter = typeof appRouter;

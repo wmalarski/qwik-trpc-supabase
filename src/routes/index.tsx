@@ -5,14 +5,13 @@ import {
   RequestHandler,
   useEndpoint,
 } from "@builder.io/qwik-city";
+import { trpc } from "~/utils/trpc";
 
 export const onGet: RequestHandler = async () => {
   // put your DB access here, we are hard coding a response for simplicity.
 
   return null;
 };
-
-// /api/auth/session
 
 export default component$(() => {
   const productData = useEndpoint();
@@ -22,7 +21,18 @@ export default component$(() => {
         Welcome to Qwik <span class="lightning">⚡️</span>
       </h1>
 
-      <a href="/api/auth/signin">SignIn</a>
+      <form
+        preventDefault:submit
+        onSubmit$={async (event) => {
+          const form = new FormData(event.target as HTMLFormElement);
+          const email = (form.get("email") as string) || "";
+          const r = await trpc.auth.sendMagicLink.mutate({ email });
+          console.log({ r });
+        }}
+      >
+        <input name="email" type="text" />
+        <input type="submit" />
+      </form>
 
       <Resource
         value={productData}

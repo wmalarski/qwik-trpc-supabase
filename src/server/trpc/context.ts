@@ -1,5 +1,6 @@
 import * as trpc from "@trpc/server";
 import { prisma } from "../db/client";
+import { supabase } from "../supabase";
 
 type CreateContextOptions = {
   session: null;
@@ -7,15 +8,12 @@ type CreateContextOptions = {
 
 export const createContextInner = async (opts: CreateContextOptions) => {
   return {
-    session: opts.session,
     prisma,
+    session: opts.session,
+    supabase,
   };
 };
 
-/**
- * This is the actual context you'll use in your router
- * @link https://trpc.io/docs/context
- **/
 export const createContext = async () =>
   // opts: trpcNext.CreateNextContextOptions,
   {
@@ -30,21 +28,3 @@ export const createContext = async () =>
   };
 
 export type Context = trpc.inferAsyncReturnType<typeof createContext>;
-
-// /**
-//  * Creates a tRPC router that asserts all queries and mutations are from an authorized user. Will throw an unauthorized error if a user is not signed in.
-//  **/
-// export function createProtectedRouter() {
-//   return createRouter().middleware(({ ctx, next }) => {
-//     if (!ctx.session || !ctx.session.user) {
-//       throw new trpc.TRPCError({ code: "UNAUTHORIZED" });
-//     }
-//     return next({
-//       ctx: {
-//         ...ctx,
-//         // infers that `session` is non-nullable to downstream resolvers
-//         session: { ...ctx.session, user: ctx.session.user },
-//       },
-//     });
-//   });
-// }
