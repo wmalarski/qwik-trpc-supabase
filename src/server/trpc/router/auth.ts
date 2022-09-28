@@ -7,7 +7,6 @@ export const authRouter = t.router({
   sendMagicLink: t.procedure
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input, ctx }) => {
-      console.log({ input, serverEnv });
       const result = await ctx.supabase.auth.api.sendMagicLinkEmail(
         input.email,
         { redirectTo: serverEnv.VITE_REDIRECT_URL }

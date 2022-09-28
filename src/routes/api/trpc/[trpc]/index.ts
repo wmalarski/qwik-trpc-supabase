@@ -9,6 +9,7 @@ const handler: RequestHandler = async (ev) => {
   ev.request.headers.forEach((value, key) => {
     headers[key] = value;
   });
+
   try {
     const res = await resolveHTTPResponse({
       router: appRouter,
@@ -21,11 +22,12 @@ const handler: RequestHandler = async (ev) => {
       },
       createContext,
     });
-    console.log(res);
+
     for (const key in res.headers) {
       const value = res.headers[key] as string;
       ev.response.headers.set(key, value);
     }
+
     ev.response.status = res.status;
     return JSON.parse(res.body as string);
   } catch (error: any) {
