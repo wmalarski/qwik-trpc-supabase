@@ -11,7 +11,8 @@ export const trpc = createTRPCProxyClient<AppRouter>({
         (opts.direction === "down" && opts.result instanceof Error),
     }),
     httpLink({
-      url: "/api/trpc",
+      // TODO: Fix link
+      url: "http://127.0.0.1:5173/api/trpc",
     }),
   ],
 });

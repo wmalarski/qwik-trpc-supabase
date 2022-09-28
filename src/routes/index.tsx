@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead } from "@builder.io/qwik-city";
+import { DocumentHead, Link } from "@builder.io/qwik-city";
 import { MagicLinkForm } from "~/modules/MagicLinkForm/MagicLinkForm";
 
 export default component$(() => {
@@ -8,6 +8,7 @@ export default component$(() => {
       <h1>
         Welcome to Qwik <span class="lightning">⚡️</span>
       </h1>
+      <Link href="/board">Board</Link>
       <MagicLinkForm />
     </div>
   );
