@@ -1,4 +1,4 @@
-import { component$, Resource } from "@builder.io/qwik";
+import { component$, Resource, useStore } from "@builder.io/qwik";
 import {
   DocumentHead,
   Link,
@@ -15,6 +15,9 @@ export const onGet: RequestHandler = async () => {
 
 export default component$(() => {
   const productData = useEndpoint();
+
+  const state = useStore({ status: "idle" });
+
   return (
     <div>
       <h1>
@@ -23,16 +26,26 @@ export default component$(() => {
 
       <form
         preventDefault:submit
+        method="post"
         onSubmit$={async (event) => {
           const form = new FormData(event.target as HTMLFormElement);
           const email = (form.get("email") as string) || "";
-          const r = await trpc.auth.sendMagicLink.mutate({ email });
-          console.log({ r });
+          try {
+            state.status = "loading";
+            const r = await trpc.auth.sendMagicLink.mutate({ email });
+            console.log({ r });
+            state.status = "success";
+          } catch (error) {
+            console.log({ error });
+            state.status = "error";
+          }
         }}
       >
-        <input name="email" type="text" />
+        <input name="email" type="email" />
         <input type="submit" />
       </form>
+
+      <pre>{JSON.stringify({ state })}</pre>
 
       <Resource
         value={productData}
