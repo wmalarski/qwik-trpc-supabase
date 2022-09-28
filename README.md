@@ -1,19 +1,11 @@
-# Qwik App ⚡️
+# Qwik + Supabase + Prisma + tRPC ⚡️
 
-- [Qwik Docs](https://qwik.builder.io/)
-- [Discord](https://qwik.builder.io/chat)
-- [Qwik Github](https://github.com/BuilderIO/qwik)
-- [@QwikDev](https://twitter.com/QwikDev)
-- [Vite](https://vitejs.dev/)
-- [Partytown](https://partytown.builder.io/)
-- [Mitosis](https://github.com/BuilderIO/mitosis)
-- [Builder.io](https://www.builder.io/)
+## Project
 
----
-
-## Inspiration
-
-- next-auth integration <https://gist.github.com/langbamit/a09161e844ad9b4a3cb756bacde67796>
+- Qwik
+- Supabase
+- Prisma
+- tRPC
 
 ## Project Structure
 
@@ -24,6 +16,10 @@ Inside of you project, you'll see the following directories and files:
 │   └── ...
 └── src/
     ├── components/
+    │   └── ...
+    ├── modules/
+    │   └── ...
+    ├── server/
     │   └── ...
     └── routes/
         └── ...
