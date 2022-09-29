@@ -34,3 +34,14 @@ export const getAuthCookieString = async (
       response.headers.append("Set-Cookie", cookieValue);
     });
 };
+
+export const getUserByRequest = async (request: RequestContext) => {
+  const cookie = request.headers.get("Cookie");
+
+  request.headers.forEach((value, key) => {
+    console.log({ value, key });
+  });
+
+  console.log({ cookie });
+  // supabase.auth.api.getUser()
+};

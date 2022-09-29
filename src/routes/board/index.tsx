@@ -12,6 +12,8 @@ export default component$(() => {
     const abortController = new AbortController();
     cleanup(() => abortController.abort("cleanup"));
 
+    console.log({ limit, skip });
+
     const posts = await trpc.post.posts.query(
       { limit, skip },
       { signal: abortController.signal }
@@ -19,7 +21,7 @@ export default component$(() => {
 
     console.log({ posts });
 
-    return `${limit}-${skip}`;
+    return posts;
   });
 
   return (

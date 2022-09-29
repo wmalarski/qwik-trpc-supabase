@@ -1,7 +1,8 @@
+import { RequestEvent } from "@builder.io/qwik-city";
 import { Session } from "@supabase/supabase-js";
 import * as trpc from "@trpc/server";
 import { prisma } from "../db/client";
-import { supabase } from "../supabase";
+import { getUserByRequest, supabase } from "../supabase";
 
 type CreateContextOptions = {
   session: Session | null;
@@ -15,8 +16,9 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   };
 };
 
-export const createContext = async (...args: any[]) => {
-  console.log({ args });
+export const createContext = async (ev: RequestEvent) => {
+  await getUserByRequest(ev.request);
+
   // const { req, res } = opts;
 
   // Get the session from the server using the unstable_getServerSession wrapper function

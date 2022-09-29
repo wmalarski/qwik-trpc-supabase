@@ -9,10 +9,9 @@ const handler: RequestHandler = async (ev) => {
     headers[key] = value;
   });
 
-  console.log({ ev });
-
   try {
     const res = await resolveHTTPResponse({
+      createContext: () => createContext(ev),
       router: appRouter,
       path: ev.params.trpc,
       req: {
@@ -21,7 +20,6 @@ const handler: RequestHandler = async (ev) => {
         method: ev.request.method,
         query: new URL(ev.request.url).searchParams,
       },
-      createContext,
     });
 
     for (const key in res.headers) {
