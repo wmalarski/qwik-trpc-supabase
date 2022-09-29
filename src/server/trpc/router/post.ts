@@ -6,9 +6,16 @@ export const postRouter = t.router({
     .input(
       z.object({ limit: z.number().min(0).max(100), skip: z.number().min(0) })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      console.log({ input, ctx: ctx.user });
+
+      return `${input.limit}-${input.skip}`;
+    }),
+  add: t.procedure
+    .input(z.object({ text: z.string() }))
+    .mutation(async ({ input }) => {
       console.log({ input });
 
-      return "dd";
+      return "AAAA";
     }),
 });

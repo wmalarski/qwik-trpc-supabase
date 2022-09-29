@@ -36,12 +36,16 @@ export const getAuthCookieString = async (
 };
 
 export const getUserByRequest = async (request: RequestContext) => {
-  const cookie = request.headers.get("Cookie");
+  const cookieHeader = request.headers.get("Cookie");
 
-  request.headers.forEach((value, key) => {
-    console.log({ value, key });
-  });
+  if (!cookieHeader) return null;
 
-  console.log({ cookie });
-  // supabase.auth.api.getUser()
+  const cookies = cookie.parse(cookieHeader);
+  const token = cookies[`${cookieName}-access-token`];
+
+  if (!token) return null;
+
+  const { user } = await supabase.auth.api.getUser(token);
+
+  return user;
 };
