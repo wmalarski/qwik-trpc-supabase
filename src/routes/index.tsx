@@ -1,7 +1,6 @@
 import { component$, Resource } from "@builder.io/qwik";
 import {
   DocumentHead,
-  Link,
   RequestHandler,
   useEndpoint,
 } from "@builder.io/qwik-city";
@@ -23,7 +22,7 @@ export default component$(() => {
       <h1>
         Welcome to Qwik <span class="lightning">⚡️</span>
       </h1>
-      <Link href="/board">Board</Link>
+
       <MagicLinkForm />
       <Resource
         value={user}
