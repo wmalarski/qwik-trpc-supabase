@@ -5,10 +5,11 @@ import {
   useEndpoint,
 } from "@builder.io/qwik-city";
 import { CreatePostForm } from "~/modules/CreatePostForm/CreatePostForm";
-import { serverCaller } from "~/server/trpc/router";
 import { paths } from "~/utils/paths";
 
 export const onGet: RequestHandler = async (ev) => {
+  const { serverCaller } = await import("~/server/trpc/router");
+
   const { caller, context } = await serverCaller(ev);
 
   if (!context.user) {

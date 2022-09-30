@@ -1,9 +1,10 @@
 import { RequestHandler } from "@builder.io/qwik-city";
-import { resolveHTTPResponse } from "@trpc/server";
-import { createContext } from "~/server/trpc/context";
-import { appRouter } from "~/server/trpc/router";
 
 const handler: RequestHandler = async (ev) => {
+  const { resolveHTTPResponse } = await import("@trpc/server");
+  const { appRouter } = await import("~/server/trpc/router/index");
+  const { createContext } = await import("~/server/trpc/context");
+
   const headers: Record<string, string> = {};
   ev.request.headers.forEach((value, key) => {
     headers[key] = value;

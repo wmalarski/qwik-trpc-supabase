@@ -19,6 +19,9 @@ export default component$(() => {
           <Link href={paths.board}>Board</Link>
         </li>
         <li>
+          <Link href={paths.login}>Login</Link>
+        </li>
+        <li>
           <Link href={paths.logout}>Logout</Link>
         </li>
       </ul>

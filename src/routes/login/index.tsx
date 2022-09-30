@@ -5,10 +5,11 @@ import {
   useEndpoint,
 } from "@builder.io/qwik-city";
 import { Login } from "~/modules/Login/Login";
-import { getUserByCookie } from "~/server/supabase";
 import { paths } from "~/utils/paths";
 
 export const onGet: RequestHandler = async (ev) => {
+  const { getUserByCookie } = await import("~/server/supabase");
+
   const user = await getUserByCookie(ev.request);
 
   if (user) {

@@ -5,10 +5,10 @@ import {
   useEndpoint,
 } from "@builder.io/qwik-city";
 import type { User } from "@supabase/supabase-js";
-import { Login } from "~/modules/Login/Login";
-import { getUserByCookie } from "~/server/supabase";
 
 export const onGet: RequestHandler = async (ev) => {
+  const { getUserByCookie } = await import("~/server/supabase");
+
   const user = await getUserByCookie(ev.request);
 
   return user;
@@ -22,8 +22,6 @@ export default component$(() => {
       <h1>
         Welcome to Qwik <span class="lightning">⚡️</span>
       </h1>
-
-      <Login />
       <Resource
         value={user}
         onPending={() => <div>Loading...</div>}
