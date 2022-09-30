@@ -4,5 +4,5 @@ import { removeAuthCookies } from "~/server/supabase";
 export const onGet: RequestHandler = async (ev) => {
   await removeAuthCookies(ev.response);
 
-  return ev.response.redirect("/");
+  throw ev.response.redirect("/");
 };

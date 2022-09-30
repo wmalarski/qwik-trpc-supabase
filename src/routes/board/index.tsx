@@ -6,12 +6,13 @@ import {
 } from "@builder.io/qwik-city";
 import { CreatePostForm } from "~/modules/CreatePostForm/CreatePostForm";
 import { serverCaller } from "~/server/trpc/router";
+import { paths } from "~/utils/paths";
 
 export const onGet: RequestHandler = async (ev) => {
   const { caller, context } = await serverCaller(ev);
 
   if (!context.user) {
-    throw ev.response.redirect("/");
+    throw ev.response.redirect(paths.login);
   }
 
   const posts = await caller.post.posts({ limit: 10, skip: 0 });

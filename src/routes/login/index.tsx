@@ -1,21 +1,25 @@
-import { component$, Resource } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import {
   DocumentHead,
   RequestHandler,
   useEndpoint,
 } from "@builder.io/qwik-city";
-import type { User } from "@supabase/supabase-js";
 import { Login } from "~/modules/Login/Login";
 import { getUserByCookie } from "~/server/supabase";
+import { paths } from "~/utils/paths";
 
 export const onGet: RequestHandler = async (ev) => {
   const user = await getUserByCookie(ev.request);
 
-  return user;
+  if (user) {
+    throw ev.response.redirect(paths.board);
+  }
+
+  return;
 };
 
 export default component$(() => {
-  const user = useEndpoint<User>();
+  useEndpoint();
 
   return (
     <div>
@@ -24,15 +28,10 @@ export default component$(() => {
       </h1>
 
       <Login />
-      <Resource
-        value={user}
-        onPending={() => <div>Loading...</div>}
-        onResolved={(user) => <pre>{JSON.stringify(user, null, 2)}</pre>}
-      />
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
+  title: "Login - Welcome to Qwik",
 };
