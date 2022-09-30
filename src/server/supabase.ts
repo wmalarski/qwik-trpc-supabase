@@ -1,5 +1,5 @@
 import { RequestContext, ResponseContext } from "@builder.io/qwik-city";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, Session } from "@supabase/supabase-js";
 import cookie from "cookie";
 import { serverEnv } from "./serverEnv";
 
@@ -10,32 +10,46 @@ export const supabase = createClient(
 
 const cookieName = "RJ";
 
-export const getAuthCookieString = async (
+const updateAuthCookies = async (
+  session: Partial<Session>,
+  response: ResponseContext
+) => {
+  response.headers.delete("Set-Cookie");
+
+  [
+    { key: "access-token", value: session.access_token },
+    { key: "refresh-token", value: session.refresh_token },
+  ].forEach((token) => {
+    if (!token.value) return null;
+
+    const name = `${cookieName}-${token.key}`;
+    const serialized = cookie.serialize(name, token.value, {
+      maxAge: session.expires_in,
+      path: "/",
+      sameSite: "lax",
+    });
+
+    response.headers.append("Set-Cookie", serialized);
+  });
+};
+
+export const setAuthCookies = async (
   request: RequestContext,
   response: ResponseContext
 ) => {
   const json = await request.json();
 
-  response.headers.delete("Set-Cookie");
-
-  [
-    { key: "access-token", value: json.access_token },
-    { key: "refresh-token", value: json.refresh_token },
-  ]
-    .map((token) => {
-      return cookie.serialize(`${cookieName}-${token.key}`, token.value, {
-        domain: "",
-        maxAge: +json.expires_in,
-        path: "/",
-        sameSite: "lax",
-      });
-    })
-    .forEach((cookieValue) => {
-      response.headers.append("Set-Cookie", cookieValue);
-    });
+  updateAuthCookies(json, response);
 };
 
-export const getUserByRequest = async (request: RequestContext) => {
+export const removeAuthCookies = async (response: ResponseContext) => {
+  updateAuthCookies(
+    { access_token: "removed", expires_in: -1, refresh_token: "removed" },
+    response
+  );
+};
+
+export const getUserByCookie = async (request: RequestContext) => {
   const cookieHeader = request.headers.get("Cookie");
 
   if (!cookieHeader) return null;

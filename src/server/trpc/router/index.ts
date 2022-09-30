@@ -11,7 +11,8 @@ export const appRouter = t.router({
 
 export const serverCaller = async (ev: RequestEvent) => {
   const context = await createContext(ev);
-  return appRouter.createCaller(context);
+  const caller = appRouter.createCaller(context);
+  return { caller, context };
 };
 
 export type AppRouter = typeof appRouter;

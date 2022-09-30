@@ -8,7 +8,12 @@ import { CreatePostForm } from "~/modules/CreatePostForm/CreatePostForm";
 import { serverCaller } from "~/server/trpc/router";
 
 export const onGet: RequestHandler = async (ev) => {
-  const caller = await serverCaller(ev);
+  const { caller, context } = await serverCaller(ev);
+
+  if (!context.user) {
+    throw ev.response.redirect("/");
+  }
+
   const posts = await caller.post.posts({ limit: 10, skip: 0 });
 
   return posts;

@@ -6,9 +6,7 @@ export const postRouter = t.router({
     .input(
       z.object({ limit: z.number().min(0).max(100), skip: z.number().min(0) })
     )
-    .query(async ({ input, ctx }) => {
-      console.log({ input, ctx: ctx.user });
-
+    .query(async ({ input }) => {
       return `${input.limit}-${input.skip}`;
     }),
   add: t.procedure
