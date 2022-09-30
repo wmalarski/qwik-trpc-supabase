@@ -10,7 +10,7 @@ export const supabase = createClient(
 
 const cookieName = "RJ";
 
-const updateAuthCookies = async (
+export const updateAuthCookies = async (
   session: Partial<Session>,
   response: ResponseContext
 ) => {
