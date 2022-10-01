@@ -10,16 +10,19 @@ export default component$(() => {
   return (
     <header>
       <div class="logo">
-        <a href={paths.index}>
+        <Link href={paths.index}>
           <QwikLogo />
-        </a>
+        </Link>
       </div>
       <ul>
         <li>
           <Link href={paths.board}>Board</Link>
         </li>
         <li>
-          <Link href={paths.login}>Login</Link>
+          <Link href={paths.login}>Sign In</Link>
+        </li>
+        <li>
+          <Link href={paths.signUp}>Sign Up</Link>
         </li>
         <li>
           <Link href={paths.logout}>Logout</Link>
