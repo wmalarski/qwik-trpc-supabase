@@ -1,11 +1,27 @@
-# Qwik + Supabase + Prisma + tRPC ⚡️
+# Qwik + Supabase Auth + Prisma + tRPC + Tailwind ⚡️
 
-## Project
+## Project TODO list
 
-- Qwik
-- Supabase
-- Prisma
-- tRPC
+- [x] Qwik setup
+- [ ] Post sub pages with params
+- [x] Qwik api routes
+- [x] Magic link Supabase auth
+- [x] Password Supabase auth
+- [x] Sign out
+- [ ] Auth refresh token
+- [ ] migrate to next-auth
+- [ ] Redirect navigation after login
+- [ ] Protected routes
+- [ ] Consuming auth context - nav conditional rendering
+- [x] tRPC setup
+- [x] tRPC + cookies auth guard setup
+- [x] tRPC queries/mutation on client side
+- [x] tRPC queries/mutation on server side
+- [ ] tRPC using Prisma
+- [ ] Protected tRPC procedures
+- [ ] Example with infinite posts scroll
+- [ ] Tailwind setup + DaisyUI
+- [ ] UI
 
 ## Project Structure
 
