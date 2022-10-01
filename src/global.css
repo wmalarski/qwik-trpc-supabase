@@ -6,6 +6,10 @@
  *
  */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --qwik-dark-blue: #006ce9;
   --qwik-light-blue: #18b6f6;

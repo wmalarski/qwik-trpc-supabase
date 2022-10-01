@@ -19,7 +19,7 @@ export default component$(() => {
 
   return (
     <div>
-      <h1>
+      <h1 class="bg-red-600">
         Welcome to Qwik <span class="lightning">⚡️</span>
       </h1>
       <Resource
