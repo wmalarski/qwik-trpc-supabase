@@ -1,4 +1,5 @@
 import { component$, useStore } from "@builder.io/qwik";
+import { useNavigate } from "@builder.io/qwik-city";
 import { paths } from "~/utils/paths";
 
 type MagicLinkFormState = {
@@ -7,6 +8,8 @@ type MagicLinkFormState = {
 
 export const PasswordForm = component$(() => {
   const state = useStore<MagicLinkFormState>({ status: "idle" });
+
+  const navigate = useNavigate();
 
   return (
     <form
@@ -27,6 +30,7 @@ export const PasswordForm = component$(() => {
             method: "POST",
           });
           state.status = "success";
+          navigate.path = paths.index;
         } catch (error) {
           state.status = "error";
         }

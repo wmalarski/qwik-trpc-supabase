@@ -9,10 +9,10 @@
 - [x] Password Supabase auth
 - [x] Sign out
 - [ ] Auth refresh token
-- [ ] migrate to next-auth
-- [ ] Redirect navigation after login
-- [ ] Protected routes
-- [ ] Consuming auth context - nav conditional rendering
+- [ ] Migrate to next-auth
+- [x] Redirect navigation after login
+- [x] Protected routes
+- [ ] Auth context - nav conditional rendering
 - [x] tRPC setup
 - [x] tRPC + cookies auth guard setup
 - [x] tRPC queries/mutation on client side

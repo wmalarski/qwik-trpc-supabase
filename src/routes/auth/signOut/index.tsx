@@ -1,9 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import {
-  DocumentHead,
-  RequestHandler,
-  useEndpoint,
-} from "@builder.io/qwik-city";
+import { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
 import { removeAuthCookies } from "~/server/auth";
 import { paths } from "~/utils/paths";
 
@@ -14,11 +10,9 @@ export const onGet: RequestHandler = (ev) => {
 };
 
 export default component$(() => {
-  useEndpoint();
-
-  return <span>Logout</span>;
+  return <span>Bye</span>;
 });
 
 export const head: DocumentHead = {
-  title: "Login - Welcome to Qwik",
+  title: "Welcome to Qwik",
 };

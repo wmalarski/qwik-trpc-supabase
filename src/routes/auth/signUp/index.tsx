@@ -1,9 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import {
-  DocumentHead,
-  RequestHandler,
-  useEndpoint,
-} from "@builder.io/qwik-city";
+import { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
 import { z } from "zod";
 import { RegisterForm } from "~/modules/RegisterForm/RegisterForm";
 import { paths } from "~/utils/paths";
@@ -37,15 +33,11 @@ export const onGet: RequestHandler = async (ev) => {
   const user = await getUserByCookie(ev.request);
 
   if (user) {
-    throw ev.response.redirect(paths.board);
+    throw ev.response.redirect(paths.index);
   }
-
-  return;
 };
 
 export default component$(() => {
-  useEndpoint();
-
   return (
     <div class="flex flex-col gap-2">
       <h1>Sign Up</h1>

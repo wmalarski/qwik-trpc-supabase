@@ -1,9 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import {
-  DocumentHead,
-  RequestHandler,
-  useEndpoint,
-} from "@builder.io/qwik-city";
+import { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
 import { Login } from "~/modules/Login/Login";
 import { paths } from "~/utils/paths";
 
@@ -13,18 +9,14 @@ export const onGet: RequestHandler = async (ev) => {
   const user = await getUserByCookie(ev.request);
 
   if (user) {
-    throw ev.response.redirect(paths.board);
+    throw ev.response.redirect(paths.index);
   }
-
-  return;
 };
 
 export default component$(() => {
-  useEndpoint();
-
   return <Login />;
 });
 
 export const head: DocumentHead = {
-  title: "Login - Welcome to Qwik",
+  title: "Sign In - Welcome to Qwik",
 };
