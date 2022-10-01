@@ -19,13 +19,13 @@ export const PasswordForm = component$(() => {
           try {
             state.status = "loading";
             await fetch(paths.signUp, {
-              method: "POST",
-              headers: new Headers({ "Content-Type": "application/json" }),
-              credentials: "same-origin",
               body: JSON.stringify({
                 email: form.get("email"),
                 password: form.get("password"),
               }),
+              credentials: "same-origin",
+              headers: new Headers({ "Content-Type": "application/json" }),
+              method: "POST",
             });
             state.status = "success";
           } catch (error) {

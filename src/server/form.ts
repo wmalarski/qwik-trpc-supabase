@@ -1,5 +1,5 @@
 export const formEntries = (form: FormData) => {
-  const data: Record<string, any> = {};
+  const data: Record<string, unknown> = {};
   form.forEach((value, key) => {
     data[key] = value;
   });

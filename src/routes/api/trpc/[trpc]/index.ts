@@ -13,7 +13,6 @@ const handler: RequestHandler = async (ev) => {
   try {
     const res = await resolveHTTPResponse({
       createContext: () => createContext(ev),
-      router: appRouter,
       path: ev.params.trpc,
       req: {
         body: await ev.request.text(),
@@ -21,6 +20,7 @@ const handler: RequestHandler = async (ev) => {
         method: ev.request.method,
         query: new URL(ev.request.url).searchParams,
       },
+      router: appRouter,
     });
 
     for (const key in res.headers) {
@@ -30,7 +30,7 @@ const handler: RequestHandler = async (ev) => {
 
     ev.response.status = res.status;
     return JSON.parse(res.body as string);
-  } catch (error: any) {
+  } catch (error) {
     ev.response.status = 500;
     return "Internal Server Error";
   }

@@ -4,9 +4,9 @@ import Header from "../modules/Header/Header";
 export default component$(() => {
   return (
     <>
-      <main class="max-w-3xl mx-auto rounded-md shadow-xl overflow-hidden bg-white">
+      <main class="mx-auto max-w-3xl overflow-hidden rounded-md bg-white shadow-xl">
         <Header />
-        <section class="p-5 border-b-8 border-primary border-solid">
+        <section class="border-b-8 border-solid border-primary p-5">
           <Slot />
         </section>
       </main>

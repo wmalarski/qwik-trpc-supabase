@@ -21,7 +21,7 @@
 - [ ] Protected tRPC procedures
 - [ ] Example with infinite posts scroll
 - [x] Tailwind setup + DaisyUI
-- [ ] Eslint setup
+- [x] Opinionated eslint setup
 - [ ] Deploy damn thing
 
 ## Project Structure

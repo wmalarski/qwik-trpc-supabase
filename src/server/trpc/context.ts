@@ -8,8 +8,8 @@ type CreateContextOptions = {
   user: User | null;
 };
 
-export const createContextInner = async (opts: CreateContextOptions) => {
-  return { prisma, user: opts.user, supabase };
+export const createContextInner = (opts: CreateContextOptions) => {
+  return { prisma, supabase, user: opts.user };
 };
 
 export const createContext = async (ev: RequestEvent) => {

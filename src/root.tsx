@@ -24,7 +24,7 @@ export default component$(() => {
       <body
         lang="en"
         data-theme="quick-theme"
-        class="bg-gray-100 h-screen py-4"
+        class="h-screen bg-gray-100 py-4"
       >
         <RouterOutlet />
         <ServiceWorkerRegister />

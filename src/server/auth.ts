@@ -38,7 +38,7 @@ export const setAuthCookies = async (
   updateAuthCookies(json, response);
 };
 
-export const removeAuthCookies = async (response: ResponseContext) => {
+export const removeAuthCookies = (response: ResponseContext) => {
   response.headers.set(
     "Set-Cookie",
     cookie.serialize(cookieName, "value", {
@@ -52,13 +52,17 @@ export const removeAuthCookies = async (response: ResponseContext) => {
 export const getUserByCookie = async (request: RequestContext) => {
   const cookieHeader = request.headers.get("Cookie");
 
-  if (!cookieHeader) return null;
+  if (!cookieHeader) {
+    return null;
+  }
 
   const cookies = cookie.parse(cookieHeader);
   const value = JSON.parse(cookies[cookieName] || "{}");
   const token = value["access-token"];
 
-  if (!token) return null;
+  if (!token) {
+    return null;
+  }
 
   const { user } = await supabase.auth.api.getUser(token);
 

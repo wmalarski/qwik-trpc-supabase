@@ -32,3 +32,4 @@ vite.config.ts
 .eslintrc.cjs
 tailwind.config.js
 postcss.config.cjs
+src/global.css

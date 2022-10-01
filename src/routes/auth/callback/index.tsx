@@ -11,14 +11,14 @@ export default component$(() => {
     const params = new URLSearchParams(hash);
 
     const data = await fetch("/api/login", {
-      method: "POST",
-      headers: new Headers({ "Content-Type": "application/json" }),
-      credentials: "same-origin",
       body: JSON.stringify({
         access_token: params.get("access_token"),
         expires_in: params.get("expires_in"),
         refresh_token: params.get("refresh_token"),
       }),
+      credentials: "same-origin",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      method: "POST",
     });
 
     if (data.ok) {
