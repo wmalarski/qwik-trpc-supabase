@@ -24,9 +24,7 @@ export default component$(() => {
 
   return (
     <div>
-      <h1>
-        Welcome to Qwik <span class="lightning">⚡️</span>
-      </h1>
+      <h1>Sign In</h1>
 
       <Login />
     </div>

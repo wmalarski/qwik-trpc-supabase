@@ -28,9 +28,7 @@ export default component$(() => {
 
   return (
     <div>
-      <h1>
-        Welcome to Qwik <span class="lightning">⚡️</span>
-      </h1>
+      <h1>Feed</h1>
       <CreatePostForm />
       <Resource
         value={resource}

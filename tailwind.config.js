@@ -9,9 +9,9 @@ module.exports = {
     themes: [
       {
         "quick-theme": {
-          primary: "#18b6f6",
+          primary: "#006ce9",
           secondary: "#713fc2",
-          accent: "#006ce9",
+          accent: "#18b6f6",
           neutral: "#3d4451",
           "base-100": "#ffffff",
         },

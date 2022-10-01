@@ -21,7 +21,11 @@ export default component$(() => {
         <meta charSet="utf-8" />
         <RouterHead />
       </head>
-      <body lang="en" data-theme="quick-theme">
+      <body
+        lang="en"
+        data-theme="quick-theme"
+        class="bg-gray-100 h-screen py-4"
+      >
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>

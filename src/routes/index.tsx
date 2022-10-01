@@ -20,7 +20,7 @@ export default component$(() => {
   return (
     <div>
       <h1 class="bg-red-600">
-        Welcome to Qwik <span class="lightning">⚡️</span>
+        Welcome to Qwik <span>⚡️</span>
       </h1>
       <Resource
         value={user}
