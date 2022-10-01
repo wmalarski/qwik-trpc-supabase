@@ -47,9 +47,8 @@ export default component$(() => {
   useEndpoint();
 
   return (
-    <div>
+    <div class="flex flex-col gap-2">
       <h1>Sign Up</h1>
-
       <RegisterForm />
     </div>
   );

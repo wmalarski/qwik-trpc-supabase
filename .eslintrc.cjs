@@ -11,8 +11,8 @@ module.exports = {
     "plugin:jsx-a11y/recommended",
     "plugin:promise/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:tailwindcss/recommended",
     "plugin:qwik/recommended",
+    // "plugin:tailwindcss/recommended",
     "plugin:prettier/recommended",
   ],
   parser: "@typescript-eslint/parser",
@@ -25,7 +25,7 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ["@typescript-eslint", "sort-keys-fix"],
+  plugins: ["sort-keys-fix"],
   rules: {
     "@typescript-eslint/no-unused-vars": ["error"],
     "no-await-in-loop": "error",
@@ -49,7 +49,7 @@ module.exports = {
       "error",
       { enforceForJSX: true },
     ],
-    "prettier/prettier": "error",
     "tailwindcss/no-custom-classname": "off",
+    "prettier/prettier": "error",
   },
 };

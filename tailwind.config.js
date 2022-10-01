@@ -12,11 +12,11 @@ module.exports = {
           primary: "#006ce9",
           secondary: "#713fc2",
           accent: "#18b6f6",
-          neutral: "#3d4451",
+          neutral: "#f1f1f1",
           "base-100": "#ffffff",
         },
       },
-      "business",
+      "light",
     ],
   },
 };

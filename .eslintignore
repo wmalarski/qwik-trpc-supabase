@@ -31,5 +31,6 @@ tsconfig.tsbuildinfo
 vite.config.ts
 .eslintrc.cjs
 tailwind.config.js
+prettier.config.cjs
 postcss.config.cjs
 src/global.css

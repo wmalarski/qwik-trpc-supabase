@@ -27,7 +27,7 @@ export default component$(() => {
   const store = useStore({ limit: 50, skip: 0 });
 
   return (
-    <div>
+    <div class="flex flex-col gap-2">
       <h1>Feed</h1>
       <CreatePostForm />
       <Resource

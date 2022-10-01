@@ -22,13 +22,7 @@ export const onGet: RequestHandler = async (ev) => {
 export default component$(() => {
   useEndpoint();
 
-  return (
-    <div>
-      <h1>Sign In</h1>
-
-      <Login />
-    </div>
-  );
+  return <Login />;
 });
 
 export const head: DocumentHead = {
