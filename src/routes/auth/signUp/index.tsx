@@ -22,8 +22,6 @@ export const onPost: RequestHandler = async (ev) => {
 
   const result = await supabase.auth.signIn(args);
 
-  console.log({ result });
-
   if (result.error || !result.session) {
     throw new Error(result.error?.message || "INVALID_INPUT");
   }

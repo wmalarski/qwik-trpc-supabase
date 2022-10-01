@@ -24,7 +24,6 @@ export const authRouter = t.router({
   signUp: t.procedure
     .input(z.object({ email: z.string().email(), password: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      console.log({ input });
       const result = await ctx.supabase.auth.signUp(input, {
         redirectTo: serverEnv.VITE_REDIRECT_URL,
       });

@@ -31,7 +31,6 @@ const handler: RequestHandler = async (ev) => {
     ev.response.status = res.status;
     return JSON.parse(res.body as string);
   } catch (error: any) {
-    console.log({ error });
     ev.response.status = 500;
     return "Internal Server Error";
   }

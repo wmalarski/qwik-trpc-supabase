@@ -9,11 +9,7 @@ export const postRouter = t.router({
     .query(async ({ input }) => {
       return `${input.limit}-${input.skip}`;
     }),
-  add: t.procedure
-    .input(z.object({ text: z.string() }))
-    .mutation(async ({ input }) => {
-      console.log({ input });
-
-      return "AAAA";
-    }),
+  add: t.procedure.input(z.object({ text: z.string() })).mutation(async () => {
+    return "AAAA";
+  }),
 });
