@@ -7,7 +7,7 @@ import {
 import type { User } from "@supabase/supabase-js";
 
 export const onGet: RequestHandler = async (ev) => {
-  const { getUserByCookie } = await import("~/server/supabase");
+  const { getUserByCookie } = await import("~/server/auth");
 
   const user = await getUserByCookie(ev.request);
 

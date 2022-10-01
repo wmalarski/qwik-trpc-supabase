@@ -1,8 +1,8 @@
 import { RequestEvent } from "@builder.io/qwik-city";
 import { User } from "@supabase/supabase-js";
 import * as trpc from "@trpc/server";
+import { getUserByCookie, supabase } from "../auth";
 import { prisma } from "../db/client";
-import { getUserByCookie, supabase } from "../supabase";
 
 type CreateContextOptions = {
   user: User | null;

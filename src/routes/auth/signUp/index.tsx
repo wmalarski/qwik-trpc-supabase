@@ -9,7 +9,7 @@ import { RegisterForm } from "~/modules/RegisterForm/RegisterForm";
 import { paths } from "~/utils/paths";
 
 export const onPost: RequestHandler = async (ev) => {
-  const { supabase, updateAuthCookies } = await import("~/server/supabase");
+  const { supabase, updateAuthCookies } = await import("~/server/auth");
 
   const json = await ev.request.json();
 
@@ -32,7 +32,7 @@ export const onPost: RequestHandler = async (ev) => {
 };
 
 export const onGet: RequestHandler = async (ev) => {
-  const { getUserByCookie } = await import("~/server/supabase");
+  const { getUserByCookie } = await import("~/server/auth");
 
   const user = await getUserByCookie(ev.request);
 

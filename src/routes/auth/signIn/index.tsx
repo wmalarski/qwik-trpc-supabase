@@ -8,7 +8,7 @@ import { Login } from "~/modules/Login/Login";
 import { paths } from "~/utils/paths";
 
 export const onGet: RequestHandler = async (ev) => {
-  const { getUserByCookie } = await import("~/server/supabase");
+  const { getUserByCookie } = await import("~/server/auth");
 
   const user = await getUserByCookie(ev.request);
 

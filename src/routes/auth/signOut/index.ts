@@ -1,5 +1,5 @@
 import { RequestHandler } from "@builder.io/qwik-city";
-import { removeAuthCookies } from "~/server/supabase";
+import { removeAuthCookies } from "~/server/auth";
 import { paths } from "~/utils/paths";
 
 export const onGet: RequestHandler = async (ev) => {
