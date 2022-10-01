@@ -21,7 +21,7 @@ export default component$(() => {
         <meta charSet="utf-8" />
         <RouterHead />
       </head>
-      <body lang="en">
+      <body lang="en" data-theme="quick-theme">
         <RouterOutlet />
         <ServiceWorkerRegister />
       </body>

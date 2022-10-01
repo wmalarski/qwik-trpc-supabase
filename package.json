@@ -46,6 +46,7 @@
     "@trpc/client": "^10.0.0-proxy-beta.10",
     "@trpc/server": "^10.0.0-proxy-beta.10",
     "cookie": "^0.5.0",
+    "daisyui": "^2.31.0",
     "superjson": "^1.10.0",
     "zod": "^3.19.1"
   }

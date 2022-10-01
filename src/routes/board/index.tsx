@@ -39,8 +39,12 @@ export default component$(() => {
           return <pre>{JSON.stringify(weather, null, 2)}</pre>;
         }}
       />
-      <button onClick$={() => (store.skip -= store.limit)}>-</button>
-      <button onClick$={() => (store.skip += store.limit)}>+</button>
+      <button class="btn" onClick$={() => (store.skip -= store.limit)}>
+        -
+      </button>
+      <button class="btn" onClick$={() => (store.skip += store.limit)}>
+        +
+      </button>
     </div>
   );
 });

@@ -20,8 +20,9 @@
 - [ ] tRPC using Prisma
 - [ ] Protected tRPC procedures
 - [ ] Example with infinite posts scroll
-- [ ] Tailwind setup + DaisyUI
-- [ ] UI
+- [x] Tailwind setup + DaisyUI
+- [ ] Eslint setup
+- [ ] Deploy damn thing
 
 ## Project Structure
 
