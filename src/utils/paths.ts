@@ -3,6 +3,6 @@ export const paths = {
   callback: "/auth/callback",
   index: "/",
   signIn: "/auth/signIn",
-  signOut: "/auth/singOut",
+  signOut: "/auth/signOut",
   signUp: "/auth/signUp",
 };
