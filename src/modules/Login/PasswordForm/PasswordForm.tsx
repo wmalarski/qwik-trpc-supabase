@@ -1,12 +1,8 @@
 import { component$, useStore } from "@builder.io/qwik";
-import { RequestHandler } from "@builder.io/qwik-city";
+import { paths } from "~/utils/paths";
 
 type MagicLinkFormState = {
   status: "idle" | "loading" | "success" | "error";
-};
-
-export const onPost: RequestHandler = (ev) => {
-  console.log({ ev });
 };
 
 export const PasswordForm = component$(() => {
@@ -22,7 +18,7 @@ export const PasswordForm = component$(() => {
           const form = new FormData(event.target as HTMLFormElement);
           try {
             state.status = "loading";
-            await fetch("/api/signIn", {
+            await fetch(paths.signUp, {
               method: "POST",
               headers: new Headers({ "Content-Type": "application/json" }),
               credentials: "same-origin",

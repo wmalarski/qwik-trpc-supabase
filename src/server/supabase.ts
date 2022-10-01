@@ -8,29 +8,25 @@ export const supabase = createClient(
   serverEnv.VITE_SUPABASE_ANON_KEY
 );
 
-const cookieName = "RJ";
+const cookieName = "RJ-auth";
 
-export const updateAuthCookies = async (
+export const updateAuthCookies = (
   session: Partial<Session>,
   response: ResponseContext
 ) => {
-  response.headers.delete("Set-Cookie");
+  const value = JSON.stringify({
+    "access-token": session.access_token,
+    "refresh-token": session.refresh_token,
+  });
 
-  [
-    { key: "access-token", value: session.access_token },
-    { key: "refresh-token", value: session.refresh_token },
-  ].forEach((token) => {
-    if (!token.value) return null;
-
-    const name = `${cookieName}-${token.key}`;
-    const serialized = cookie.serialize(name, token.value, {
+  response.headers.set(
+    "Set-Cookie",
+    cookie.serialize(cookieName, value, {
       maxAge: session.expires_in,
       path: "/",
       sameSite: "lax",
-    });
-
-    response.headers.append("Set-Cookie", serialized);
-  });
+    })
+  );
 };
 
 export const setAuthCookies = async (
@@ -43,9 +39,13 @@ export const setAuthCookies = async (
 };
 
 export const removeAuthCookies = async (response: ResponseContext) => {
-  updateAuthCookies(
-    { access_token: "removed", expires_in: -1, refresh_token: "removed" },
-    response
+  response.headers.set(
+    "Set-Cookie",
+    cookie.serialize(cookieName, "value", {
+      maxAge: -1,
+      path: "/",
+      sameSite: "lax",
+    })
   );
 };
 
@@ -55,7 +55,8 @@ export const getUserByCookie = async (request: RequestContext) => {
   if (!cookieHeader) return null;
 
   const cookies = cookie.parse(cookieHeader);
-  const token = cookies[`${cookieName}-access-token`];
+  const value = JSON.parse(cookies[cookieName] || "{}");
+  const token = value["access-token"];
 
   if (!token) return null;
 

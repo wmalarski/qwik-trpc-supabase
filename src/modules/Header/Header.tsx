@@ -19,13 +19,13 @@ export default component$(() => {
           <Link href={paths.board}>Board</Link>
         </li>
         <li>
-          <Link href={paths.login}>Sign In</Link>
+          <Link href={paths.signIn}>Sign In</Link>
         </li>
         <li>
           <Link href={paths.signUp}>Sign Up</Link>
         </li>
         <li>
-          <Link href={paths.logout}>Logout</Link>
+          <Link href={paths.signOut}>Logout</Link>
         </li>
       </ul>
     </header>

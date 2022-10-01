@@ -13,7 +13,7 @@ export const onGet: RequestHandler = async (ev) => {
   const { caller, context } = await serverCaller(ev);
 
   if (!context.user) {
-    throw ev.response.redirect(paths.login);
+    throw ev.response.redirect(paths.signIn);
   }
 
   const posts = await caller.post.posts({ limit: 10, skip: 0 });
@@ -26,28 +26,6 @@ export default component$(() => {
 
   const store = useStore({ limit: 50, skip: 0 });
 
-  // const resource = useResource$<string>(async ({ track, cleanup }) => {
-  //   const limit = track(store, "limit");
-  //   const skip = track(store, "skip");
-
-  //   const abortController = new AbortController();
-  //   cleanup(() => abortController.abort("cleanup"));
-
-  //   console.log({ limit, skip });
-
-  //   const posts = await trpc.post.posts.query(
-  //     { limit, skip },
-  //     {
-  //       signal: abortController.signal,
-  //       context: { isServer: typeof window === "undefined" },
-  //     }
-  //   );
-
-  //   console.log({ posts });
-
-  //   return "posts";
-  // });
-
   return (
     <div>
       <h1>
@@ -58,7 +36,7 @@ export default component$(() => {
         value={resource}
         onPending={() => <div>Loading...</div>}
         onResolved={(weather) => {
-          return <div>Temperature: {weather}</div>;
+          return <pre>{JSON.stringify(weather, null, 2)}</pre>;
         }}
       />
       <button onClick$={() => (store.skip -= store.limit)}>-</button>

@@ -1,7 +1,8 @@
 export const paths = {
   index: "/",
   board: "/board",
-  logout: "/logout",
-  login: "/login",
-  signUp: "/signUp",
+  signOut: "/auth/singOut",
+  signIn: "/auth/signIn",
+  signUp: "/auth/signUp",
+  callback: "/auth/callback",
 };
