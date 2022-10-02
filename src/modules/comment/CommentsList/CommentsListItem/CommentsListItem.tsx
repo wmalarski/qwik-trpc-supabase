@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { CommentActions } from "~/modules/CommentActions/CommentActions";
+import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { paths } from "~/utils/paths";
 
 type Props = {

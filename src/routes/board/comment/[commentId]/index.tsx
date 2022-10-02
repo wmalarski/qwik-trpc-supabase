@@ -1,6 +1,6 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { CommentCard } from "~/modules/CommentCard/CommentCard";
+import { CommentCard } from "~/modules/comment/CommentCard/CommentCard";
 import { paths } from "~/utils/paths";
 import { InferPromise } from "~/utils/trpc";
 

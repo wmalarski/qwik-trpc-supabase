@@ -1,6 +1,6 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { PostCard } from "~/modules/PostCard/PostCard";
+import { PostCard } from "~/modules/post/PostCard/PostCard";
 import { paths } from "~/utils/paths";
 import { InferPromise } from "~/utils/trpc";
 

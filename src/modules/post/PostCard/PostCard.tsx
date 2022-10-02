@@ -1,9 +1,9 @@
 import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import type { Comment, Post } from "@prisma/client";
+import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
+import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { paths } from "~/utils/paths";
-import { CommentsList } from "../CommentsList/CommentsList";
-import { CreateCommentForm } from "../CreateCommentForm/CreateCommentForm";
 
 type Props = {
   comments: Comment[];

@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
 import { z } from "zod";
-import { RegisterForm } from "~/modules/RegisterForm/RegisterForm";
+import { RegisterForm } from "~/modules/auth/RegisterForm/RegisterForm";
 import { paths } from "~/utils/paths";
 
 export const onPost: RequestHandler = async (ev) => {

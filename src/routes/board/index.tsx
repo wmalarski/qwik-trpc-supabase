@@ -1,7 +1,7 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { CreatePostForm } from "~/modules/CreatePostForm/CreatePostForm";
-import { PostsList } from "~/modules/PostsList/PostsList";
+import { CreatePostForm } from "~/modules/post/CreatePostForm/CreatePostForm";
+import { PostsList } from "~/modules/post/PostsList/PostsList";
 import { paths } from "~/utils/paths";
 import { InferPromise } from "~/utils/trpc";
 

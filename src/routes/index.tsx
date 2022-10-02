@@ -5,8 +5,8 @@ import {
   useEndpoint,
 } from "@builder.io/qwik-city";
 import type { User } from "@supabase/supabase-js";
-import { ProtectedHeader } from "~/modules/ProtectedHeader/ProtectedHeader";
-import { PublicHeader } from "~/modules/PublicHeader/PublicHeader";
+import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
+import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
 
 export const onGet: RequestHandler = async (ev) => {
   const { getUserByCookie } = await import("~/server/auth");

@@ -1,5 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { ProtectedHeader } from "~/modules/ProtectedHeader/ProtectedHeader";
+import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
 
 export default component$(() => {
   return (
