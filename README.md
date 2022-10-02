@@ -3,7 +3,7 @@
 ## Project TODO list
 
 - [x] Qwik setup
-- [ ] Post sub pages with params
+- [x] Post sub pages with params
 - [x] Qwik api routes
 - [x] Magic link Supabase auth
 - [x] Password Supabase auth

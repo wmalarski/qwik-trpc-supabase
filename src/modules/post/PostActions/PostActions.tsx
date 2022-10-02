@@ -1,5 +1,5 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
-import type { Comment } from "@prisma/client";
+import type { Post } from "@prisma/client";
 import { trpc } from "~/utils/trpc";
 
 type State = {
@@ -7,11 +7,11 @@ type State = {
 };
 
 type Props = {
-  comment: Comment;
   onDeleteSuccess$?: PropFunction<() => void>;
+  post: Post;
 };
 
-export const CommentActions = component$((props: Props) => {
+export const PostActions = component$((props: Props) => {
   const state = useStore<State>({ status: "idle" });
 
   return (
@@ -24,7 +24,7 @@ export const CommentActions = component$((props: Props) => {
         onClick$={async () => {
           try {
             state.status = "loading";
-            await trpc.comment.delete.mutate({ id: props.comment.id });
+            await trpc.post.delete.mutate({ id: props.post.id });
             props.onDeleteSuccess$?.();
             state.status = "success";
           } catch (error) {

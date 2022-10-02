@@ -34,8 +34,8 @@ export default component$(() => {
         onResolved={(result) => (
           <CommentCard
             comment={result.comment}
-            comments={result.comments.comments}
-            commentsCount={result.comments.count}
+            comments={result.comments?.comments || []}
+            commentsCount={result.comments?.count || 0}
           />
         )}
       />

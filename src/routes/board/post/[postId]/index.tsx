@@ -33,8 +33,8 @@ export default component$(() => {
         onPending={() => <div>Loading...</div>}
         onResolved={(result) => (
           <PostCard
-            comments={result.comments.comments}
-            commentsCount={result.comments.count}
+            comments={result.comments?.comments || []}
+            commentsCount={result.comments?.count || 0}
             post={result.post}
           />
         )}
