@@ -2,6 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { paths } from "~/utils/paths";
+import { CommentActions } from "../CommentActions/CommentActions";
 import { CommentsList } from "../CommentsList/CommentsList";
 import { CreateCommentForm } from "../CreateCommentForm/CreateCommentForm";
 
@@ -25,6 +26,7 @@ export const CommentCard = component$((props: Props) => {
         Back
       </Link>
       <pre>{JSON.stringify(props.comment, null, 2)}</pre>
+      <CommentActions comment={props.comment} />
       <CreateCommentForm
         parentId={props.comment.id}
         postId={props.comment.postId}

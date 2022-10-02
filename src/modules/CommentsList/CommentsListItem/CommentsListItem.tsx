@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
+import { CommentActions } from "~/modules/CommentActions/CommentActions";
 import { paths } from "~/utils/paths";
 
 type Props = {
@@ -14,6 +15,7 @@ export const CommentsListItem = component$((props: Props) => {
       <Link class="link" href={paths.comment(props.comment.id)}>
         Show comments
       </Link>
+      <CommentActions comment={props.comment} />
     </div>
   );
 });
