@@ -17,8 +17,12 @@
 - [x] tRPC + cookies auth guard setup
 - [x] tRPC queries/mutation on client side
 - [x] tRPC queries/mutation on server side
-- [ ] tRPC using Prisma
-- [ ] Protected tRPC procedures
+- [x] tRPC using Prisma
+- [x] Protected tRPC procedures
+- [ ] Crud on Post model
+- [ ] Crud on Comments
+- [ ] Cache invalidation after mutations
+- [ ] Optimistic updates
 - [ ] Example with infinite posts scroll
 - [x] Tailwind setup + DaisyUI
 - [x] Opinionated eslint setup

@@ -1,13 +1,11 @@
 import { component$, Resource, useStore } from "@builder.io/qwik";
-import {
-  DocumentHead,
-  RequestHandler,
-  useEndpoint,
-} from "@builder.io/qwik-city";
+import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
 import { CreatePostForm } from "~/modules/CreatePostForm/CreatePostForm";
+import { PostsList } from "~/modules/PostsList/PostsList";
 import { paths } from "~/utils/paths";
+import { InferProcedures } from "~/utils/trpc";
 
-export const onGet: RequestHandler = async (ev) => {
+export const onGet = async (ev: RequestEvent) => {
   const { serverCaller } = await import("~/server/trpc/router");
 
   const { caller, context } = await serverCaller(ev);
@@ -16,13 +14,13 @@ export const onGet: RequestHandler = async (ev) => {
     throw ev.response.redirect(paths.signIn);
   }
 
-  const posts = await caller.post.posts({ limit: 10, skip: 0 });
+  const posts = await caller.post.posts({ skip: 0, take: 10 });
 
   return posts;
 };
 
 export default component$(() => {
-  const resource = useEndpoint<string>();
+  const resource = useEndpoint<InferProcedures["post"]["posts"]["output"]>();
 
   const store = useStore({ limit: 50, skip: 0 });
 
@@ -33,9 +31,7 @@ export default component$(() => {
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}
-        onResolved={(weather) => {
-          return <pre>{JSON.stringify(weather, null, 2)}</pre>;
-        }}
+        onResolved={(result) => <PostsList posts={result.posts} />}
       />
       <button class="btn" onClick$={() => (store.skip -= store.limit)}>
         -
@@ -48,5 +44,5 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
+  title: "Board - Welcome to Qwik",
 };

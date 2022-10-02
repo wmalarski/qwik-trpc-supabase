@@ -18,7 +18,7 @@ export const CreatePostForm = component$(() => {
         const text = (form.get("text") as string) || "";
         try {
           state.status = "loading";
-          await trpc.post.add.mutate({ text });
+          await trpc.post.create.mutate({ text });
           state.status = "success";
         } catch (error) {
           state.status = "error";

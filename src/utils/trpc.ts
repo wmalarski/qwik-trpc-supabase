@@ -1,6 +1,9 @@
 import { createTRPCProxyClient, httpLink, loggerLink } from "@trpc/client";
+import type { GetInferenceHelpers } from "@trpc/server";
 import superjson from "superjson";
 import type { AppRouter } from "~/server/trpc/router";
+
+export type InferProcedures = GetInferenceHelpers<AppRouter>;
 
 export const trpc = createTRPCProxyClient<AppRouter>({
   links: [

@@ -14,16 +14,22 @@ model Post {
   id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   content     String
-  videoId     String
+  videoId     String?
   createdById String
   comments    Comment[]
 }
 
 model Comment {
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
-  content      String
-  createdById  String
-  replayedToId String
-  replayedTo   Post     @relation(fields: [replayedToId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  content     String
+  createdById String
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: NoAction)
+
+  parentId String?
+  parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: NoAction)
+  comments Comment[] @relation("CommentToComment")
+
+  @@map("comments")
 }
