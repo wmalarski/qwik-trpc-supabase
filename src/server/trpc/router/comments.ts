@@ -70,10 +70,10 @@ export const commentRouter = t.router({
           orderBy: { createdAt: "desc" },
           skip: input.skip,
           take: input.take,
-          where: { postId: input.postId },
+          where: { parentId: null, postId: input.postId },
         }),
         ctx.prisma.comment.count({
-          where: { postId: input.postId },
+          where: { parentId: null, postId: input.postId },
         }),
       ]);
       return { comments, count };
