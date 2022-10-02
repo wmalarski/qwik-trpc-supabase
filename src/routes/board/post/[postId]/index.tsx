@@ -1,7 +1,6 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
 import { CreatePostForm } from "~/modules/CreatePostForm/CreatePostForm";
-import { PostsList } from "~/modules/PostsList/PostsList";
 import { paths } from "~/utils/paths";
 import { InferPromise } from "~/utils/trpc";
 
@@ -14,9 +13,13 @@ export const onGet = async (ev: RequestEvent) => {
     throw ev.response.redirect(paths.signIn);
   }
 
-  const posts = await caller.post.list({ skip: 0, take: 10 });
+  const postId = ev.params.postId;
+  const [post, comments] = await Promise.all([
+    caller.post.get({ id: postId }),
+    caller.comment.list({ parentId: null, postId, skip: 0, take: 10 }),
+  ]);
 
-  return posts;
+  return { comments, post };
 };
 
 export default component$(() => {
@@ -24,12 +27,12 @@ export default component$(() => {
 
   return (
     <div class="flex flex-col gap-2">
-      <h1>Feed</h1>
+      <h1>Post</h1>
       <CreatePostForm />
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}
-        onResolved={(result) => <PostsList posts={result.posts} />}
+        onResolved={(result) => <pre>{JSON.stringify(result, null, 2)}</pre>}
       />
     </div>
   );
