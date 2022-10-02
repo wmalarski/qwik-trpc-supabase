@@ -34,10 +34,31 @@ export const commentRouter = t.router({
         where: { id: input.id },
       });
     }),
-  list: protectedProcedure
+  listForParent: protectedProcedure
     .input(
       z.object({
         parentId: z.string().cuid().nullable(),
+        skip: z.number().min(0),
+        take: z.number().min(0).max(100),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const [comments, count] = await Promise.all([
+        ctx.prisma.comment.findMany({
+          orderBy: { createdAt: "desc" },
+          skip: input.skip,
+          take: input.take,
+          where: { parentId: input.parentId },
+        }),
+        ctx.prisma.comment.count({
+          where: { parentId: input.parentId },
+        }),
+      ]);
+      return { comments, count };
+    }),
+  listForPost: protectedProcedure
+    .input(
+      z.object({
         postId: z.string().cuid(),
         skip: z.number().min(0),
         take: z.number().min(0).max(100),
@@ -49,10 +70,10 @@ export const commentRouter = t.router({
           orderBy: { createdAt: "desc" },
           skip: input.skip,
           take: input.take,
-          where: { parentId: input.parentId, postId: input.postId },
+          where: { postId: input.postId },
         }),
         ctx.prisma.comment.count({
-          where: { parentId: input.parentId, postId: input.postId },
+          where: { postId: input.postId },
         }),
       ]);
       return { comments, count };

@@ -1,6 +1,6 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { PostCard } from "~/modules/PostCard/PostCard";
+import { CommentCard } from "~/modules/CommentCard/CommentCard";
 import { paths } from "~/utils/paths";
 import { InferPromise } from "~/utils/trpc";
 
@@ -13,13 +13,13 @@ export const onGet = async (ev: RequestEvent) => {
     throw ev.response.redirect(paths.signIn);
   }
 
-  const postId = ev.params.postId;
-  const [post, comments] = await Promise.all([
-    caller.post.get({ id: postId }),
-    caller.comment.listForPost({ postId, skip: 0, take: 10 }),
+  const commentId = ev.params.commentId;
+  const [comment, comments] = await Promise.all([
+    caller.comment.get({ id: commentId }),
+    caller.comment.listForParent({ parentId: commentId, skip: 0, take: 10 }),
   ]);
 
-  return { comments, post };
+  return { comment, comments };
 };
 
 export default component$(() => {
@@ -27,15 +27,15 @@ export default component$(() => {
 
   return (
     <div class="flex flex-col gap-2">
-      <h1>Post</h1>
+      <h1>Comment</h1>
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}
         onResolved={(result) => (
-          <PostCard
+          <CommentCard
+            comment={result.comment}
             comments={result.comments.comments}
             commentsCount={result.comments.count}
-            post={result.post}
           />
         )}
       />
