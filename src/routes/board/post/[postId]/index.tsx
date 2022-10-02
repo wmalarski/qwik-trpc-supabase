@@ -1,6 +1,5 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { CreatePostForm } from "~/modules/CreatePostForm/CreatePostForm";
 import { paths } from "~/utils/paths";
 import { InferPromise } from "~/utils/trpc";
 
@@ -28,7 +27,6 @@ export default component$(() => {
   return (
     <div class="flex flex-col gap-2">
       <h1>Post</h1>
-      <CreatePostForm />
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}

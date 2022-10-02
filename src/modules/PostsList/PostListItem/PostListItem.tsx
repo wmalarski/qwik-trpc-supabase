@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
-import { Post } from "@prisma/client";
+import type { Post } from "@prisma/client";
 
-export type Props = {
+type Props = {
   post: Post;
 };
 
