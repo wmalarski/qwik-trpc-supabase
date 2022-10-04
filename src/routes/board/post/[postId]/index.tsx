@@ -13,9 +13,6 @@ export const onGet = async (ev: RequestEvent) => {
     throw ev.response.redirect(paths.signIn);
   }
 
-  const code = ev.url.searchParams.get("code");
-  console.log({ code });
-
   const postId = ev.params.postId;
   const [post, comments] = await Promise.all([
     caller.post.get({ id: postId }),
