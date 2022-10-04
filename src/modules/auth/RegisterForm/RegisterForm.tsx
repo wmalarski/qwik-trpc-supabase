@@ -29,23 +29,25 @@ export const RegisterForm = component$(() => {
       <h2 class="text-xl">Sign up with password</h2>
 
       <div class="form-control w-full">
-        <label htmlFor="text" class="label">
+        <label htmlFor="email" class="label">
           <span class="label-text">Email</span>
         </label>
         <input
           class="input input-bordered w-full"
           placeholder="Email"
+          id="email"
           name="email"
           type="email"
         />
       </div>
 
       <div class="form-control w-full">
-        <label htmlFor="text" class="label">
+        <label htmlFor="password" class="label">
           <span class="label-text">Password</span>
         </label>
         <input
           class="input input-bordered w-full"
+          id="password"
           name="password"
           type="password"
         />

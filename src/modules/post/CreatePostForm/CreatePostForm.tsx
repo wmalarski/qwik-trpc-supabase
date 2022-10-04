@@ -1,4 +1,4 @@
-import { component$, useStore } from "@builder.io/qwik";
+import { component$, mutable, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 import { PostForm } from "../PostForm/PostForm";
 
@@ -8,15 +8,16 @@ type State = {
 
 export const CreatePostForm = component$(() => {
   const state = useStore<State>({ status: "idle" });
+  const isLoading = state.status === "loading";
 
   return (
     <div>
       <PostForm
-        isLoading={state.status === "loading"}
-        onSubmit$={async (data) => {
+        isLoading={mutable(isLoading)}
+        onSubmit$={async ({ content }) => {
           try {
             state.status = "loading";
-            await trpc.post.create.mutate(data);
+            await trpc.post.create.mutate({ text: content });
             state.status = "success";
           } catch (error) {
             state.status = "error";

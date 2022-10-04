@@ -1,4 +1,4 @@
-import { component$, useStore } from "@builder.io/qwik";
+import { component$, mutable, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
@@ -13,18 +13,19 @@ type Props = {
 
 export const CreateCommentForm = component$((props: Props) => {
   const state = useStore<State>({ status: "idle" });
+  const isLoading = state.status === "loading";
 
   return (
     <div>
       <CommentForm
-        isLoading={state.status === "loading"}
-        onSubmit$={async (data) => {
+        isLoading={mutable(isLoading)}
+        onSubmit$={async ({ content }) => {
           try {
             state.status = "loading";
             await trpc.comment.create.mutate({
               parentId: props.parentId,
               postId: props.postId,
-              text: data.text,
+              text: content,
             });
             state.status = "success";
           } catch (error) {

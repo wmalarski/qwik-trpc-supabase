@@ -28,11 +28,12 @@ export const MagicLinkForm = component$(() => {
       <h2 class="text-xl">Send magic link</h2>
 
       <div class="form-control w-full">
-        <label htmlFor="text" class="label">
+        <label htmlFor="email" class="label">
           <span class="label-text">Email</span>
         </label>
         <input
           class="input input-bordered w-full"
+          id="email"
           placeholder="Email"
           name="email"
           type="email"

@@ -39,11 +39,12 @@ export const PasswordForm = component$(() => {
       <h2 class="text-xl">Sign in with password</h2>
 
       <div class="form-control w-full">
-        <label htmlFor="text" class="label">
+        <label htmlFor="email" class="label">
           <span class="label-text">Email</span>
         </label>
         <input
           class="input input-bordered w-full"
+          id="email"
           placeholder="Email"
           name="email"
           type="email"
@@ -51,10 +52,11 @@ export const PasswordForm = component$(() => {
       </div>
 
       <div class="form-control w-full">
-        <label htmlFor="text" class="label">
+        <label htmlFor="password" class="label">
           <span class="label-text">Password</span>
         </label>
         <input
+          id="password"
           class="input input-bordered w-full"
           name="password"
           type="password"

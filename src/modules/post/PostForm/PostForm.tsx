@@ -1,10 +1,11 @@
 import { component$, PropFunction } from "@builder.io/qwik";
 
 type FormResult = {
-  text: string;
+  content: string;
 };
 
 type Props = {
+  initialValue?: FormResult;
   isLoading: boolean;
   onSubmit$: PropFunction<(result: FormResult) => void>;
 };
@@ -17,21 +18,23 @@ export const PostForm = component$((props: Props) => {
       class="flex flex-col gap-2"
       onSubmit$={(event) => {
         const form = new FormData(event.target as HTMLFormElement);
-        const text = (form.get("text") as string) || "";
-        props.onSubmit$({ text });
+        const content = (form.get("content") as string) || "";
+        props.onSubmit$({ content });
       }}
     >
       <h2 class="text-xl">Add post</h2>
 
       <div class="form-control w-full">
-        <label htmlFor="text" class="label">
+        <label htmlFor="content" class="label">
           <span class="label-text">Text</span>
         </label>
         <input
           class="input input-bordered w-full"
-          name="text"
+          name="content"
+          id="content"
           placeholder="Type here"
           type="text"
+          value={props.initialValue?.content}
         />
       </div>
 
