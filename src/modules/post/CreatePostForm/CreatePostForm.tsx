@@ -16,7 +16,7 @@ export const CreatePostForm = component$(() => {
         onSubmit$={async (data) => {
           try {
             state.status = "loading";
-            await trpc.post.create.mutate({ text: data.text });
+            await trpc.post.create.mutate(data);
             state.status = "success";
           } catch (error) {
             state.status = "error";
