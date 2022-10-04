@@ -1,7 +1,7 @@
 import { component$, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 
-type CreateCommentFormState = {
+type State = {
   status: "idle" | "loading" | "success" | "error";
 };
 
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const CreateCommentForm = component$((props: Props) => {
-  const state = useStore<CreateCommentFormState>({ status: "idle" });
+  const state = useStore<State>({ status: "idle" });
 
   return (
     <form

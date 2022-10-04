@@ -2,12 +2,12 @@ import { component$, useStore } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import { paths } from "~/utils/paths";
 
-type MagicLinkFormState = {
+type State = {
   status: "idle" | "loading" | "success" | "error";
 };
 
 export const PasswordForm = component$(() => {
-  const state = useStore<MagicLinkFormState>({ status: "idle" });
+  const state = useStore<State>({ status: "idle" });
 
   const navigate = useNavigate();
 

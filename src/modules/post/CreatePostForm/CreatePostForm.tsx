@@ -2,12 +2,12 @@ import { component$, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 import { PostForm } from "../PostForm/PostForm";
 
-type CreatePostFormState = {
+type State = {
   status: "idle" | "loading" | "success" | "error";
 };
 
 export const CreatePostForm = component$(() => {
-  const state = useStore<CreatePostFormState>({ status: "idle" });
+  const state = useStore<State>({ status: "idle" });
 
   return (
     <div>

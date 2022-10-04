@@ -1,12 +1,12 @@
 import { component$, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 
-type RegisterFormState = {
+type State = {
   status: "idle" | "loading" | "success" | "error";
 };
 
 export const RegisterForm = component$(() => {
-  const state = useStore<RegisterFormState>({ status: "idle" });
+  const state = useStore<State>({ status: "idle" });
 
   return (
     <form
