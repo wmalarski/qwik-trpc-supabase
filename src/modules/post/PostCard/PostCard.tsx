@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Link, useNavigate } from "@builder.io/qwik-city";
+import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
@@ -14,6 +14,7 @@ type Props = {
 
 export const PostCard = component$((props: Props) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div>
@@ -25,6 +26,9 @@ export const PostCard = component$((props: Props) => {
         post={props.post}
         onDeleteSuccess$={() => {
           navigate.path = paths.board;
+        }}
+        onUpdateSuccess$={() => {
+          navigate.path = location.pathname;
         }}
       />
       <CreateCommentForm parentId={null} postId={props.post.id} />

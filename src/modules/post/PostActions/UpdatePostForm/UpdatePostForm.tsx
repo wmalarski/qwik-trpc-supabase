@@ -1,4 +1,4 @@
-import { component$, mutable, useStore } from "@builder.io/qwik";
+import { component$, mutable, PropFunction, useStore } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
 import { trpc } from "~/utils/trpc";
 import { PostForm } from "../../PostForm/PostForm";
@@ -9,6 +9,7 @@ type State = {
 };
 
 type Props = {
+  onSuccess$?: PropFunction<() => void>;
   post: Post;
 };
 
@@ -39,6 +40,7 @@ export const UpdatePostForm = component$((props: Props) => {
                   id: props.post.id,
                   text: content,
                 });
+                props.onSuccess$?.();
                 state.status = "success";
               } catch (error) {
                 state.status = "error";

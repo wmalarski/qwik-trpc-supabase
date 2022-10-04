@@ -5,17 +5,15 @@ import { UpdatePostForm } from "./UpdatePostForm/UpdatePostForm";
 
 type Props = {
   onDeleteSuccess$?: PropFunction<() => void>;
+  onUpdateSuccess$?: PropFunction<() => void>;
   post: Post;
 };
 
 export const PostActions = component$((props: Props) => {
   return (
     <>
-      <DeletePostForm
-        post={props.post}
-        onDeleteSuccess$={props.onDeleteSuccess$}
-      />
-      <UpdatePostForm post={props.post} />
+      <DeletePostForm post={props.post} onSuccess$={props.onDeleteSuccess$} />
+      <UpdatePostForm post={props.post} onSuccess$={props.onUpdateSuccess$} />
     </>
   );
 });

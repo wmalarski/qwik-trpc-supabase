@@ -12,15 +12,16 @@
 - [ ] Migrate to next-auth
 - [x] Redirect navigation after login
 - [x] Protected routes
-- [ ] Auth context - nav conditional rendering
+- [ ] Auth context
+- [ ] Top bar conditional rendering
 - [x] tRPC setup
 - [x] tRPC + cookies auth guard setup
 - [x] tRPC queries/mutation on client side
 - [x] tRPC queries/mutation on server side
 - [x] tRPC using Prisma
 - [x] Protected tRPC procedures
-- [ ] Crud on Post model
-- [ ] Crud on Comments
+- [x] Crud on Post model
+- [x] Crud on Comments
 - [ ] Cache invalidation after mutations
 - [ ] Optimistic updates
 - [ ] Example with infinite posts scroll
