@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Link, useNavigate } from "@builder.io/qwik-city";
+import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { paths } from "~/utils/paths";
 import { CommentActions } from "../CommentActions/CommentActions";
@@ -13,6 +13,7 @@ type Props = {
 };
 
 export const CommentCard = component$((props: Props) => {
+  const location = useLocation();
   const navigate = useNavigate();
 
   const backPath = props.comment.parentId
@@ -28,12 +29,18 @@ export const CommentCard = component$((props: Props) => {
       <CommentActions
         comment={props.comment}
         onDeleteSuccess$={() => {
-          navigate.path = backPath;
+          navigate.path = paths.post(props.comment.postId);
+        }}
+        onUpdateSuccess$={() => {
+          window.location.replace(location.pathname);
         }}
       />
       <CreateCommentForm
         parentId={props.comment.id}
         postId={props.comment.postId}
+        onSuccess$={() => {
+          window.location.replace(location.pathname);
+        }}
       />
       <CommentsList comments={props.comments} count={props.commentsCount} />
     </div>

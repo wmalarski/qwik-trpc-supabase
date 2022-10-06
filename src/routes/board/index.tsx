@@ -25,7 +25,11 @@ export default component$(() => {
   return (
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
-      <CreatePostForm />
+      <CreatePostForm
+        onSuccess$={() => {
+          window.location.replace(location.pathname);
+        }}
+      />
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}

@@ -15,7 +15,15 @@ export const CommentsListItem = component$((props: Props) => {
       <Link class="link" href={paths.comment(props.comment.id)}>
         Show comments
       </Link>
-      <CommentActions comment={props.comment} />
+      <CommentActions
+        comment={props.comment}
+        onDeleteSuccess$={() => {
+          window.location.replace(location.pathname);
+        }}
+        onUpdateSuccess$={() => {
+          window.location.replace(location.pathname);
+        }}
+      />
     </div>
   );
 });

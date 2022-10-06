@@ -22,7 +22,7 @@
 - [x] Protected tRPC procedures
 - [x] Crud on Post model
 - [x] Crud on Comments
-- [ ] Cache invalidation after mutations
+- [x] Cache invalidation after mutations
 - [ ] Optimistic updates
 - [ ] Example with infinite posts scroll
 - [x] Tailwind setup + DaisyUI

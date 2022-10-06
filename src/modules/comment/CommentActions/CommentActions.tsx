@@ -6,6 +6,7 @@ import { UpdateCommentForm } from "./UpdateCommentForm/UpdateCommentForm";
 type Props = {
   comment: Comment;
   onDeleteSuccess$?: PropFunction<() => void>;
+  onUpdateSuccess$?: PropFunction<() => void>;
 };
 
 export const CommentActions = component$((props: Props) => {
@@ -13,9 +14,12 @@ export const CommentActions = component$((props: Props) => {
     <>
       <DeleteCommentForm
         comment={props.comment}
-        onDeleteSuccess$={props.onDeleteSuccess$}
+        onSuccess$={props.onDeleteSuccess$}
       />
-      <UpdateCommentForm comment={props.comment} />
+      <UpdateCommentForm
+        comment={props.comment}
+        onSuccess$={props.onUpdateSuccess$}
+      />
     </>
   );
 });

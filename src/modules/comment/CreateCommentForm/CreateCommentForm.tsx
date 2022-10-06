@@ -1,4 +1,4 @@
-import { component$, mutable, useStore } from "@builder.io/qwik";
+import { component$, mutable, PropFunction, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
@@ -9,6 +9,7 @@ type State = {
 type Props = {
   parentId: string | null;
   postId: string;
+  onSuccess$?: PropFunction<() => void>;
 };
 
 export const CreateCommentForm = component$((props: Props) => {
@@ -27,6 +28,7 @@ export const CreateCommentForm = component$((props: Props) => {
               postId: props.postId,
               text: content,
             });
+            props.onSuccess$?.();
             state.status = "success";
           } catch (error) {
             state.status = "error";

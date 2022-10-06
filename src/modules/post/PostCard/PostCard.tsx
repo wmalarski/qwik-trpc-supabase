@@ -28,10 +28,16 @@ export const PostCard = component$((props: Props) => {
           navigate.path = paths.board;
         }}
         onUpdateSuccess$={() => {
-          navigate.path = location.pathname;
+          window.location.replace(location.pathname);
         }}
       />
-      <CreateCommentForm parentId={null} postId={props.post.id} />
+      <CreateCommentForm
+        parentId={null}
+        postId={props.post.id}
+        onSuccess$={() => {
+          window.location.replace(location.pathname);
+        }}
+      />
       <CommentsList comments={props.comments} count={props.commentsCount} />
     </div>
   );
