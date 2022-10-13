@@ -64,7 +64,7 @@ export const getUserByCookie = async (request: RequestContext) => {
     return null;
   }
 
-  const { user } = await supabase.auth.api.getUser(token);
+  const { data } = await supabase.auth.getUser(token);
 
-  return user;
+  return data;
 };

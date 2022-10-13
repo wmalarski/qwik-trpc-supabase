@@ -16,13 +16,13 @@ export const onPost: RequestHandler = async (ev) => {
 
   const args = formSchema.parse(json);
 
-  const result = await supabase.auth.signIn(args);
+  const result = await supabase.auth.signInWithPassword(args);
 
-  if (result.error || !result.session) {
+  if (result.error || !result.data.session) {
     throw new Error(result.error?.message || "INVALID_INPUT");
   }
 
-  updateAuthCookies(result.session, ev.response);
+  updateAuthCookies(result.data.session, ev.response);
 
   return null;
 };
