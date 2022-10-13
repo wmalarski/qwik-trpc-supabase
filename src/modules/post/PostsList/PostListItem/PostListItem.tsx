@@ -12,17 +12,21 @@ export const PostListItem = component$((props: Props) => {
   const location = useLocation();
 
   return (
-    <div>
-      <pre>{JSON.stringify(props.post, null, 2)}</pre>
-      <Link class="link" href={paths.post(props.post.id)}>
-        Show comments
-      </Link>
-      <PostActions
-        post={props.post}
-        onUpdateSuccess$={() => {
-          window.location.replace(location.pathname);
-        }}
-      />
+    <div class="card card-bordered card-compact">
+      <div class="card-body">
+        <pre>{JSON.stringify(props.post, null, 2)}</pre>
+        <div class="card-actions">
+          <Link class="link" href={paths.post(props.post.id)}>
+            Show comments
+          </Link>
+          <PostActions
+            post={props.post}
+            onUpdateSuccess$={() => {
+              window.location.replace(location.pathname);
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 });
