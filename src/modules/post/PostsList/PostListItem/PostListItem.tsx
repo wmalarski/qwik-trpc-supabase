@@ -12,11 +12,11 @@ export const PostListItem = component$((props: Props) => {
   const location = useLocation();
 
   return (
-    <div class="card card-bordered card-compact">
+    <div class="card card-bordered card-compact overflow-visible">
       <div class="card-body">
         <pre>{JSON.stringify(props.post, null, 2)}</pre>
         <div class="card-actions">
-          <Link class="link" href={paths.post(props.post.id)}>
+          <Link class="btn btn-link btn-sm" href={paths.post(props.post.id)}>
             Show comments
           </Link>
           <PostActions

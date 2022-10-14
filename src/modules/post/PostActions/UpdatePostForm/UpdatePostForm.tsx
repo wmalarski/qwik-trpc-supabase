@@ -20,7 +20,7 @@ export const UpdatePostForm = component$((props: Props) => {
   return (
     <>
       <button
-        class="btn"
+        class="btn btn-ghost btn-sm"
         onClick$={() => {
           state.isOpen = !state.isOpen;
         }}

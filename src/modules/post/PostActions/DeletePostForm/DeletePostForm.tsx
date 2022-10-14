@@ -18,7 +18,7 @@ export const DeletePostForm = component$((props: Props) => {
     <>
       <button
         class={{
-          "btn btn-ghost mt-2": true,
+          "btn btn-ghost btn-sm": true,
           loading: state.status === "loading",
         }}
         onClick$={async () => {
