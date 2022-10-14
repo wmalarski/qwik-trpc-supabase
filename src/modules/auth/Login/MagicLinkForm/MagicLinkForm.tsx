@@ -11,7 +11,7 @@ export const MagicLinkForm = component$(() => {
   return (
     <form
       class="flex flex-col gap-2"
-      preventDefault:submit
+      preventdefault:submit
       method="post"
       onSubmit$={async (event) => {
         const form = new FormData(event.target as HTMLFormElement);
@@ -28,7 +28,7 @@ export const MagicLinkForm = component$(() => {
       <h2 class="text-xl">Send magic link</h2>
 
       <div class="form-control w-full">
-        <label htmlFor="email" class="label">
+        <label for="email" class="label">
           <span class="label-text">Email</span>
         </label>
         <input

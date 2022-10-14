@@ -51,5 +51,6 @@ module.exports = {
     ],
     "tailwindcss/no-custom-classname": "off",
     "prettier/prettier": "error",
+    "jsx-a11y/label-has-associated-control": "off",
   },
 };

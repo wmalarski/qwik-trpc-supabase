@@ -13,7 +13,7 @@ type Props = {
 export const CommentForm = component$((props: Props) => {
   return (
     <form
-      preventDefault:submit
+      preventdefault:submit
       method="post"
       class="flex flex-col gap-2"
       onSubmit$={(event) => {
@@ -25,7 +25,7 @@ export const CommentForm = component$((props: Props) => {
       <h2 class="text-xl">Add comment</h2>
 
       <div class="form-control w-full">
-        <label htmlFor="content" class="label">
+        <label for="content" class="label">
           <span class="label-text">Text</span>
         </label>
         <input

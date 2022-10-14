@@ -11,7 +11,7 @@ export const RegisterForm = component$(() => {
   return (
     <form
       class="flex flex-col gap-2"
-      preventDefault:submit
+      preventdefault:submit
       method="post"
       onSubmit$={async (event) => {
         const form = new FormData(event.target as HTMLFormElement);
@@ -29,7 +29,7 @@ export const RegisterForm = component$(() => {
       <h2 class="text-xl">Sign up with password</h2>
 
       <div class="form-control w-full">
-        <label htmlFor="email" class="label">
+        <label for="email" class="label">
           <span class="label-text">Email</span>
         </label>
         <input
@@ -42,7 +42,7 @@ export const RegisterForm = component$(() => {
       </div>
 
       <div class="form-control w-full">
-        <label htmlFor="password" class="label">
+        <label for="password" class="label">
           <span class="label-text">Password</span>
         </label>
         <input

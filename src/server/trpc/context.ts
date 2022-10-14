@@ -5,7 +5,7 @@ import { getUserByCookie, supabase } from "../auth";
 import { prisma } from "../db/client";
 
 type CreateContextOptions = {
-  user: User | null;
+  user?: User | null;
 };
 
 export const createContextInner = (opts: CreateContextOptions) => {
@@ -13,9 +13,9 @@ export const createContextInner = (opts: CreateContextOptions) => {
 };
 
 export const createContext = async (ev: RequestEvent) => {
-  const user = await getUserByCookie(ev.request);
+  const data = await getUserByCookie(ev.request);
 
-  return await createContextInner({ user });
+  return createContextInner({ user: data?.user });
 };
 
 export type Context = trpc.inferAsyncReturnType<typeof createContext>;
