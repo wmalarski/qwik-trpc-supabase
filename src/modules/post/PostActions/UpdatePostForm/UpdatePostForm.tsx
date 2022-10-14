@@ -1,4 +1,4 @@
-import { component$, mutable, PropFunction, useStore } from "@builder.io/qwik";
+import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
 import { trpc } from "~/utils/trpc";
 import { PostForm } from "../../PostForm/PostForm";
@@ -32,7 +32,7 @@ export const UpdatePostForm = component$((props: Props) => {
         <>
           <PostForm
             initialValue={props.post}
-            isLoading={mutable(isLoading)}
+            isLoading={isLoading}
             onSubmit$={async ({ content }) => {
               try {
                 state.status = "loading";

@@ -1,4 +1,4 @@
-import { component$, mutable, PropFunction, useStore } from "@builder.io/qwik";
+import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
@@ -19,7 +19,7 @@ export const CreateCommentForm = component$((props: Props) => {
   return (
     <div>
       <CommentForm
-        isLoading={mutable(isLoading)}
+        isLoading={isLoading}
         onSubmit$={async ({ content }) => {
           try {
             state.status = "loading";

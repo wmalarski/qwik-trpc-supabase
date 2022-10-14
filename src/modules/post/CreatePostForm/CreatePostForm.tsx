@@ -1,4 +1,4 @@
-import { component$, mutable, PropFunction, useStore } from "@builder.io/qwik";
+import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import { trpc } from "~/utils/trpc";
 import { PostForm } from "../PostForm/PostForm";
 
@@ -17,7 +17,7 @@ export const CreatePostForm = component$((props: Props) => {
   return (
     <div>
       <PostForm
-        isLoading={mutable(isLoading)}
+        isLoading={isLoading}
         onSubmit$={async ({ content }) => {
           try {
             state.status = "loading";

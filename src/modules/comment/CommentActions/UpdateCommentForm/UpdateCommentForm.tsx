@@ -1,4 +1,4 @@
-import { component$, mutable, PropFunction, useStore } from "@builder.io/qwik";
+import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
 import { trpc } from "~/utils/trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
@@ -32,7 +32,7 @@ export const UpdateCommentForm = component$((props: Props) => {
         <>
           <CommentForm
             initialValue={props.comment}
-            isLoading={mutable(isLoading)}
+            isLoading={isLoading}
             onSubmit$={async ({ content }) => {
               try {
                 state.status = "loading";
