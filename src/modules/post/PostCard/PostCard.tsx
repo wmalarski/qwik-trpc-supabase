@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
@@ -18,9 +18,9 @@ export const PostCard = component$((props: Props) => {
 
   return (
     <div>
-      <Link class="link" href={paths.board}>
+      <a class="link" href={paths.board}>
         Back
-      </Link>
+      </a>
       <pre>{JSON.stringify(props.post, null, 2)}</pre>
       <PostActions
         post={props.post}

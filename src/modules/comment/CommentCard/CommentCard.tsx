@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { paths } from "~/utils/paths";
 import { CommentActions } from "../CommentActions/CommentActions";
@@ -22,9 +22,9 @@ export const CommentCard = component$((props: Props) => {
 
   return (
     <div>
-      <Link class="link" href={backPath}>
+      <a class="link" href={backPath}>
         Back
-      </Link>
+      </a>
       <pre>{JSON.stringify(props.comment, null, 2)}</pre>
       <CommentActions
         comment={props.comment}

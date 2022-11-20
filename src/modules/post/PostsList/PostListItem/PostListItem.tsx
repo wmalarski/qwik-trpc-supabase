@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Link, useLocation } from "@builder.io/qwik-city";
+import { useLocation } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { paths } from "~/utils/paths";
 import { PostActions } from "../../PostActions/PostActions";
@@ -16,9 +16,9 @@ export const PostListItem = component$((props: Props) => {
       <div class="card-body">
         <pre>{JSON.stringify(props.post, null, 2)}</pre>
         <div class="card-actions">
-          <Link class="btn btn-link btn-sm" href={paths.post(props.post.id)}>
+          <a class="btn btn-link btn-sm" href={paths.post(props.post.id)}>
             Show comments
-          </Link>
+          </a>
           <PostActions
             post={props.post}
             onUpdateSuccess$={() => {
