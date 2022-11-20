@@ -1,6 +1,6 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 
 type State = {
   status: "idle" | "loading" | "success" | "error";
@@ -13,6 +13,7 @@ type Props = {
 
 export const DeleteCommentForm = component$((props: Props) => {
   const state = useStore<State>({ status: "idle" });
+  const trpcContext = useTrpcContext();
 
   return (
     <>
@@ -24,7 +25,8 @@ export const DeleteCommentForm = component$((props: Props) => {
         onClick$={async () => {
           try {
             state.status = "loading";
-            await trpc.comment.delete.mutate({ id: props.comment.id });
+            const trpc = await trpcContext();
+            await trpc?.comment.delete.mutate({ id: props.comment.id });
             props.onSuccess$?.();
             state.status = "success";
           } catch (error) {

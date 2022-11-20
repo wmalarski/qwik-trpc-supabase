@@ -1,5 +1,5 @@
 import { component$, useStore } from "@builder.io/qwik";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 
 type State = {
   status: "idle" | "loading" | "success" | "error";
@@ -7,6 +7,7 @@ type State = {
 
 export const MagicLinkForm = component$(() => {
   const state = useStore<State>({ status: "idle" });
+  const trpcContext = useTrpcContext();
 
   return (
     <form
@@ -18,7 +19,8 @@ export const MagicLinkForm = component$(() => {
         const email = (form.get("email") as string) || "";
         try {
           state.status = "loading";
-          await trpc.auth.sendMagicLink.mutate({ email });
+          const trpc = await trpcContext();
+          await trpc?.auth.sendMagicLink.mutate({ email });
           state.status = "success";
         } catch (error) {
           state.status = "error";
@@ -32,7 +34,7 @@ export const MagicLinkForm = component$(() => {
           <span class="label-text">Email</span>
         </label>
         <input
-          class="input input-bordered w-full"
+          class="input-bordered input w-full"
           id="email"
           placeholder="Email"
           name="email"
@@ -42,7 +44,7 @@ export const MagicLinkForm = component$(() => {
 
       <button
         class={{
-          "btn btn-primary mt-2": true,
+          "btn-primary btn mt-2": true,
           loading: state.status === "loading",
         }}
         type="submit"

@@ -1,5 +1,5 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 import { PostForm } from "../PostForm/PostForm";
 
 type Props = {
@@ -12,6 +12,7 @@ type State = {
 
 export const CreatePostForm = component$((props: Props) => {
   const state = useStore<State>({ status: "idle" });
+  const trpcContext = useTrpcContext();
   const isLoading = state.status === "loading";
 
   return (
@@ -21,7 +22,8 @@ export const CreatePostForm = component$((props: Props) => {
         onSubmit$={async ({ content }) => {
           try {
             state.status = "loading";
-            await trpc.post.create.mutate({ text: content });
+            const trpc = await trpcContext();
+            await trpc?.post.create.mutate({ text: content });
             props.onSuccess$?.();
             state.status = "success";
           } catch (error) {

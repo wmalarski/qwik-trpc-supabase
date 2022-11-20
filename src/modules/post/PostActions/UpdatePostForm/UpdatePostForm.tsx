@@ -1,6 +1,6 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 import { PostForm } from "../../PostForm/PostForm";
 
 type State = {
@@ -15,6 +15,7 @@ type Props = {
 
 export const UpdatePostForm = component$((props: Props) => {
   const state = useStore<State>({ isOpen: false, status: "idle" });
+  const trpcContext = useTrpcContext();
   const isLoading = state.status === "loading";
 
   return (
@@ -36,7 +37,8 @@ export const UpdatePostForm = component$((props: Props) => {
             onSubmit$={async ({ content }) => {
               try {
                 state.status = "loading";
-                await trpc.post.update.mutate({
+                const trpc = await trpcContext();
+                await trpc?.post.update.mutate({
                   id: props.post.id,
                   text: content,
                 });

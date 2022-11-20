@@ -1,6 +1,6 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
 type State = {
@@ -15,6 +15,7 @@ type Props = {
 
 export const UpdateCommentForm = component$((props: Props) => {
   const state = useStore<State>({ isOpen: false, status: "idle" });
+  const trpcContext = useTrpcContext();
   const isLoading = state.status === "loading";
 
   return (
@@ -36,7 +37,8 @@ export const UpdateCommentForm = component$((props: Props) => {
             onSubmit$={async ({ content }) => {
               try {
                 state.status = "loading";
-                await trpc.comment.create.mutate({
+                const trpc = await trpcContext();
+                await trpc?.comment.create.mutate({
                   parentId: props.comment.parentId,
                   postId: props.comment.postId,
                   text: content,

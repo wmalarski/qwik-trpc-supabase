@@ -1,5 +1,5 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 import { CommentForm } from "../CommentForm/CommentForm";
 
 type State = {
@@ -14,6 +14,7 @@ type Props = {
 
 export const CreateCommentForm = component$((props: Props) => {
   const state = useStore<State>({ status: "idle" });
+  const trpcContext = useTrpcContext();
   const isLoading = state.status === "loading";
 
   return (
@@ -23,7 +24,8 @@ export const CreateCommentForm = component$((props: Props) => {
         onSubmit$={async ({ content }) => {
           try {
             state.status = "loading";
-            await trpc.comment.create.mutate({
+            const trpc = await trpcContext();
+            await trpc?.comment.create.mutate({
               parentId: props.parentId,
               postId: props.postId,
               text: content,

@@ -1,5 +1,5 @@
 import { component$, useStore } from "@builder.io/qwik";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 
 type State = {
   status: "idle" | "loading" | "success" | "error";
@@ -7,6 +7,7 @@ type State = {
 
 export const RegisterForm = component$(() => {
   const state = useStore<State>({ status: "idle" });
+  const trpcContext = useTrpcContext();
 
   return (
     <form
@@ -19,7 +20,8 @@ export const RegisterForm = component$(() => {
         const password = (form.get("password") as string) || "";
         try {
           state.status = "loading";
-          await trpc.auth.signUp.mutate({ email, password });
+          const trpc = await trpcContext();
+          await trpc?.auth.signUp.mutate({ email, password });
           state.status = "success";
         } catch (error) {
           state.status = "error";

@@ -1,6 +1,6 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
-import { trpc } from "~/utils/trpc";
+import { useTrpcContext } from "~/routes/context";
 
 type State = {
   status: "idle" | "loading" | "success" | "error";
@@ -13,18 +13,21 @@ type Props = {
 
 export const DeletePostForm = component$((props: Props) => {
   const state = useStore<State>({ status: "idle" });
+  const trpcContext = useTrpcContext();
 
   return (
     <>
       <button
         class={{
           "btn btn-ghost btn-sm": true,
+
           loading: state.status === "loading",
         }}
         onClick$={async () => {
           try {
             state.status = "loading";
-            await trpc.post.delete.mutate({ id: props.post.id });
+            const trpc = await trpcContext();
+            await trpc?.post.delete.mutate({ id: props.post.id });
             props.onSuccess$?.();
             state.status = "success";
           } catch (error) {

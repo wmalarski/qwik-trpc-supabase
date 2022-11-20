@@ -2,7 +2,6 @@ import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
 import { PostCard } from "~/modules/post/PostCard/PostCard";
 import { paths } from "~/utils/paths";
-import { InferPromise } from "~/utils/trpc";
 
 export const onGet = async (ev: RequestEvent) => {
   const { serverCaller } = await import("~/server/trpc/router");
@@ -23,7 +22,7 @@ export const onGet = async (ev: RequestEvent) => {
 };
 
 export default component$(() => {
-  const resource = useEndpoint<InferPromise<typeof onGet>>();
+  const resource = useEndpoint<typeof onGet>();
 
   return (
     <div class="flex flex-col gap-2">

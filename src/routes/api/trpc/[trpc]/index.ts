@@ -1,7 +1,7 @@
 import { RequestHandler } from "@builder.io/qwik-city";
 
 const handler: RequestHandler = async (ev) => {
-  const { resolveHTTPResponse } = await import("@trpc/server");
+  const { resolveHTTPResponse } = await import("@trpc/server/http");
   const { appRouter } = await import("~/server/trpc/router/index");
   const { createContext } = await import("~/server/trpc/context");
 
