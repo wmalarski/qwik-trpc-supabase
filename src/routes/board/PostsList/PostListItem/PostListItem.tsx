@@ -8,7 +8,7 @@ type Props = {
   post: Post;
 };
 
-export const PostListItem = component$((props: Props) => {
+export const PostListItem = component$<Props>((props) => {
   const location = useLocation();
 
   return (

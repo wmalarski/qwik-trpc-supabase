@@ -6,7 +6,7 @@ type Props = {
   posts: Post[];
 };
 
-export const PostsList = component$((props: Props) => {
+export const PostsList = component$<Props>((props) => {
   return (
     <div class="flex flex-col gap-4">
       {props.posts.map((post) => (

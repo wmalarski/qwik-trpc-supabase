@@ -10,7 +10,9 @@ type State = {
   status: "idle" | "loading" | "success" | "error";
 };
 
-export const CreatePostForm = component$((props: Props) => {
+export const CreatePostForm = component$<Props>((props) => {
+  const onSuccess$ = props.onSuccess$;
+
   const state = useStore<State>({ status: "idle" });
   const trpcContext = useTrpcContext();
   const isLoading = state.status === "loading";
@@ -24,7 +26,7 @@ export const CreatePostForm = component$((props: Props) => {
             state.status = "loading";
             const trpc = await trpcContext();
             await trpc?.post.create.mutate({ text: content });
-            props.onSuccess$?.();
+            onSuccess$?.();
             state.status = "success";
           } catch (error) {
             state.status = "error";

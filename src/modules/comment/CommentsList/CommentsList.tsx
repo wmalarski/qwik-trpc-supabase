@@ -7,7 +7,7 @@ type Props = {
   count: number;
 };
 
-export const CommentsList = component$((props: Props) => {
+export const CommentsList = component$<Props>((props) => {
   return (
     <div>
       {props.comments.map((comment) => (

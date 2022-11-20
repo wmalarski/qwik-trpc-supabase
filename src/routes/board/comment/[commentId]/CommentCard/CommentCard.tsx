@@ -12,7 +12,9 @@ type Props = {
   comment: Comment;
 };
 
-export const CommentCard = component$((props: Props) => {
+export const CommentCard = component$<Props>((props) => {
+  const postId = props.comment.postId;
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -29,7 +31,7 @@ export const CommentCard = component$((props: Props) => {
       <CommentActions
         comment={props.comment}
         onDeleteSuccess$={() => {
-          navigate.path = paths.post(props.comment.postId);
+          navigate.path = paths.post(postId);
         }}
         onUpdateSuccess$={() => {
           window.location.replace(location.pathname);

@@ -11,7 +11,10 @@ type Props = {
   post: Post;
 };
 
-export const DeletePostForm = component$((props: Props) => {
+export const DeletePostForm = component$<Props>((props) => {
+  const onSuccess$ = props.onSuccess$;
+  const postId = props.post.id;
+
   const state = useStore<State>({ status: "idle" });
   const trpcContext = useTrpcContext();
 
@@ -20,15 +23,14 @@ export const DeletePostForm = component$((props: Props) => {
       <button
         class={{
           "btn btn-ghost btn-sm": true,
-
           loading: state.status === "loading",
         }}
         onClick$={async () => {
           try {
             state.status = "loading";
             const trpc = await trpcContext();
-            await trpc?.post.delete.mutate({ id: props.post.id });
-            props.onSuccess$?.();
+            await trpc?.post.delete.mutate({ id: postId });
+            onSuccess$?.();
             state.status = "success";
           } catch (error) {
             state.status = "error";

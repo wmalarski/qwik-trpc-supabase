@@ -11,7 +11,10 @@ type Props = {
   onSuccess$?: PropFunction<() => void>;
 };
 
-export const DeleteCommentForm = component$((props: Props) => {
+export const DeleteCommentForm = component$<Props>((props) => {
+  const onSuccess$ = props.onSuccess$;
+  const commentId = props.comment.id;
+
   const state = useStore<State>({ status: "idle" });
   const trpcContext = useTrpcContext();
 
@@ -26,8 +29,8 @@ export const DeleteCommentForm = component$((props: Props) => {
           try {
             state.status = "loading";
             const trpc = await trpcContext();
-            await trpc?.comment.delete.mutate({ id: props.comment.id });
-            props.onSuccess$?.();
+            await trpc?.comment.delete.mutate({ id: commentId });
+            onSuccess$?.();
             state.status = "success";
           } catch (error) {
             state.status = "error";

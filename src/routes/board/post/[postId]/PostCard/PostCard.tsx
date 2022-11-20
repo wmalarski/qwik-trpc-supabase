@@ -12,7 +12,7 @@ type Props = {
   post: Post;
 };
 
-export const PostCard = component$((props: Props) => {
+export const PostCard = component$<Props>((props) => {
   const navigate = useNavigate();
   const location = useLocation();
 

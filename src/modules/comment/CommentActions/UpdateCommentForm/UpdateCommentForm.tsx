@@ -13,7 +13,11 @@ type Props = {
   onSuccess$?: PropFunction<() => void>;
 };
 
-export const UpdateCommentForm = component$((props: Props) => {
+export const UpdateCommentForm = component$<Props>((props) => {
+  const onSuccess$ = props.onSuccess$;
+  const parentId = props.comment.parentId;
+  const postId = props.comment.postId;
+
   const state = useStore<State>({ isOpen: false, status: "idle" });
   const trpcContext = useTrpcContext();
   const isLoading = state.status === "loading";
@@ -39,11 +43,11 @@ export const UpdateCommentForm = component$((props: Props) => {
                 state.status = "loading";
                 const trpc = await trpcContext();
                 await trpc?.comment.create.mutate({
-                  parentId: props.comment.parentId,
-                  postId: props.comment.postId,
+                  parentId,
+                  postId,
                   text: content,
                 });
-                props.onSuccess$?.();
+                onSuccess$?.();
                 state.status = "success";
               } catch (error) {
                 state.status = "error";

@@ -9,7 +9,7 @@ type Props = {
   onUpdateSuccess$?: PropFunction<() => void>;
 };
 
-export const CommentActions = component$((props: Props) => {
+export const CommentActions = component$<Props>((props) => {
   return (
     <>
       <DeleteCommentForm

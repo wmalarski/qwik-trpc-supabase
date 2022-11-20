@@ -10,7 +10,9 @@ type Props = {
   onSubmit$: PropFunction<(result: FormResult) => void>;
 };
 
-export const PostForm = component$((props: Props) => {
+export const PostForm = component$<Props>((props) => {
+  const onSubmit$ = props.onSubmit$;
+
   return (
     <form
       preventdefault:submit
@@ -19,7 +21,7 @@ export const PostForm = component$((props: Props) => {
       onSubmit$={(event) => {
         const form = new FormData(event.target as HTMLFormElement);
         const content = (form.get("content") as string) || "";
-        props.onSubmit$({ content });
+        onSubmit$({ content });
       }}
     >
       <h2 class="text-xl">Add post</h2>

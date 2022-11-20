@@ -7,7 +7,7 @@ type Props = {
   comment: Comment;
 };
 
-export const CommentsListItem = component$((props: Props) => {
+export const CommentsListItem = component$<Props>((props) => {
   return (
     <div>
       <pre>{JSON.stringify(props.comment, null, 2)}</pre>

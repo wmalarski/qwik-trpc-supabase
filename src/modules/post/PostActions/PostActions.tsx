@@ -9,7 +9,7 @@ type Props = {
   post: Post;
 };
 
-export const PostActions = component$((props: Props) => {
+export const PostActions = component$<Props>((props) => {
   return (
     <div>
       <DeletePostForm post={props.post} onSuccess$={props.onDeleteSuccess$} />
