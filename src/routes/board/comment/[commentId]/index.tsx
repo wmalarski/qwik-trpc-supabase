@@ -1,25 +1,22 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { paths } from "~/utils/paths";
+import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
+import { withProtected } from "~/server/auth/withUser";
+import { withTrpc } from "~/server/trpc/withTrpc";
+import { endpointBuilder } from "~/utils/endpointBuilder";
 import { CommentCard } from "./CommentCard/CommentCard";
 
-export const onGet = async (ev: RequestEvent) => {
-  const { serverCaller } = await import("~/server/trpc/router");
+export const onGet = endpointBuilder()
+  .use(withProtected())
+  .use(withTrpc())
+  .resolver(async ({ trpc, params }) => {
+    const commentId = params.commentId;
+    const [comment, comments] = await Promise.all([
+      trpc.comment.get({ id: commentId }),
+      trpc.comment.listForParent({ parentId: commentId, skip: 0, take: 10 }),
+    ]);
 
-  const { caller, context } = await serverCaller(ev);
-
-  if (!context.user) {
-    throw ev.response.redirect(paths.signIn);
-  }
-
-  const commentId = ev.params.commentId;
-  const [comment, comments] = await Promise.all([
-    caller.comment.get({ id: commentId }),
-    caller.comment.listForParent({ parentId: commentId, skip: 0, take: 10 }),
-  ]);
-
-  return { comment, comments };
-};
+    return { comment, comments };
+  });
 
 export default component$(() => {
   const resource = useEndpoint<typeof onGet>();

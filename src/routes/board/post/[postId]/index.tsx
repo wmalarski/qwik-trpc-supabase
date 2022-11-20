@@ -1,25 +1,22 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { paths } from "~/utils/paths";
+import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
+import { withProtected } from "~/server/auth/withUser";
+import { withTrpc } from "~/server/trpc/withTrpc";
+import { endpointBuilder } from "~/utils/endpointBuilder";
 import { PostCard } from "./PostCard/PostCard";
 
-export const onGet = async (ev: RequestEvent) => {
-  const { serverCaller } = await import("~/server/trpc/router");
+export const onGet = endpointBuilder()
+  .use(withProtected())
+  .use(withTrpc())
+  .resolver(async ({ trpc, params }) => {
+    const postId = params.postId;
+    const [post, comments] = await Promise.all([
+      trpc.post.get({ id: postId }),
+      trpc.comment.listForPost({ postId, skip: 0, take: 10 }),
+    ]);
 
-  const { caller, context } = await serverCaller(ev);
-
-  if (!context.user) {
-    throw ev.response.redirect(paths.signIn);
-  }
-
-  const postId = ev.params.postId;
-  const [post, comments] = await Promise.all([
-    caller.post.get({ id: postId }),
-    caller.comment.listForPost({ postId, skip: 0, take: 10 }),
-  ]);
-
-  return { comments, post };
-};
+    return { comments, post };
+  });
 
 export default component$(() => {
   const resource = useEndpoint<typeof onGet>();

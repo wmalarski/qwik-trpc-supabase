@@ -1,20 +1,16 @@
 import { component$, Resource } from "@builder.io/qwik";
-import {
-  DocumentHead,
-  RequestHandler,
-  useEndpoint,
-} from "@builder.io/qwik-city";
+import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
 import type { User } from "@supabase/supabase-js";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
+import { withUser } from "~/server/auth/withUser";
+import { endpointBuilder } from "~/utils/endpointBuilder";
 
-export const onGet: RequestHandler = async (ev) => {
-  const { getUserByCookie } = await import("~/server/auth");
-
-  const user = await getUserByCookie(ev.request);
-
-  return user;
-};
+export const onGet = endpointBuilder()
+  .use(withUser())
+  .resolver(({ user }) => {
+    return user;
+  });
 
 export default component$(() => {
   const user = useEndpoint<User>();

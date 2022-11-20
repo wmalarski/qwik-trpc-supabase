@@ -1,7 +1,7 @@
 import { RequestContext, ResponseContext } from "@builder.io/qwik-city";
 import { createClient, Session } from "@supabase/supabase-js";
 import cookie from "cookie";
-import { serverEnv } from "./serverEnv";
+import { serverEnv } from "../serverEnv";
 
 export const supabase = createClient(
   serverEnv.VITE_SUPABASE_URL,

@@ -1,22 +1,19 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { paths } from "~/utils/paths";
+import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
+import { withProtected } from "~/server/auth/withUser";
+import { withTrpc } from "~/server/trpc/withTrpc";
+import { endpointBuilder } from "~/utils/endpointBuilder";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
-export const onGet = async (ev: RequestEvent) => {
-  const { serverCaller } = await import("~/server/trpc/router");
+export const onGet = endpointBuilder()
+  .use(withProtected())
+  .use(withTrpc())
+  .resolver(async ({ trpc }) => {
+    const posts = await trpc.post.list({ skip: 0, take: 10 });
 
-  const { caller, context } = await serverCaller(ev);
-
-  if (!context.user) {
-    throw ev.response.redirect(paths.signIn);
-  }
-
-  const posts = await caller.post.list({ skip: 0, take: 10 });
-
-  return posts;
-};
+    return posts;
+  });
 
 export default component$(() => {
   const resource = useEndpoint<typeof onGet>();
