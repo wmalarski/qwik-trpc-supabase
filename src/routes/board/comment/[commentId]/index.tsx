@@ -1,7 +1,7 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { CommentCard } from "~/modules/comment/CommentCard/CommentCard";
 import { paths } from "~/utils/paths";
+import { CommentCard } from "./CommentCard/CommentCard";
 
 export const onGet = async (ev: RequestEvent) => {
   const { serverCaller } = await import("~/server/trpc/router");

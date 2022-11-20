@@ -1,6 +1,6 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
+import { PostForm } from "~/modules/post/PostForm/PostForm";
 import { useTrpcContext } from "~/routes/context";
-import { PostForm } from "../PostForm/PostForm";
 
 type Props = {
   onSuccess$?: PropFunction<() => void>;

@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
+import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { paths } from "~/utils/paths";
-import { PostActions } from "../PostActions/PostActions";
 
 type Props = {
   comments: Comment[];

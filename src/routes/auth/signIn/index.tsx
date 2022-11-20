@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
-import { Login } from "~/modules/auth/Login/Login";
 import { paths } from "~/utils/paths";
+import { Login } from "./Login/Login";
 
 export const onGet: RequestHandler = async (ev) => {
   const { getUserByCookie } = await import("~/server/auth");

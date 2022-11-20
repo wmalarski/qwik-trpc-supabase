@@ -2,7 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { paths } from "~/utils/paths";
-import { PostActions } from "../../PostActions/PostActions";
+import { PostActions } from "../../../../modules/post/PostActions/PostActions";
 
 type Props = {
   post: Post;

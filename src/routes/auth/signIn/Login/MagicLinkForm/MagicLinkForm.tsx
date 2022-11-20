@@ -34,7 +34,7 @@ export const MagicLinkForm = component$(() => {
           <span class="label-text">Email</span>
         </label>
         <input
-          class="input-bordered input w-full"
+          class="input input-bordered w-full"
           id="email"
           placeholder="Email"
           name="email"
@@ -44,7 +44,7 @@ export const MagicLinkForm = component$(() => {
 
       <button
         class={{
-          "btn-primary btn mt-2": true,
+          "btn btn-primary mt-2": true,
           loading: state.status === "loading",
         }}
         type="submit"

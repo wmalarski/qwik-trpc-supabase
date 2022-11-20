@@ -1,8 +1,8 @@
 import { component$ } from "@builder.io/qwik";
 import { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
 import { z } from "zod";
-import { RegisterForm } from "~/modules/auth/RegisterForm/RegisterForm";
 import { paths } from "~/utils/paths";
+import { RegisterForm } from "./RegisterForm/RegisterForm";
 
 export const onPost: RequestHandler = async (ev) => {
   const { supabase, updateAuthCookies } = await import("~/server/auth");

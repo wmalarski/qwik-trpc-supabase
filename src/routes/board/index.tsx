@@ -1,8 +1,8 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, RequestEvent, useEndpoint } from "@builder.io/qwik-city";
-import { CreatePostForm } from "~/modules/post/CreatePostForm/CreatePostForm";
-import { PostsList } from "~/modules/post/PostsList/PostsList";
 import { paths } from "~/utils/paths";
+import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
+import { PostsList } from "./PostsList/PostsList";
 
 export const onGet = async (ev: RequestEvent) => {
   const { serverCaller } = await import("~/server/trpc/router");
