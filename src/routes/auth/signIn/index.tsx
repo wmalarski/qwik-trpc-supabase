@@ -10,7 +10,7 @@ import { Login } from "./Login/Login";
 export const onPost = endpointBuilder()
   .use(withUser())
   .use(withTrpc())
-  .resolver(async ({ request, response, supabase }) => {
+  .resolver(async ({ request, response, supabase, cookie }) => {
     const form = await request.formData();
     const email = form.get("email") as string;
     const password = form.get("password") as string | undefined;
@@ -29,7 +29,7 @@ export const onPost = endpointBuilder()
     }
 
     const { updateAuthCookies } = await import("~/server/auth/auth");
-    updateAuthCookies(result.data.session, response);
+    updateAuthCookies(result.data.session, cookie);
 
     throw response.redirect(paths.board);
   });

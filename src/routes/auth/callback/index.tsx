@@ -11,7 +11,7 @@ export default component$(() => {
 
     const params = new URLSearchParams(hash);
 
-    const data = await fetch(paths.login, {
+    const data = await fetch(paths.cookies, {
       body: JSON.stringify({
         access_token: params.get("access_token"),
         expires_in: params.get("expires_in"),
