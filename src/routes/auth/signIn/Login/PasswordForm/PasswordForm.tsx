@@ -1,41 +1,13 @@
-import { component$, useStore } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
-import { paths } from "~/utils/paths";
+import { component$ } from "@builder.io/qwik";
+import { AuthError } from "@supabase/supabase-js";
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
+type Props = {
+  error?: AuthError | null;
 };
 
-export const PasswordForm = component$(() => {
-  const state = useStore<State>({ status: "idle" });
-
-  const navigate = useNavigate();
-
+export const PasswordForm = component$<Props>((props) => {
   return (
-    <form
-      class="flex flex-col gap-2"
-      preventdefault:submit
-      method="post"
-      onSubmit$={async (event) => {
-        const form = new FormData(event.target as HTMLFormElement);
-        try {
-          state.status = "loading";
-          await fetch(paths.signUp, {
-            body: JSON.stringify({
-              email: form.get("email"),
-              password: form.get("password"),
-            }),
-            credentials: "same-origin",
-            headers: new Headers({ "Content-Type": "application/json" }),
-            method: "POST",
-          });
-          state.status = "success";
-          navigate.path = paths.index;
-        } catch (error) {
-          state.status = "error";
-        }
-      }}
-    >
+    <form class="flex flex-col gap-2" method="post">
       <h2 class="text-xl">Sign in with password</h2>
 
       <div class="form-control w-full">
@@ -63,21 +35,10 @@ export const PasswordForm = component$(() => {
         />
       </div>
 
-      <button
-        class={{
-          "btn btn-primary mt-2": true,
-          loading: state.status === "loading",
-        }}
-        type="submit"
-      >
+      <button class="btn btn-primary mt-2" type="submit">
         Sign In
       </button>
-
-      {state.status === "success" ? (
-        <span>Success</span>
-      ) : state.status === "error" ? (
-        <span>Error</span>
-      ) : null}
+      <pre>{JSON.stringify(props.error, null, 2)}</pre>
     </form>
   );
 });

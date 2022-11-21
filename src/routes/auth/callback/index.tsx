@@ -1,5 +1,6 @@
 import { component$, useClientEffect$ } from "@builder.io/qwik";
 import { DocumentHead } from "@builder.io/qwik-city";
+import { paths } from "~/utils/paths";
 
 export default component$(() => {
   useClientEffect$(async () => {
@@ -10,7 +11,7 @@ export default component$(() => {
 
     const params = new URLSearchParams(hash);
 
-    const data = await fetch("/api/login", {
+    const data = await fetch(paths.login, {
       body: JSON.stringify({
         access_token: params.get("access_token"),
         expires_in: params.get("expires_in"),
