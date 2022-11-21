@@ -1,9 +1,9 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
 import { withUser } from "~/server/auth/withUser";
-import { serverEnv } from "~/server/serverEnv";
 import { withTrpc } from "~/server/trpc/withTrpc";
 import { endpointBuilder } from "~/utils/endpointBuilder";
+import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 import { RegisterForm } from "./RegisterForm/RegisterForm";
 
@@ -17,8 +17,7 @@ export const onPost = endpointBuilder()
 
     const result = await supabase.auth.signUp({
       email,
-      // TODO: replace with calculated url
-      options: { emailRedirectTo: serverEnv.VITE_REDIRECT_URL },
+      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
       password,
     });
 

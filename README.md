@@ -9,7 +9,6 @@
 - [x] Password Supabase auth
 - [x] Sign out
 - [ ] Auth refresh token
-- [ ] Migrate to next-auth
 - [x] Redirect navigation after login
 - [x] Protected routes
 - [ ] Auth context

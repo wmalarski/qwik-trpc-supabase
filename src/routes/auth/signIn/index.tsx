@@ -1,9 +1,9 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
 import { withUser } from "~/server/auth/withUser";
-import { serverEnv } from "~/server/serverEnv";
 import { withTrpc } from "~/server/trpc/withTrpc";
 import { endpointBuilder } from "~/utils/endpointBuilder";
+import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 import { Login } from "./Login/Login";
 
@@ -18,8 +18,7 @@ export const onPost = endpointBuilder()
     if (!password) {
       const otpResult = await supabase.auth.signInWithOtp({
         email,
-        // TODO: replace with calculated url
-        options: { emailRedirectTo: serverEnv.VITE_REDIRECT_URL },
+        options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
       });
       return { otpError: otpResult.error, otpSuccess: !otpResult.error };
     }
