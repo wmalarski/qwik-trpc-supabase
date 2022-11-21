@@ -44,21 +44,19 @@ export const onGet = endpointBuilder()
   });
 
 export default component$(() => {
-  const endpoint = useEndpoint<typeof onPost>();
+  const resource = useEndpoint<typeof onPost>();
 
   return (
-    <>
-      <Resource
-        value={endpoint}
-        onResolved={(data) => (
-          <Login
-            passError={data?.passError}
-            otpError={data?.otpError}
-            otpIsSuccess={data?.otpSuccess}
-          />
-        )}
-      />
-    </>
+    <Resource
+      value={resource}
+      onResolved={(data) => (
+        <Login
+          passError={data?.passError}
+          otpError={data?.otpError}
+          otpIsSuccess={data?.otpSuccess}
+        />
+      )}
+    />
   );
 });
 

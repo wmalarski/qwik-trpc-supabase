@@ -1,33 +1,13 @@
-import { component$, useStore } from "@builder.io/qwik";
-import { useTrpcContext } from "~/routes/context";
+import { component$ } from "@builder.io/qwik";
+import type { AuthError } from "@supabase/supabase-js";
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
+type Props = {
+  error?: AuthError | null;
 };
 
-export const RegisterForm = component$(() => {
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
-
+export const RegisterForm = component$<Props>((props) => {
   return (
-    <form
-      class="flex flex-col gap-2"
-      preventdefault:submit
-      method="post"
-      onSubmit$={async (event) => {
-        const form = new FormData(event.target as HTMLFormElement);
-        const email = (form.get("email") as string) || "";
-        const password = (form.get("password") as string) || "";
-        try {
-          state.status = "loading";
-          const trpc = await trpcContext();
-          await trpc?.auth.signUp.mutate({ email, password });
-          state.status = "success";
-        } catch (error) {
-          state.status = "error";
-        }
-      }}
-    >
+    <form class="flex flex-col gap-2" method="post">
       <h2 class="text-xl">Sign up with password</h2>
 
       <div class="form-control w-full">
@@ -55,21 +35,11 @@ export const RegisterForm = component$(() => {
         />
       </div>
 
-      <button
-        class={{
-          "btn btn-primary mt-2": true,
-          loading: state.status === "loading",
-        }}
-        type="submit"
-      >
+      <button class="btn btn-primary mt-2" type="submit">
         Sign Up
       </button>
 
-      {state.status === "success" ? (
-        <span>Success</span>
-      ) : state.status === "error" ? (
-        <span>Error</span>
-      ) : null}
+      <pre>{JSON.stringify(props.error, null, 2)}</pre>
     </form>
   );
 });

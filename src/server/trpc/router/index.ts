@@ -1,12 +1,10 @@
 import { RequestEvent } from "@builder.io/qwik-city";
 import { createContext } from "../context";
 import { t } from "../trpc";
-import { authRouter } from "./auth";
 import { commentRouter } from "./comments";
 import { postRouter } from "./post";
 
 export const appRouter = t.router({
-  auth: authRouter,
   comment: commentRouter,
   post: postRouter,
 });
