@@ -1,32 +1,14 @@
-import { component$, useStore } from "@builder.io/qwik";
-import { useTrpcContext } from "~/routes/context";
+import { component$ } from "@builder.io/qwik";
+import type { AuthError } from "@supabase/supabase-js";
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
+type Props = {
+  error?: AuthError | null;
+  isSuccess?: boolean;
 };
 
-export const MagicLinkForm = component$(() => {
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
-
+export const MagicLinkForm = component$<Props>((props) => {
   return (
-    <form
-      class="flex flex-col gap-2"
-      preventdefault:submit
-      method="post"
-      onSubmit$={async (event) => {
-        const form = new FormData(event.target as HTMLFormElement);
-        const email = (form.get("email") as string) || "";
-        try {
-          state.status = "loading";
-          const trpc = await trpcContext();
-          await trpc?.auth.sendMagicLink.mutate({ email });
-          state.status = "success";
-        } catch (error) {
-          state.status = "error";
-        }
-      }}
-    >
+    <form class="flex flex-col gap-2" method="post">
       <h2 class="text-xl">Send magic link</h2>
 
       <div class="form-control w-full">
@@ -42,21 +24,12 @@ export const MagicLinkForm = component$(() => {
         />
       </div>
 
-      <button
-        class={{
-          "btn btn-primary mt-2": true,
-          loading: state.status === "loading",
-        }}
-        type="submit"
-      >
+      <button class="btn btn-primary mt-2" type="submit">
         Send
       </button>
 
-      {state.status === "success" ? (
-        <span>Success</span>
-      ) : state.status === "error" ? (
-        <span>Error</span>
-      ) : null}
+      {props.isSuccess ? <span>Success</span> : null}
+      {props.error ? <pre>{JSON.stringify(props.error, null, 2)}</pre> : null}
     </form>
   );
 });

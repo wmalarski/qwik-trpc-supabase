@@ -4,7 +4,9 @@ import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
 import { PasswordForm } from "./PasswordForm/PasswordForm";
 
 type Props = {
-  error?: AuthError | null;
+  otpError?: AuthError | null;
+  otpIsSuccess?: boolean;
+  passError?: AuthError | null;
 };
 
 export const Login = component$<Props>((props) => {
@@ -12,8 +14,8 @@ export const Login = component$<Props>((props) => {
     <div class="flex flex-col gap-2">
       <h1>Sign In</h1>
       <div class="flex flex-col gap-6">
-        <MagicLinkForm />
-        <PasswordForm error={props.error} />
+        <MagicLinkForm isSuccess={props.otpIsSuccess} error={props.otpError} />
+        <PasswordForm error={props.passError} />
       </div>
     </div>
   );
