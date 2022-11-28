@@ -5,6 +5,7 @@
     "node": ">=15.0.0"
   },
   "private": true,
+  "license": "MIT",
   "scripts": {
     "-------BUILD-------": "",
     "build": "qwik build",
