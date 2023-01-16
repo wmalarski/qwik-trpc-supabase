@@ -4,7 +4,7 @@ import { removeAuthCookies } from "~/server/auth/auth";
 import { endpointBuilder } from "~/utils/endpointBuilder";
 import { paths } from "~/utils/paths";
 
-export const onGet = endpointBuilder().resolver(({ cookie, redirect }) => {
+export const onGet = endpointBuilder().loader(({ cookie, redirect }) => {
   removeAuthCookies(cookie);
 
   throw redirect(302, paths.index);

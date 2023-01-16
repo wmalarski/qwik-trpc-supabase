@@ -1,23 +1,20 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, loader$ } from "@builder.io/qwik-city";
-import type { User } from "@supabase/supabase-js";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
 import { withUser } from "~/server/auth/withUser";
 import { endpointBuilder } from "~/utils/endpointBuilder";
 
-export const onGet = endpointBuilder()
-  .use(withUser())
-  .resolver(({ user }) => {
-    return user;
-  });
-
-export const getUser = loader$((event) => {
-  return { data: 2 };
-});
+export const getData = loader$(
+  endpointBuilder()
+    .use(withUser())
+    .loader(({ user }) => {
+      return user;
+    })
+);
 
 export default component$(() => {
-  const user = useEndpoint<User>();
+  const user = getData.use();
 
   return (
     <Resource

@@ -1,25 +1,27 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead } from "@builder.io/qwik-city";
+import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { withProtected } from "~/server/auth/withUser";
 import { withTrpc } from "~/server/trpc/withTrpc";
 import { endpointBuilder } from "~/utils/endpointBuilder";
 import { PostCard } from "./PostCard/PostCard";
 
-export const onGet = endpointBuilder()
-  .use(withProtected())
-  .use(withTrpc())
-  .resolver(async ({ trpc, params }) => {
-    const postId = params.postId;
-    const [post, comments] = await Promise.all([
-      trpc.post.get({ id: postId }),
-      trpc.comment.listForPost({ postId, skip: 0, take: 10 }),
-    ]);
+export const getData = loader$(
+  endpointBuilder()
+    .use(withProtected())
+    .use(withTrpc())
+    .loader(async ({ trpc, params }) => {
+      const postId = params.postId;
+      const [post, comments] = await Promise.all([
+        trpc.post.get({ id: postId }),
+        trpc.comment.listForPost({ postId, skip: 0, take: 10 }),
+      ]);
 
-    return { comments, post };
-  });
+      return { comments, post };
+    })
+);
 
 export default component$(() => {
-  const resource = useEndpoint<typeof onGet>();
+  const resource = getData.use();
 
   return (
     <div class="flex flex-col gap-2">
