@@ -1,9 +1,10 @@
 import { component$, PropFunction, useStore } from "@builder.io/qwik";
+import type { Post } from "@prisma/client";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
 import { useTrpcContext } from "~/routes/context";
 
 type Props = {
-  onSuccess$?: PropFunction<() => void>;
+  onSuccess$: PropFunction<(post: Post) => void>;
 };
 
 type State = {
@@ -25,8 +26,10 @@ export const CreatePostForm = component$<Props>((props) => {
           try {
             state.status = "loading";
             const trpc = await trpcContext();
-            await trpc?.post.create.mutate({ text: content });
-            onSuccess$?.();
+            const result = await trpc?.post.create.mutate({ text: content });
+            if (result) {
+              onSuccess$(result);
+            }
             state.status = "success";
           } catch (error) {
             state.status = "error";

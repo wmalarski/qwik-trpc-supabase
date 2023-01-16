@@ -34,6 +34,13 @@ export default component$(() => {
             comment={result.comment}
             comments={result.comments?.comments || []}
             commentsCount={result.comments?.count || 0}
+            onCreateSuccess$={(created) => {
+              resource.value.comments.comments.splice(0, 0, created);
+              resource.value.comments.count += 1;
+            }}
+            onUpdateSuccess$={(updated) => {
+              resource.value.comment = updated;
+            }}
           />
         )}
       />

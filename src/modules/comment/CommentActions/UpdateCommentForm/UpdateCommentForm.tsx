@@ -10,13 +10,11 @@ type State = {
 
 type Props = {
   comment: Comment;
-  onSuccess$?: PropFunction<() => void>;
+  onSuccess$: PropFunction<(comment: Comment) => void>;
 };
 
 export const UpdateCommentForm = component$<Props>((props) => {
   const onSuccess$ = props.onSuccess$;
-  const parentId = props.comment.parentId;
-  const postId = props.comment.postId;
 
   const state = useStore<State>({ isOpen: false, status: "idle" });
   const trpcContext = useTrpcContext();
@@ -42,12 +40,11 @@ export const UpdateCommentForm = component$<Props>((props) => {
               try {
                 state.status = "loading";
                 const trpc = await trpcContext();
-                await trpc?.comment.create.mutate({
-                  parentId,
-                  postId,
+                await trpc?.comment.update.mutate({
+                  id: props.comment.id,
                   text: content,
                 });
-                onSuccess$?.();
+                onSuccess$({ ...props.comment, content });
                 state.status = "success";
               } catch (error) {
                 state.status = "error";

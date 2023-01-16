@@ -9,7 +9,7 @@ type State = {
 };
 
 type Props = {
-  onSuccess$?: PropFunction<() => void>;
+  onSuccess$: PropFunction<(post: Post) => void>;
   post: Post;
 };
 
@@ -42,7 +42,7 @@ export const UpdatePostForm = component$<Props>((props) => {
                 state.status = "loading";
                 const trpc = await trpcContext();
                 await trpc?.post.update.mutate({ id: postId, text: content });
-                onSuccess$?.();
+                onSuccess$({ ...props.post, content });
                 state.status = "success";
               } catch (error) {
                 state.status = "error";

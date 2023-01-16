@@ -9,14 +9,8 @@ export const getData = loader$(
   endpointBuilder()
     .use(withProtected())
     .use(withTrpc())
-    .loader(async ({ trpc, params }) => {
-      const postId = params.postId;
-      const [post, comments] = await Promise.all([
-        trpc.post.get({ id: postId }),
-        trpc.comment.listForPost({ postId, skip: 0, take: 10 }),
-      ]);
-
-      return { comments, post };
+    .loader(({ trpc, params }) => {
+      return trpc.post.get({ id: params.postId });
     })
 );
 
@@ -31,9 +25,10 @@ export default component$(() => {
         onPending={() => <div>Loading...</div>}
         onResolved={(result) => (
           <PostCard
-            comments={result.comments?.comments || []}
-            commentsCount={result.comments?.count || 0}
-            post={result.post}
+            post={result}
+            onUpdateSuccess$={(post) => {
+              resource.value = post;
+            }}
           />
         )}
       />

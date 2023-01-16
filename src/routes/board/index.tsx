@@ -10,9 +10,8 @@ export const getData = loader$(
   endpointBuilder()
     .use(withProtected())
     .use(withTrpc())
-    .loader(async ({ trpc }) => {
-      const posts = await trpc.post.list({ skip: 0, take: 10 });
-      return posts;
+    .loader(({ trpc }) => {
+      return trpc.post.list({ skip: 0, take: 10 });
     })
 );
 
@@ -23,14 +22,30 @@ export default component$(() => {
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
       <CreatePostForm
-        onSuccess$={() => {
-          window.location.replace(location.pathname);
+        onSuccess$={(post) => {
+          resource.value.posts.splice(0, 0, post);
+          resource.value.count += 1;
         }}
       />
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}
-        onResolved={(result) => <PostsList posts={result.posts} />}
+        onResolved={(result) => (
+          <PostsList
+            onDeleteSuccess$={(postId) => {
+              const posts = resource.value.posts;
+              const index = posts.findIndex((entry) => entry.id === postId);
+              resource.value.posts.splice(index, 1);
+              resource.value.count -= 1;
+            }}
+            onUpdateSuccess$={(post) => {
+              const posts = resource.value.posts;
+              const index = posts.findIndex((entry) => entry.id === post.id);
+              resource.value.posts.splice(index, 1, post);
+            }}
+            posts={result.posts}
+          />
+        )}
       />
     </div>
   );

@@ -4,8 +4,8 @@ import { DeletePostForm } from "./DeletePostForm/DeletePostForm";
 import { UpdatePostForm } from "./UpdatePostForm/UpdatePostForm";
 
 type Props = {
-  onDeleteSuccess$?: PropFunction<() => void>;
-  onUpdateSuccess$?: PropFunction<() => void>;
+  onDeleteSuccess$: PropFunction<(postId: string) => void>;
+  onUpdateSuccess$: PropFunction<(post: Post) => void>;
   post: Post;
 };
 

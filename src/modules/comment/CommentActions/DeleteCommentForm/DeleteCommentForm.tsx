@@ -8,7 +8,7 @@ type State = {
 
 type Props = {
   comment: Comment;
-  onSuccess$?: PropFunction<() => void>;
+  onSuccess$: PropFunction<(commentId: string) => void>;
 };
 
 export const DeleteCommentForm = component$<Props>((props) => {
@@ -30,7 +30,7 @@ export const DeleteCommentForm = component$<Props>((props) => {
             state.status = "loading";
             const trpc = await trpcContext();
             await trpc?.comment.delete.mutate({ id: commentId });
-            onSuccess$?.();
+            onSuccess$(commentId);
             state.status = "success";
           } catch (error) {
             state.status = "error";

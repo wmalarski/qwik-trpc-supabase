@@ -5,8 +5,8 @@ import { UpdateCommentForm } from "./UpdateCommentForm/UpdateCommentForm";
 
 type Props = {
   comment: Comment;
-  onDeleteSuccess$?: PropFunction<() => void>;
-  onUpdateSuccess$?: PropFunction<() => void>;
+  onDeleteSuccess$: PropFunction<(commentId: string) => void>;
+  onUpdateSuccess$: PropFunction<(comment: Comment) => void>;
 };
 
 export const CommentActions = component$<Props>((props) => {
