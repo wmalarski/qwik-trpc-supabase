@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { updateAuthCookies } from "~/server/auth/auth";
 import { withUser } from "~/server/auth/withUser";
 import { withTrpc } from "~/server/trpc/withTrpc";
 import { endpointBuilder } from "~/utils/endpointBuilder";
@@ -31,7 +32,6 @@ export const signIn = action$(
         return { passError: result.error };
       }
 
-      const { updateAuthCookies } = await import("~/server/auth/auth");
       updateAuthCookies(result.data.session, cookie);
 
       throw redirect(302, paths.board);

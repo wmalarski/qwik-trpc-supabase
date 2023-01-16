@@ -1,12 +1,11 @@
 import type { RequestEventLoader } from "~/utils/endpointBuilder";
 import { paths } from "~/utils/paths";
+import { getUserByCookie, supabase } from "./auth";
 
 export const withUser = <
   R extends RequestEventLoader = RequestEventLoader
 >() => {
   return async (event: R) => {
-    const { getUserByCookie, supabase } = await import("./auth");
-
     const result = await getUserByCookie(event.cookie);
 
     return { ...event, supabase, user: result?.user || null };
@@ -23,8 +22,6 @@ export const withProtected = <
   options: WithProtectedOptions = {}
 ) => {
   return async (event: R) => {
-    const { getUserByCookie, supabase } = await import("./auth");
-
     const result = await getUserByCookie(event.cookie);
 
     if (!result?.user) {
