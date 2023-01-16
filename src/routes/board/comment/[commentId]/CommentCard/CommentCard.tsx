@@ -17,6 +17,7 @@ export const CommentCard = component$<Props>((props) => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const pathname = location.pathname;
 
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)
@@ -31,17 +32,17 @@ export const CommentCard = component$<Props>((props) => {
       <CommentActions
         comment={props.comment}
         onDeleteSuccess$={() => {
-          navigate.path = paths.post(postId);
+          navigate(paths.post(postId));
         }}
         onUpdateSuccess$={() => {
-          window.location.replace(location.pathname);
+          window.location.replace(pathname);
         }}
       />
       <CreateCommentForm
         parentId={props.comment.id}
         postId={props.comment.postId}
         onSuccess$={() => {
-          window.location.replace(location.pathname);
+          window.location.replace(pathname);
         }}
       />
       <CommentsList comments={props.comments} count={props.commentsCount} />

@@ -25,13 +25,13 @@ const handler: RequestHandler = async (ev) => {
 
     for (const key in res.headers) {
       const value = res.headers[key] as string;
-      ev.response.headers.set(key, value);
+      ev.headers.set(key, value);
     }
 
-    ev.response.status = res.status;
+    ev.status(res.status);
     return JSON.parse(res.body as string);
   } catch (error) {
-    ev.response.status = 500;
+    ev.status(500);
     return "Internal Server Error";
   }
 };

@@ -1,5 +1,5 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
+import { DocumentHead } from "@builder.io/qwik-city";
 import { withUser } from "~/server/auth/withUser";
 import { withTrpc } from "~/server/trpc/withTrpc";
 import { endpointBuilder } from "~/utils/endpointBuilder";
@@ -10,7 +10,7 @@ import { Login } from "./Login/Login";
 export const onPost = endpointBuilder()
   .use(withUser())
   .use(withTrpc())
-  .resolver(async ({ request, response, supabase, cookie }) => {
+  .resolver(async ({ request, supabase, cookie, redirect }) => {
     const form = await request.formData();
     const email = form.get("email") as string;
     const password = form.get("password") as string | undefined;
@@ -31,14 +31,14 @@ export const onPost = endpointBuilder()
     const { updateAuthCookies } = await import("~/server/auth/auth");
     updateAuthCookies(result.data.session, cookie);
 
-    throw response.redirect(paths.board);
+    throw redirect(302, paths.board);
   });
 
 export const onGet = endpointBuilder()
   .use(withUser())
   .resolver((ev) => {
     if (ev.user) {
-      throw ev.response.redirect(paths.index);
+      throw ev.redirect(302, paths.index);
     }
   });
 

@@ -1,5 +1,5 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
+import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import type { User } from "@supabase/supabase-js";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
@@ -11,6 +11,10 @@ export const onGet = endpointBuilder()
   .resolver(({ user }) => {
     return user;
   });
+
+export const getUser = loader$((event) => {
+  return { data: 2 };
+});
 
 export default component$(() => {
   const user = useEndpoint<User>();

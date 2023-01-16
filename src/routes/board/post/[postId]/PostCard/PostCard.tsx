@@ -15,6 +15,7 @@ type Props = {
 export const PostCard = component$<Props>((props) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const pathname = location.pathname;
 
   return (
     <div>
@@ -25,17 +26,17 @@ export const PostCard = component$<Props>((props) => {
       <PostActions
         post={props.post}
         onDeleteSuccess$={() => {
-          navigate.path = paths.board;
+          navigate(paths.board);
         }}
         onUpdateSuccess$={() => {
-          window.location.replace(location.pathname);
+          window.location.replace(pathname);
         }}
       />
       <CreateCommentForm
         parentId={null}
         postId={props.post.id}
         onSuccess$={() => {
-          window.location.replace(location.pathname);
+          window.location.replace(pathname);
         }}
       />
       <CommentsList comments={props.comments} count={props.commentsCount} />

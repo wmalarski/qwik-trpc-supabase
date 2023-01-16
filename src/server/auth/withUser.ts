@@ -1,7 +1,9 @@
-import { RequestEvent } from "@builder.io/qwik-city";
+import type { RequestEventLoader } from "~/utils/endpointBuilder";
 import { paths } from "~/utils/paths";
 
-export const withUser = <R extends RequestEvent = RequestEvent>() => {
+export const withUser = <
+  R extends RequestEventLoader = RequestEventLoader
+>() => {
   return async (event: R) => {
     const { getUserByCookie, supabase } = await import("./auth");
 
@@ -15,7 +17,9 @@ type WithProtectedOptions = {
   redirectTo?: string;
 };
 
-export const withProtected = <R extends RequestEvent = RequestEvent>(
+export const withProtected = <
+  R extends RequestEventLoader = RequestEventLoader
+>(
   options: WithProtectedOptions = {}
 ) => {
   return async (event: R) => {
@@ -24,7 +28,7 @@ export const withProtected = <R extends RequestEvent = RequestEvent>(
     const result = await getUserByCookie(event.cookie);
 
     if (!result?.user) {
-      throw event.response.redirect(options.redirectTo || paths.signIn);
+      throw event.redirect(302, options.redirectTo || paths.signIn);
     }
     return { ...event, supabase, user: result.user };
   };

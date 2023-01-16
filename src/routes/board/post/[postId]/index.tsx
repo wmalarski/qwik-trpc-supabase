@@ -1,5 +1,5 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
+import { DocumentHead } from "@builder.io/qwik-city";
 import { withProtected } from "~/server/auth/withUser";
 import { withTrpc } from "~/server/trpc/withTrpc";
 import { endpointBuilder } from "~/utils/endpointBuilder";

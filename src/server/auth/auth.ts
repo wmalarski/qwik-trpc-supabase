@@ -1,4 +1,5 @@
-import type { Cookie, RequestContext } from "@builder.io/qwik-city";
+import type { Cookie } from "@builder.io/qwik-city";
+import type { RequestContext } from "@builder.io/qwik-city/middleware/request-handler";
 import { createClient, Session } from "@supabase/supabase-js";
 import { serverEnv } from "../serverEnv";
 

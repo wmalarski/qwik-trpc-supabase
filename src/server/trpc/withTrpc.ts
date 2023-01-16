@@ -1,9 +1,9 @@
-import { RequestEvent } from "@builder.io/qwik-city";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { prisma } from "~/server/db/client";
 import { appRouter } from "~/server/trpc/router";
+import type { RequestEventLoader } from "~/utils/endpointBuilder";
 
-type RequestEventWithSession = RequestEvent & {
+type RequestEventWithSession = RequestEventLoader & {
   user: User | null;
   supabase: SupabaseClient;
 };
