@@ -1,56 +1,51 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
-import { protectedTrpcProcedure } from "~/server/procedures";
 import { paths } from "~/utils/paths";
+import { getTrpc } from "../../layout";
 import { CommentCard } from "./CommentCard/CommentCard";
 
-export const getData = loader$(
-  protectedTrpcProcedure.loader(({ trpc, params }) => {
-    return trpc.comment.get({ id: params.commentId });
-  })
-);
+export const getData = loader$(async (event) => {
+  const trpc = await event.getData(getTrpc);
+  return trpc.comment.get({ id: event.params.commentId });
+});
 
-export const getComments = loader$(
-  protectedTrpcProcedure.loader(({ trpc, params }) => {
-    return trpc.comment.listForParent({
-      parentId: params.commentId,
-      skip: 0,
-      take: 10,
-    });
-  })
-);
+export const getComments = loader$(async (event) => {
+  const trpc = await event.getData(getTrpc);
+  return trpc.comment.listForParent({
+    parentId: event.params.commentId,
+    skip: 0,
+    take: 10,
+  });
+});
 
-export const deleteComment = action$(
-  protectedTrpcProcedure.action(async (form, { trpc }) => {
-    const id = form.get("id") as string;
-    await trpc.comment.delete({ id });
-  })
-);
+export const deleteComment = action$(async (form, event) => {
+  const trpc = await event.getData(getTrpc);
+  const id = form.get("id") as string;
+  await trpc.comment.delete({ id });
+});
 
-export const updateComment = action$(
-  protectedTrpcProcedure.action(async (form, { trpc }) => {
-    const id = form.get("id") as string;
-    const text = form.get("text") as string;
+export const updateComment = action$(async (form, event) => {
+  const trpc = await event.getData(getTrpc);
+  const id = form.get("id") as string;
+  const text = form.get("text") as string;
 
-    await trpc.comment.update({ id, text });
-  })
-);
+  await trpc.comment.update({ id, text });
+});
 
-export const createComment = action$(
-  protectedTrpcProcedure.action(async (form, { trpc, redirect }) => {
-    const text = form.get("text") as string;
-    const parentId = form.get("parentId") as string;
-    const postId = form.get("postId") as string;
+export const createComment = action$(async (form, event) => {
+  const trpc = await event.getData(getTrpc);
+  const text = form.get("text") as string;
+  const parentId = form.get("parentId") as string;
+  const postId = form.get("postId") as string;
 
-    const comment = await trpc.comment.create({
-      parentId,
-      postId,
-      text,
-    });
+  const comment = await trpc.comment.create({
+    parentId,
+    postId,
+    text,
+  });
 
-    throw redirect(302, paths.comment(comment.id));
-  })
-);
+  throw event.redirect(302, paths.comment(comment.id));
+});
 
 export default component$(() => {
   const resource = getData.use();

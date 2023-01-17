@@ -1,17 +1,11 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { DocumentHead } from "@builder.io/qwik-city";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
-import { userProcedure } from "~/server/procedures";
-
-export const getData = loader$(
-  userProcedure.loader(({ user }) => {
-    return user;
-  })
-);
+import { getUser } from "./layout";
 
 export default component$(() => {
-  const user = getData.use();
+  const user = getUser.use();
 
   return (
     <Resource

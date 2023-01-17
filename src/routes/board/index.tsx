@@ -1,44 +1,49 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
-import { protectedTrpcProcedure } from "~/server/procedures";
 import { paths } from "~/utils/paths";
+import { getUser } from "../layout";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
+import { getTrpc } from "./layout";
 import { PostsList } from "./PostsList/PostsList";
 
-export const getData = loader$(
-  protectedTrpcProcedure.loader(({ trpc }) => {
-    return trpc.post.list({ skip: 0, take: 10 });
-  })
-);
+export const getData = loader$(async (event) => {
+  console.log("getData", event.url.href);
+  const user = await event.getData(getUser);
 
-export const deletePost = action$(
-  protectedTrpcProcedure.action(async (form, { trpc, redirect }) => {
-    const id = form.get("id") as string;
+  console.log("getData", event.url.href, { user });
 
-    await trpc.post.delete({ id });
+  const trpc = await event.getData(getTrpc);
 
-    redirect(302, paths.board);
-  })
-);
+  console.log("getData", event.url.href, { trpc });
 
-export const updatePost = action$(
-  protectedTrpcProcedure.action(async (form, { trpc }) => {
-    const id = form.get("id") as string;
-    const content = form.get("content") as string;
+  return trpc?.post.list({ skip: 0, take: 10 });
+});
 
-    await trpc.post.update({ content, id });
-  })
-);
+export const deletePost = action$(async (form, event) => {
+  const trpc = await event.getData(getTrpc);
+  const id = form.get("id") as string;
 
-export const createPost = action$(
-  protectedTrpcProcedure.action(async (form, { trpc, redirect }) => {
-    const content = form.get("content") as string;
+  await trpc.post.delete({ id });
 
-    const comment = await trpc.post.create({ content });
+  throw event.redirect(302, paths.board);
+});
 
-    throw redirect(302, paths.comment(comment.id));
-  })
-);
+export const updatePost = action$(async (form, event) => {
+  const trpc = await event.getData(getTrpc);
+  const id = form.get("id") as string;
+  const content = form.get("content") as string;
+
+  await trpc.post.update({ content, id });
+});
+
+export const createPost = action$(async (form, event) => {
+  const trpc = await event.getData(getTrpc);
+  const content = form.get("content") as string;
+
+  const comment = await trpc.post.create({ content });
+
+  throw event.redirect(302, paths.comment(comment.id));
+});
 
 export default component$(() => {
   const resource = getData.use();

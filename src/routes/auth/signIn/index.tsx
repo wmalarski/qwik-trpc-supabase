@@ -1,54 +1,45 @@
 import { component$ } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
-import { updateAuthCookies } from "~/server/auth/auth";
-import { userProcedure, userTrpcProcedure } from "~/server/procedures";
+import { supabase, updateAuthCookies } from "~/server/auth/auth";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
+import { getUser } from "../../layout";
 import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
 import { PasswordForm } from "./PasswordForm/PasswordForm";
 
-export const signInPassword = action$(
-  userTrpcProcedure.action(async (form, { supabase, cookie, redirect }) => {
-    const email = form.get("email") as string;
-    const password = form.get("password") as string;
+export const signInPassword = action$(async (form, event) => {
+  const email = form.get("email") as string;
+  const password = form.get("password") as string;
 
-    console.log({ email, password });
+  const result = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    const result = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  if (result.error || !result.data.session) {
+    return result;
+  }
 
-    console.log({ result });
+  updateAuthCookies(result.data.session, event.cookie);
 
-    if (result.error || !result.data.session) {
-      return result;
-    }
+  throw event.redirect(302, paths.board);
+});
 
-    updateAuthCookies(result.data.session, cookie);
+export const signInOtp = action$((form) => {
+  const email = form.get("email") as string;
 
-    throw redirect(302, paths.board);
-  })
-);
+  return supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
+  });
+});
 
-export const signInOtp = action$(
-  userTrpcProcedure.action((form, { supabase }) => {
-    const email = form.get("email") as string;
-
-    return supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
-    });
-  })
-);
-
-export const getData = loader$(
-  userProcedure.loader((ev) => {
-    if (ev.user) {
-      throw ev.redirect(302, paths.index);
-    }
-  })
-);
+export const getData = loader$(async (event) => {
+  const user = await event.getData(getUser);
+  if (user) {
+    throw event.redirect(302, paths.index);
+  }
+});
 
 export default component$(() => {
   getData.use();
