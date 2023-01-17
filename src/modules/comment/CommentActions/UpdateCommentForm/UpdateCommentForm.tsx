@@ -1,60 +1,49 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
+import { action$ } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { useTrpcContext } from "~/routes/context";
+import { protectedTrpcProcedure } from "~/server/procedures";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
-type State = {
-  isOpen: boolean;
-  status: "idle" | "loading" | "success" | "error";
-};
+export const updateComment = action$(
+  protectedTrpcProcedure.action(async (form, { trpc }) => {
+    const id = form.get("id") as string;
+    const text = form.get("text") as string;
+
+    await trpc.comment.update({ id, text });
+  })
+);
 
 type Props = {
   comment: Comment;
-  onSuccess$: PropFunction<(comment: Comment) => void>;
 };
 
 export const UpdateCommentForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
+  const action = updateComment.use();
 
-  const state = useStore<State>({ isOpen: false, status: "idle" });
-  const trpcContext = useTrpcContext();
-  const isLoading = state.status === "loading";
+  const isOpen = useSignal(false);
 
   return (
     <>
       <button
         class="btn"
         onClick$={() => {
-          state.isOpen = !state.isOpen;
+          isOpen.value = !isOpen.value;
         }}
       >
         Edit
       </button>
 
-      {state.isOpen && (
+      {isOpen.value && (
         <>
           <CommentForm
             initialValue={props.comment}
-            isLoading={isLoading}
-            onSubmit$={async ({ content }) => {
-              try {
-                state.status = "loading";
-                const trpc = await trpcContext();
-                await trpc?.comment.update.mutate({
-                  id: props.comment.id,
-                  text: content,
-                });
-                onSuccess$({ ...props.comment, content });
-                state.status = "success";
-              } catch (error) {
-                state.status = "error";
-              }
-            }}
+            isLoading={action.isPending}
+            action={action}
           />
 
-          {state.status === "success" ? (
+          {action.status === 200 ? (
             <span>Success</span>
-          ) : state.status === "error" ? (
+          ) : typeof action.status !== "undefined" ? (
             <span>Error</span>
           ) : null}
         </>

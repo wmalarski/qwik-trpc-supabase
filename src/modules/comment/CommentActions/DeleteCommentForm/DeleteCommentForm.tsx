@@ -1,50 +1,40 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
+import { action$, Form } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { useTrpcContext } from "~/routes/context";
+import { protectedTrpcProcedure } from "~/server/procedures";
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
-};
+export const deleteComment = action$(
+  protectedTrpcProcedure.action(async (form, { trpc }) => {
+    const id = form.get("id") as string;
+    await trpc.comment.delete({ id });
+  })
+);
 
 type Props = {
   comment: Comment;
-  onSuccess$: PropFunction<(commentId: string) => void>;
 };
 
 export const DeleteCommentForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
-  const commentId = props.comment.id;
-
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
+  const action = deleteComment.use();
 
   return (
-    <>
+    <Form action={action}>
+      <input type="hidden" name="id" value={props.comment.id} />
       <button
+        type="submit"
         class={{
           "btn btn-ghost mt-2": true,
-          loading: state.status === "loading",
-        }}
-        onClick$={async () => {
-          try {
-            state.status = "loading";
-            const trpc = await trpcContext();
-            await trpc?.comment.delete.mutate({ id: commentId });
-            onSuccess$(commentId);
-            state.status = "success";
-          } catch (error) {
-            state.status = "error";
-          }
+          loading: action.isPending,
         }}
       >
         Remove
       </button>
 
-      {state.status === "success" ? (
+      {action.status === 200 ? (
         <span>Success</span>
-      ) : state.status === "error" ? (
+      ) : typeof action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
-    </>
+    </Form>
   );
 });

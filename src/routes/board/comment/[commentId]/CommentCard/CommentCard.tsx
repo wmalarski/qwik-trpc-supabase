@@ -1,5 +1,5 @@
 import { component$, PropFunction } from "@builder.io/qwik";
-import { loader$, useNavigate } from "@builder.io/qwik-city";
+import { loader$ } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
@@ -23,10 +23,6 @@ type Props = {
 };
 
 export const CommentCard = component$<Props>((props) => {
-  const postId = props.comment.postId;
-
-  const navigate = useNavigate();
-
   const resource = getData.use();
 
   const backPath = props.comment.parentId
@@ -39,33 +35,12 @@ export const CommentCard = component$<Props>((props) => {
         Back
       </a>
       <pre>{JSON.stringify(props.comment, null, 2)}</pre>
-      <CommentActions
-        comment={props.comment}
-        onDeleteSuccess$={() => {
-          navigate(paths.post(postId));
-        }}
-        onUpdateSuccess$={props.onUpdateSuccess$}
-      />
+      <CommentActions comment={props.comment} />
       <CreateCommentForm
         parentId={props.comment.id}
         postId={props.comment.postId}
-        onSuccess$={(created) => {
-          resource.value.comments.splice(0, 0, created);
-          resource.value.count += 1;
-        }}
       />
       <CommentsList
-        onDeleteSuccess$={(commentId) => {
-          const comments = resource.value.comments;
-          const index = comments.findIndex((entry) => entry.id === commentId);
-          resource.value.comments.splice(index, 1);
-          resource.value.count -= 1;
-        }}
-        onUpdateSuccess$={(comment) => {
-          const comments = resource.value.comments;
-          const index = comments.findIndex((entry) => entry.id === comment.id);
-          resource.value.comments.splice(index, 1, comment);
-        }}
         comments={resource.value.comments}
         count={resource.value.count}
       />

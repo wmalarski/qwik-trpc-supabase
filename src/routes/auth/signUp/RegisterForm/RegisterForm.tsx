@@ -1,13 +1,40 @@
 import { component$ } from "@builder.io/qwik";
-import type { AuthError } from "@supabase/supabase-js";
+import { action$, Form } from "@builder.io/qwik-city";
+import { userProcedure } from "~/server/procedures";
+import { getBaseUrl } from "~/utils/getBaseUrl";
+import { paths } from "~/utils/paths";
 
-type Props = {
-  error?: AuthError | null;
-};
+export const signUp = action$(
+  userProcedure.action(async (form, { supabase, redirect }) => {
+    const email = form.get("email") as string;
+    const password = form.get("password") as string;
 
-export const RegisterForm = component$<Props>((props) => {
+    console.log({ email, password });
+
+    const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
+    const result = await supabase.auth.signUp({
+      email,
+      options: { emailRedirectTo },
+      password,
+    });
+
+    console.log(result);
+
+    if (result.error) {
+      return result;
+    }
+
+    throw redirect(302, paths.signIn);
+  })
+);
+
+export const RegisterForm = component$(() => {
+  const action = signUp.use();
+
+  console.log({ action });
+
   return (
-    <form class="flex flex-col gap-2" method="post">
+    <Form class="flex flex-col gap-2" action={action}>
       <h2 class="text-xl">Sign up with password</h2>
 
       <div class="form-control w-full">
@@ -35,11 +62,12 @@ export const RegisterForm = component$<Props>((props) => {
         />
       </div>
 
-      <button class="btn btn-primary mt-2" type="submit">
+      <button class={"btn btn-primary mt-2"} type="submit">
         Sign Up
       </button>
 
-      <pre>{JSON.stringify(props.error, null, 2)}</pre>
-    </form>
+      <pre>{JSON.stringify({ status: action.status }, null, 2)}</pre>
+      <pre>{JSON.stringify(action.value?.error, null, 2)}</pre>
+    </Form>
   );
 });

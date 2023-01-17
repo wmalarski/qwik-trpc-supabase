@@ -3,10 +3,10 @@ import { protectedProcedure, t } from "../trpc";
 
 export const postRouter = t.router({
   create: protectedProcedure
-    .input(z.object({ text: z.string() }))
+    .input(z.object({ content: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.post.create({
-        data: { content: input.text, createdById: ctx.user.id },
+        data: { content: input.content, createdById: ctx.user.id },
       });
     }),
   delete: protectedProcedure
@@ -42,10 +42,10 @@ export const postRouter = t.router({
       return { count, posts };
     }),
   update: protectedProcedure
-    .input(z.object({ id: z.string().cuid(), text: z.string() }))
+    .input(z.object({ content: z.string(), id: z.string().cuid() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.post.updateMany({
-        data: { content: input.text },
+        data: { content: input.content },
         where: { createdById: ctx.user.id, id: input.id },
       });
     }),

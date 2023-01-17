@@ -1,12 +1,10 @@
-import { component$, PropFunction } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { paths } from "~/utils/paths";
 
 type Props = {
   comment: Comment;
-  onDeleteSuccess$: PropFunction<(commentId: string) => void>;
-  onUpdateSuccess$: PropFunction<(comment: Comment) => void>;
 };
 
 export const CommentsListItem = component$<Props>((props) => {
@@ -16,11 +14,7 @@ export const CommentsListItem = component$<Props>((props) => {
       <a class="link" href={paths.comment(props.comment.id)}>
         Show comments
       </a>
-      <CommentActions
-        comment={props.comment}
-        onDeleteSuccess$={props.onDeleteSuccess$}
-        onUpdateSuccess$={props.onUpdateSuccess$}
-      />
+      <CommentActions comment={props.comment} />
     </div>
   );
 });

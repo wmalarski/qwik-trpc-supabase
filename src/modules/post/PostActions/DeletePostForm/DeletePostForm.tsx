@@ -1,50 +1,44 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
+import { action$, Form } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
-import { useTrpcContext } from "~/routes/context";
+import { protectedTrpcProcedure } from "~/server/procedures";
+import { paths } from "~/utils/paths";
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
-};
+export const deletePost = action$(
+  protectedTrpcProcedure.action(async (form, { trpc, redirect }) => {
+    const id = form.get("id") as string;
+
+    await trpc.post.delete({ id });
+
+    redirect(302, paths.board);
+  })
+);
 
 type Props = {
-  onSuccess$: PropFunction<(postId: string) => void>;
   post: Post;
 };
 
 export const DeletePostForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
-  const postId = props.post.id;
-
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
+  const action = deletePost.use();
 
   return (
-    <>
+    <Form action={action}>
+      <input type="hidden" name="id" value={props.post.id} />
       <button
+        type="submit"
         class={{
           "btn btn-ghost btn-sm": true,
-          loading: state.status === "loading",
-        }}
-        onClick$={async () => {
-          try {
-            state.status = "loading";
-            const trpc = await trpcContext();
-            await trpc?.post.delete.mutate({ id: postId });
-            onSuccess$(postId);
-            state.status = "success";
-          } catch (error) {
-            state.status = "error";
-          }
+          loading: action.isPending,
         }}
       >
         Remove
       </button>
 
-      {state.status === "success" ? (
+      {action.status === 200 ? (
         <span>Success</span>
-      ) : state.status === "error" ? (
+      ) : typeof action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
-    </>
+    </Form>
   );
 });

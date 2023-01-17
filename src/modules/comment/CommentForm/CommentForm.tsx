@@ -1,42 +1,50 @@
-import { component$, PropFunction } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
+import { Form, FormProps } from "@builder.io/qwik-city";
 
 type FormResult = {
-  content: string;
+  text: string;
+  id: string;
+  parentId: string | null;
+  postId: string;
 };
 
 type Props = {
-  initialValue?: FormResult;
+  action: FormProps<void>["action"];
+  initialValue?: Partial<FormResult>;
   isLoading: boolean;
-  onSubmit$: PropFunction<(result: FormResult) => void>;
 };
 
 export const CommentForm = component$<Props>((props) => {
-  const onSubmit$ = props.onSubmit$;
-
   return (
-    <form
-      preventdefault:submit
-      method="post"
-      class="flex flex-col gap-2"
-      onSubmit$={(event) => {
-        const form = new FormData(event.target as HTMLFormElement);
-        const content = (form.get("content") as string) || "";
-        onSubmit$({ content });
-      }}
-    >
+    <Form class="flex flex-col gap-2" action={props.action}>
       <h2 class="text-xl">Add comment</h2>
 
+      {props.initialValue?.id ? (
+        <input type="hidden" name="id" value={props.initialValue.id} />
+      ) : null}
+
+      {props.initialValue?.parentId ? (
+        <input
+          type="hidden"
+          name="parentId"
+          value={props.initialValue.parentId}
+        />
+      ) : null}
+
+      {props.initialValue?.postId ? (
+        <input type="hidden" name="postId" value={props.initialValue.postId} />
+      ) : null}
+
       <div class="form-control w-full">
-        <label for="content" class="label">
+        <label for="text" class="label">
           <span class="label-text">Text</span>
         </label>
         <input
-          id="content"
           class="input input-bordered w-full"
-          name="content"
+          name="text"
           placeholder="Type here"
           type="text"
-          value={props.initialValue?.content}
+          value={props.initialValue?.text}
         />
       </div>
 
@@ -49,6 +57,6 @@ export const CommentForm = component$<Props>((props) => {
       >
         Save
       </button>
-    </form>
+    </Form>
   );
 });

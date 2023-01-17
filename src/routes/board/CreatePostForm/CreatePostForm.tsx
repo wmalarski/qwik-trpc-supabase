@@ -1,45 +1,28 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
-import type { Post } from "@prisma/client";
+import { component$ } from "@builder.io/qwik";
+import { action$ } from "@builder.io/qwik-city";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
-import { useTrpcContext } from "~/routes/context";
+import { protectedTrpcProcedure } from "~/server/procedures";
+import { paths } from "~/utils/paths";
 
-type Props = {
-  onSuccess$: PropFunction<(post: Post) => void>;
-};
+export const createPost = action$(
+  protectedTrpcProcedure.action(async (form, { trpc, redirect }) => {
+    const content = form.get("content") as string;
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
-};
+    const comment = await trpc.post.create({ content });
 
-export const CreatePostForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
+    throw redirect(302, paths.comment(comment.id));
+  })
+);
 
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
-  const isLoading = state.status === "loading";
+export const CreatePostForm = component$(() => {
+  const action = createPost.use();
 
   return (
     <div>
-      <PostForm
-        isLoading={isLoading}
-        onSubmit$={async ({ content }) => {
-          try {
-            state.status = "loading";
-            const trpc = await trpcContext();
-            const result = await trpc?.post.create.mutate({ text: content });
-            if (result) {
-              onSuccess$(result);
-            }
-            state.status = "success";
-          } catch (error) {
-            state.status = "error";
-          }
-        }}
-      />
-
-      {state.status === "success" ? (
+      <PostForm isLoading={action.isPending} action={action} />
+      {action.status === 200 ? (
         <span>Success</span>
-      ) : state.status === "error" ? (
+      ) : typeof action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </div>
