@@ -1,17 +1,12 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, loader$ } from "@builder.io/qwik-city";
-import { withProtected } from "~/server/auth/withUser";
-import { withTrpc } from "~/server/trpc/withTrpc";
-import { endpointBuilder } from "~/utils/endpointBuilder";
+import { protectedTrpcProcedure } from "~/server/procedures";
 import { PostCard } from "./PostCard/PostCard";
 
 export const getData = loader$(
-  endpointBuilder()
-    .use(withProtected())
-    .use(withTrpc())
-    .loader(({ trpc, params }) => {
-      return trpc.post.get({ id: params.postId });
-    })
+  protectedTrpcProcedure.loader(({ trpc, params }) => {
+    return trpc.post.get({ id: params.postId });
+  })
 );
 
 export default component$(() => {

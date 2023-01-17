@@ -2,15 +2,12 @@ import { component$, Resource } from "@builder.io/qwik";
 import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
-import { withUser } from "~/server/auth/withUser";
-import { endpointBuilder } from "~/utils/endpointBuilder";
+import { userProcedure } from "~/server/procedures";
 
 export const getData = loader$(
-  endpointBuilder()
-    .use(withUser())
-    .loader(({ user }) => {
-      return user;
-    })
+  userProcedure.loader(({ user }) => {
+    return user;
+  })
 );
 
 export default component$(() => {

@@ -4,22 +4,17 @@ import type { Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { withProtected } from "~/server/auth/withUser";
-import { withTrpc } from "~/server/trpc/withTrpc";
-import { endpointBuilder } from "~/utils/endpointBuilder";
+import { protectedTrpcProcedure } from "~/server/procedures";
 import { paths } from "~/utils/paths";
 
 export const getData = loader$(
-  endpointBuilder()
-    .use(withProtected())
-    .use(withTrpc())
-    .loader(({ trpc, params }) => {
-      return trpc.comment.listForPost({
-        postId: params.postId,
-        skip: 0,
-        take: 10,
-      });
-    })
+  protectedTrpcProcedure.loader(({ trpc, params }) => {
+    return trpc.comment.listForPost({
+      postId: params.postId,
+      skip: 0,
+      take: 10,
+    });
+  })
 );
 
 type Props = {

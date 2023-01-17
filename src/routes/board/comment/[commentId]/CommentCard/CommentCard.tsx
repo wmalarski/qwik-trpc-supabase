@@ -1,23 +1,33 @@
 import { component$, PropFunction } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
+import { loader$, useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
+import { protectedTrpcProcedure } from "~/server/procedures";
 import { paths } from "~/utils/paths";
 
+export const getData = loader$(
+  protectedTrpcProcedure.loader(({ trpc, params }) => {
+    return trpc.comment.listForParent({
+      parentId: params.commentId,
+      skip: 0,
+      take: 10,
+    });
+  })
+);
+
 type Props = {
-  comments: Comment[];
-  commentsCount: number;
   comment: Comment;
   onUpdateSuccess$: PropFunction<(comment: Comment) => void>;
-  onCreateSuccess$: PropFunction<(comment: Comment) => void>;
 };
 
 export const CommentCard = component$<Props>((props) => {
   const postId = props.comment.postId;
 
   const navigate = useNavigate();
+
+  const resource = getData.use();
 
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)
@@ -39,9 +49,26 @@ export const CommentCard = component$<Props>((props) => {
       <CreateCommentForm
         parentId={props.comment.id}
         postId={props.comment.postId}
-        onSuccess$={props.onCreateSuccess$}
+        onSuccess$={(created) => {
+          resource.value.comments.splice(0, 0, created);
+          resource.value.count += 1;
+        }}
       />
-      <CommentsList comments={props.comments} count={props.commentsCount} />
+      <CommentsList
+        onDeleteSuccess$={(commentId) => {
+          const comments = resource.value.comments;
+          const index = comments.findIndex((entry) => entry.id === commentId);
+          resource.value.comments.splice(index, 1);
+          resource.value.count -= 1;
+        }}
+        onUpdateSuccess$={(comment) => {
+          const comments = resource.value.comments;
+          const index = comments.findIndex((entry) => entry.id === comment.id);
+          resource.value.comments.splice(index, 1, comment);
+        }}
+        comments={resource.value.comments}
+        count={resource.value.count}
+      />
     </div>
   );
 });

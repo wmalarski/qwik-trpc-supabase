@@ -1,14 +1,13 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead } from "@builder.io/qwik-city";
+import { DocumentHead, RequestEvent } from "@builder.io/qwik-city";
 import { removeAuthCookies } from "~/server/auth/auth";
-import { endpointBuilder } from "~/utils/endpointBuilder";
 import { paths } from "~/utils/paths";
 
-export const onGet = endpointBuilder().loader(({ cookie, redirect }) => {
+export const onGet = ({ cookie, redirect }: RequestEvent) => {
   removeAuthCookies(cookie);
 
   throw redirect(302, paths.index);
-});
+};
 
 export default component$(() => {
   return <span>Bye</span>;
