@@ -1,17 +1,24 @@
 import { component$ } from "@builder.io/qwik";
+import { FormProps } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { CommentsListItem } from "./CommentsListItem/CommentsListItem";
 
 type Props = {
   comments: Comment[];
   count: number;
+  deleteCommentAction: FormProps<void>["action"];
+  updateCommentAction: FormProps<void>["action"];
 };
 
 export const CommentsList = component$<Props>((props) => {
   return (
     <div>
       {props.comments.map((comment) => (
-        <CommentsListItem comment={comment} />
+        <CommentsListItem
+          comment={comment}
+          deleteCommentAction={props.deleteCommentAction}
+          updateCommentAction={props.updateCommentAction}
+        />
       ))}
     </div>
   );

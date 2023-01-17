@@ -1,28 +1,18 @@
 import { component$ } from "@builder.io/qwik";
-import { action$ } from "@builder.io/qwik-city";
+import { FormProps } from "@builder.io/qwik-city";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
-import { protectedTrpcProcedure } from "~/server/procedures";
-import { paths } from "~/utils/paths";
 
-export const createPost = action$(
-  protectedTrpcProcedure.action(async (form, { trpc, redirect }) => {
-    const content = form.get("content") as string;
+type Props = {
+  action: FormProps<void>["action"];
+};
 
-    const comment = await trpc.post.create({ content });
-
-    throw redirect(302, paths.comment(comment.id));
-  })
-);
-
-export const CreatePostForm = component$(() => {
-  const action = createPost.use();
-
+export const CreatePostForm = component$((props: Props) => {
   return (
     <div>
-      <PostForm isLoading={action.isPending} action={action} />
-      {action.status === 200 ? (
+      <PostForm isLoading={props.action.isPending} action={props.action} />
+      {props.action.status === 200 ? (
         <span>Success</span>
-      ) : typeof action.status !== "undefined" ? (
+      ) : typeof props.action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </div>

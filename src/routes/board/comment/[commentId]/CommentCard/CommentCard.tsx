@@ -1,29 +1,21 @@
-import { component$, PropFunction } from "@builder.io/qwik";
-import { loader$ } from "@builder.io/qwik-city";
+import { component$ } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
-import { protectedTrpcProcedure } from "~/server/procedures";
 import { paths } from "~/utils/paths";
-
-export const getData = loader$(
-  protectedTrpcProcedure.loader(({ trpc, params }) => {
-    return trpc.comment.listForParent({
-      parentId: params.commentId,
-      skip: 0,
-      take: 10,
-    });
-  })
-);
+import { createComment, deleteComment, getComments, updateComment } from "..";
 
 type Props = {
   comment: Comment;
-  onUpdateSuccess$: PropFunction<(comment: Comment) => void>;
 };
 
 export const CommentCard = component$<Props>((props) => {
-  const resource = getData.use();
+  const resource = getComments.use();
+
+  const deleteCommentAction = deleteComment.use();
+  const updateCommentAction = updateComment.use();
+  const createCommentAction = createComment.use();
 
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)
@@ -35,12 +27,19 @@ export const CommentCard = component$<Props>((props) => {
         Back
       </a>
       <pre>{JSON.stringify(props.comment, null, 2)}</pre>
-      <CommentActions comment={props.comment} />
+      <CommentActions
+        comment={props.comment}
+        deleteCommentAction={deleteCommentAction}
+        updateCommentAction={updateCommentAction}
+      />
       <CreateCommentForm
         parentId={props.comment.id}
         postId={props.comment.postId}
+        action={createCommentAction}
       />
       <CommentsList
+        deleteCommentAction={deleteCommentAction}
+        updateCommentAction={updateCommentAction}
         comments={resource.value.comments}
         count={resource.value.count}
       />

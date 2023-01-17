@@ -1,38 +1,29 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, Form } from "@builder.io/qwik-city";
+import { Form, FormProps } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { protectedTrpcProcedure } from "~/server/procedures";
-
-export const deleteComment = action$(
-  protectedTrpcProcedure.action(async (form, { trpc }) => {
-    const id = form.get("id") as string;
-    await trpc.comment.delete({ id });
-  })
-);
 
 type Props = {
   comment: Comment;
+  action: FormProps<void>["action"];
 };
 
 export const DeleteCommentForm = component$<Props>((props) => {
-  const action = deleteComment.use();
-
   return (
-    <Form action={action}>
+    <Form action={props.action}>
       <input type="hidden" name="id" value={props.comment.id} />
       <button
         type="submit"
         class={{
           "btn btn-ghost mt-2": true,
-          loading: action.isPending,
+          loading: props.action.isPending,
         }}
       >
         Remove
       </button>
 
-      {action.status === 200 ? (
+      {props.action.status === 200 ? (
         <span>Success</span>
-      ) : typeof action.status !== "undefined" ? (
+      ) : typeof props.action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </Form>
