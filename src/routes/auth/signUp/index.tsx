@@ -29,7 +29,7 @@ export const signUp = action$(
       return result;
     }
 
-    redirect(302, paths.signIn);
+    throw redirect(302, paths.signIn);
   })
 );
 

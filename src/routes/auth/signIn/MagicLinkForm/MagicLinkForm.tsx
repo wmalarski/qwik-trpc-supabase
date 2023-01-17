@@ -1,14 +1,14 @@
 import { component$ } from "@builder.io/qwik";
-import type { AuthError } from "@supabase/supabase-js";
+import { Form, FormProps } from "@builder.io/qwik-city";
+import type { AuthResponse } from "@supabase/supabase-js";
 
 type Props = {
-  error?: AuthError | null;
-  isSuccess?: boolean;
+  action: FormProps<AuthResponse>["action"];
 };
 
 export const MagicLinkForm = component$<Props>((props) => {
   return (
-    <form class="flex flex-col gap-2" method="post">
+    <Form class="flex flex-col gap-2" action={props.action}>
       <h2 class="text-xl">Send magic link</h2>
 
       <div class="form-control w-full">
@@ -28,8 +28,10 @@ export const MagicLinkForm = component$<Props>((props) => {
         Send
       </button>
 
-      {props.isSuccess ? <span>Success</span> : null}
-      {props.error ? <pre>{JSON.stringify(props.error, null, 2)}</pre> : null}
-    </form>
+      {props.action.status === 200 ? <span>Success</span> : null}
+      {props.action.status !== 200 ? (
+        <pre>{JSON.stringify(props.action.value, null, 2)}</pre>
+      ) : null}
+    </Form>
   );
 });

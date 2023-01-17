@@ -4,32 +4,41 @@ import { updateAuthCookies } from "~/server/auth/auth";
 import { userProcedure, userTrpcProcedure } from "~/server/procedures";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
-import { Login } from "./Login/Login";
+import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
+import { PasswordForm } from "./PasswordForm/PasswordForm";
 
-export const signIn = action$(
+export const signInPassword = action$(
   userTrpcProcedure.action(async (form, { supabase, cookie, redirect }) => {
     const email = form.get("email") as string;
-    const password = form.get("password") as string | undefined;
+    const password = form.get("password") as string;
 
-    if (!password) {
-      const otpResult = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
-      });
-      return { otpError: otpResult.error, otpSuccess: !otpResult.error };
-    }
+    console.log({ email, password });
 
     const result = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    console.log({ result });
+
     if (result.error || !result.data.session) {
-      return { passError: result.error };
+      return result;
     }
 
     updateAuthCookies(result.data.session, cookie);
 
     throw redirect(302, paths.board);
+  })
+);
+
+export const signInOtp = action$(
+  userTrpcProcedure.action((form, { supabase }) => {
+    const email = form.get("email") as string;
+
+    return supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
+    });
   })
 );
 
@@ -44,14 +53,17 @@ export const getData = loader$(
 export default component$(() => {
   getData.use();
 
-  const action = signIn.use();
+  const signInPasswordAction = signInPassword.use();
+  const signInOtpAction = signInOtp.use();
 
   return (
-    <Login
-      passError={action.value?.passError}
-      otpError={action.value?.otpError}
-      otpIsSuccess={action.value?.otpSuccess}
-    />
+    <div class="flex flex-col gap-2">
+      <h1>Sign In</h1>
+      <div class="flex flex-col gap-6">
+        <MagicLinkForm action={signInOtpAction} />
+        <PasswordForm action={signInPasswordAction} />
+      </div>
+    </div>
   );
 });
 
