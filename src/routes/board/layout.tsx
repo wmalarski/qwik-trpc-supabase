@@ -1,34 +1,19 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { loader$ } from "@builder.io/qwik-city";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
-import { supabase } from "~/server/auth/auth";
-import { prisma } from "~/server/db/client";
-import { appRouter } from "~/server/trpc/router";
-import { getUser } from "../layout";
+import { getUserFromEvent } from "~/server/loaders";
+import { paths } from "~/utils/paths";
 
-export const getTrpc = loader$(async (event) => {
-  console.log("getTrpc", event.url.href);
+export const getProtectedUser = loader$(async (event) => {
+  const user = await getUserFromEvent(event);
 
-  const user = await event.getData(getUser);
-
-  console.log("getTrpc", event.url.href, { user });
-
-  // if (!user) {
-  //   throw event.redirect(302, paths.signIn);
-  // }
-
-  const trpc = appRouter.createCaller({
-    prisma,
-    supabase: supabase,
-    user,
-  });
-
-  console.log("getTrpc", event.url.href, { trpc });
-
-  return trpc;
+  if (!user) {
+    throw event.redirect(302, paths.signIn);
+  }
 });
 
 export default component$(() => {
+  getProtectedUser.use();
   return (
     <>
       <ProtectedHeader />

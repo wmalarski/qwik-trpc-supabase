@@ -1,16 +1,16 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { getTrpcFromEvent } from "~/server/loaders";
 import { paths } from "~/utils/paths";
-import { getTrpc } from "../../layout";
 import { CommentCard } from "./CommentCard/CommentCard";
 
 export const getData = loader$(async (event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   return trpc.comment.get({ id: event.params.commentId });
 });
 
 export const getComments = loader$(async (event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   return trpc.comment.listForParent({
     parentId: event.params.commentId,
     skip: 0,
@@ -19,13 +19,13 @@ export const getComments = loader$(async (event) => {
 });
 
 export const deleteComment = action$(async (form, event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   const id = form.get("id") as string;
   await trpc.comment.delete({ id });
 });
 
 export const updateComment = action$(async (form, event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   const id = form.get("id") as string;
   const text = form.get("text") as string;
 
@@ -33,7 +33,7 @@ export const updateComment = action$(async (form, event) => {
 });
 
 export const createComment = action$(async (form, event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   const text = form.get("text") as string;
   const parentId = form.get("parentId") as string;
   const postId = form.get("postId") as string;

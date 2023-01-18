@@ -56,5 +56,5 @@ export const getUserByCookie = async (cookie: Cookie) => {
   }
 
   const { data } = await supabase.auth.getUser(token);
-  return data;
+  return data.user;
 };

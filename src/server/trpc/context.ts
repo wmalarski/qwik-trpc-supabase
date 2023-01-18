@@ -13,9 +13,9 @@ export const createContextInner = (opts: CreateContextOptions) => {
 };
 
 export const createContext = async (ev: RequestEvent) => {
-  const data = await getUserByCookie(ev.cookie);
+  const user = await getUserByCookie(ev.cookie);
 
-  return createContextInner({ user: data?.user });
+  return createContextInner({ user });
 };
 
 export type Context = trpc.inferAsyncReturnType<typeof createContext>;

@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, FormProps } from "@builder.io/qwik-city";
-import type { Post } from "@prisma/client";
+import type { Post } from "~/server/db/types";
 
 type Props = {
   action: FormProps<void>["action"];

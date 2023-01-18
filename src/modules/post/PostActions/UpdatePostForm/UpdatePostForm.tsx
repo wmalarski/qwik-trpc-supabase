@@ -1,6 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { FormProps } from "@builder.io/qwik-city";
-import type { Post } from "@prisma/client";
+import type { Post } from "~/server/db/types";
 import { PostForm } from "../../PostForm/PostForm";
 
 type Props = {

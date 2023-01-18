@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { FormProps } from "@builder.io/qwik-city";
-import type { Comment } from "@prisma/client";
+import type { Comment } from "~/server/db/types";
 import { CommentsListItem } from "./CommentsListItem/CommentsListItem";
 
 type Props = {

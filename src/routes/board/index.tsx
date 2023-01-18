@@ -1,26 +1,18 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { getTrpcFromEvent } from "~/server/loaders";
 import { paths } from "~/utils/paths";
-import { getUser } from "../layout";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
-import { getTrpc } from "./layout";
 import { PostsList } from "./PostsList/PostsList";
 
 export const getData = loader$(async (event) => {
-  console.log("getData", event.url.href);
-  const user = await event.getData(getUser);
-
-  console.log("getData", event.url.href, { user });
-
-  const trpc = await event.getData(getTrpc);
-
-  console.log("getData", event.url.href, { trpc });
-
-  return trpc?.post.list({ skip: 0, take: 10 });
+  const trpc = await getTrpcFromEvent(event);
+  const result = await trpc.post.list({ skip: 0, take: 10 });
+  return result;
 });
 
 export const deletePost = action$(async (form, event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   const id = form.get("id") as string;
 
   await trpc.post.delete({ id });
@@ -29,7 +21,7 @@ export const deletePost = action$(async (form, event) => {
 });
 
 export const updatePost = action$(async (form, event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   const id = form.get("id") as string;
   const content = form.get("content") as string;
 
@@ -37,7 +29,7 @@ export const updatePost = action$(async (form, event) => {
 });
 
 export const createPost = action$(async (form, event) => {
-  const trpc = await event.getData(getTrpc);
+  const trpc = await getTrpcFromEvent(event);
   const content = form.get("content") as string;
 
   const comment = await trpc.post.create({ content });
