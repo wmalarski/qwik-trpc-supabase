@@ -10,7 +10,7 @@ export const PostsList = component$<Props>((props) => {
   return (
     <div class="flex flex-col gap-4">
       {props.posts.map((post) => (
-        <PostListItem post={post} />
+        <PostListItem key={post.id} post={post} />
       ))}
     </div>
   );

@@ -1,14 +1,12 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, FormProps } from "@builder.io/qwik-city";
-import type { AuthResponse } from "@supabase/supabase-js";
+import { Form } from "@builder.io/qwik-city";
+import { signInOtp } from "..";
 
-type Props = {
-  action: FormProps<AuthResponse>["action"];
-};
+export const MagicLinkForm = component$(() => {
+  const action = signInOtp.use();
 
-export const MagicLinkForm = component$<Props>((props) => {
   return (
-    <Form class="flex flex-col gap-2" action={props.action}>
+    <Form class="flex flex-col gap-2" action={action}>
       <h2 class="text-xl">Send magic link</h2>
 
       <div class="form-control w-full">
@@ -28,9 +26,9 @@ export const MagicLinkForm = component$<Props>((props) => {
         Send
       </button>
 
-      {props.action.status === 200 ? <span>Success</span> : null}
-      {props.action.status !== 200 ? (
-        <pre>{JSON.stringify(props.action.value, null, 2)}</pre>
+      {action.status === 200 ? <span>Success</span> : null}
+      {action.status !== 200 ? (
+        <pre>{JSON.stringify(action.value, null, 2)}</pre>
       ) : null}
     </Form>
   );

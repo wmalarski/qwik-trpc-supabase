@@ -15,6 +15,7 @@ export const CommentsList = component$<Props>((props) => {
     <div>
       {props.comments.map((comment) => (
         <CommentsListItem
+          key={comment.id}
           comment={comment}
           deleteCommentAction={props.deleteCommentAction}
           updateCommentAction={props.updateCommentAction}
