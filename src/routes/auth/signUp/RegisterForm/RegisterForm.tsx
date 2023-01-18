@@ -39,7 +39,7 @@ export const RegisterForm = component$(() => {
       </button>
 
       <pre>{JSON.stringify({ status: action.status }, null, 2)}</pre>
-      <pre>{JSON.stringify(action.value?.error, null, 2)}</pre>
+      <pre>{JSON.stringify(action.value, null, 2)}</pre>
     </Form>
   );
 });

@@ -1,9 +1,10 @@
 import { component$ } from "@builder.io/qwik";
 import { FormProps } from "@builder.io/qwik-city";
+import type { Comment } from "~/server/db/types";
 import { CommentForm } from "../CommentForm/CommentForm";
 
 type Props = {
-  action: FormProps<void>["action"];
+  action: FormProps<Comment>["action"];
   parentId: string | null;
   postId: string;
 };

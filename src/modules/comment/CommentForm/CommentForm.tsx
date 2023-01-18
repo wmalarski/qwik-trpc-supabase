@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, FormProps } from "@builder.io/qwik-city";
+import type { Comment } from "~/server/db/types";
 
 type FormResult = {
   text: string;
@@ -9,7 +10,7 @@ type FormResult = {
 };
 
 type Props = {
-  action: FormProps<void>["action"];
+  action: FormProps<Comment>["action"];
   initialValue?: Partial<FormResult>;
   isLoading: boolean;
 };

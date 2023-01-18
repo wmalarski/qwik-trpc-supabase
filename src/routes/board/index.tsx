@@ -34,7 +34,7 @@ export const createPost = action$(async (form, event) => {
 
   const comment = await trpc.post.create({ content });
 
-  throw event.redirect(302, paths.comment(comment.id));
+  event.redirect(302, paths.post(comment.id));
 });
 
 export default component$(() => {

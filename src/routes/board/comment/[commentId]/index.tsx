@@ -21,7 +21,16 @@ export const getComments = loader$(async (event) => {
 export const deleteComment = action$(async (form, event) => {
   const trpc = await getTrpcFromEvent(event);
   const id = form.get("id") as string;
+
+  const comment = await trpc.comment.get({ id });
+
   await trpc.comment.delete({ id });
+
+  const path = comment.parentId
+    ? paths.comment(comment.parentId)
+    : paths.post(comment.postId);
+
+  event.redirect(302, path);
 });
 
 export const updateComment = action$(async (form, event) => {
@@ -30,6 +39,8 @@ export const updateComment = action$(async (form, event) => {
   const text = form.get("text") as string;
 
   await trpc.comment.update({ id, text });
+
+  return trpc.comment.get({ id });
 });
 
 export const createComment = action$(async (form, event) => {
@@ -38,13 +49,11 @@ export const createComment = action$(async (form, event) => {
   const parentId = form.get("parentId") as string;
   const postId = form.get("postId") as string;
 
-  const comment = await trpc.comment.create({
+  return trpc.comment.create({
     parentId,
     postId,
     text,
   });
-
-  throw event.redirect(302, paths.comment(comment.id));
 });
 
 export default component$(() => {

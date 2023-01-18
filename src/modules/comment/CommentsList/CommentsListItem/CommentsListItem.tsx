@@ -7,7 +7,7 @@ import { paths } from "~/utils/paths";
 type Props = {
   comment: Comment;
   deleteCommentAction: FormProps<void>["action"];
-  updateCommentAction: FormProps<void>["action"];
+  updateCommentAction: FormProps<Comment>["action"];
 };
 
 export const CommentsListItem = component$<Props>((props) => {

@@ -7,7 +7,7 @@ type Props = {
   comments: Comment[];
   count: number;
   deleteCommentAction: FormProps<void>["action"];
-  updateCommentAction: FormProps<void>["action"];
+  updateCommentAction: FormProps<Comment>["action"];
 };
 
 export const CommentsList = component$<Props>((props) => {

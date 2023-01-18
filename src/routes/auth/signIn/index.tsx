@@ -22,7 +22,7 @@ export const signInPassword = action$(async (form, event) => {
 
   updateAuthCookies(result.data.session, event.cookie);
 
-  throw event.redirect(302, paths.board);
+  event.redirect(302, paths.board);
 });
 
 export const signInOtp = action$((form) => {
@@ -36,7 +36,6 @@ export const signInOtp = action$((form) => {
 
 export const getData = loader$(async (event) => {
   const user = await getUserFromEvent(event);
-
   if (user) {
     throw event.redirect(302, paths.index);
   }

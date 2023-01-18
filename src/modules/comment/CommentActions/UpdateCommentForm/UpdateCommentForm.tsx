@@ -5,7 +5,7 @@ import { CommentForm } from "../../CommentForm/CommentForm";
 
 type Props = {
   comment: Comment;
-  action: FormProps<void>["action"];
+  action: FormProps<Comment>["action"];
 };
 
 export const UpdateCommentForm = component$<Props>((props) => {
