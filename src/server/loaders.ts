@@ -1,10 +1,7 @@
-import type { loader$ } from "@builder.io/qwik-city";
 import { prisma } from "~/server/db/client";
 import { appRouter } from "~/server/trpc/router";
+import type { RequestEventLoader } from "~/utils/types";
 import { getUserByCookie, supabase } from "./auth/auth";
-
-type LoaderParameter = Parameters<typeof loader$>[0];
-type RequestEventLoader = Parameters<LoaderParameter>[0];
 
 export const getUserFromEvent = async (event: RequestEventLoader) => {
   const promise = event.sharedMap.get("user") || getUserByCookie(event.cookie);

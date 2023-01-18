@@ -1,7 +1,8 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
-import { paths } from "~/utils/paths";
+import { trpcAction } from "~/server/trpc/action";
+import { useTinyTrpc } from "~/utils/tinyTrpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
@@ -16,8 +17,6 @@ export const deletePost = action$(async (form, event) => {
   const id = form.get("id") as string;
 
   await trpc.post.delete({ id });
-
-  throw event.redirect(302, paths.board);
 });
 
 export const updatePost = action$(async (form, event) => {
@@ -32,19 +31,32 @@ export const createPost = action$(async (form, event) => {
   const trpc = await getTrpcFromEvent(event);
   const content = form.get("content") as string;
 
-  const comment = await trpc.post.create({ content });
-
-  event.redirect(302, paths.post(comment.id));
+  await trpc.post.create({ content });
 });
+
+export const yolo = action$(trpcAction);
 
 export default component$(() => {
   const resource = getData.use();
 
   const createPostAction = createPost.use();
 
+  const yl = yolo.use();
+  const yoloAction = useTinyTrpc();
+
   return (
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
+      <button
+        onClick$={async () => {
+          const trpc = await yoloAction();
+          await trpc().post.create.mutate(yl, {
+            content: "Crazy hack",
+          });
+        }}
+      >
+        YOLO
+      </button>
       <CreatePostForm action={createPostAction} />
       <Resource
         value={resource}
