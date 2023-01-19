@@ -1,51 +1,43 @@
-import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
-import { withUser } from "~/server/auth/withUser";
-import { withTrpc } from "~/server/trpc/withTrpc";
-import { endpointBuilder } from "~/utils/endpointBuilder";
+import { component$ } from "@builder.io/qwik";
+import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { supabase } from "~/server/auth/auth";
+import { getUserFromEvent } from "~/server/loaders";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 import { RegisterForm } from "./RegisterForm/RegisterForm";
 
-export const onPost = endpointBuilder()
-  .use(withUser())
-  .use(withTrpc())
-  .resolver(async ({ request, response, supabase }) => {
-    const form = await request.formData();
-    const email = form.get("email") as string;
-    const password = form.get("password") as string;
+export const getData = loader$(async (event) => {
+  const user = await getUserFromEvent(event);
+  if (user) {
+    throw event.redirect(302, paths.index);
+  }
+});
 
-    const result = await supabase.auth.signUp({
-      email,
-      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
-      password,
-    });
+export const signUp = action$(async (form, event) => {
+  const email = form.get("email") as string;
+  const password = form.get("password") as string;
 
-    if (result.error) {
-      return result;
-    }
-
-    throw response.redirect(paths.signIn);
+  const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
+  const result = await supabase.auth.signUp({
+    email,
+    options: { emailRedirectTo },
+    password,
   });
 
-export const onGet = endpointBuilder()
-  .use(withUser())
-  .resolver(({ user, response }) => {
-    if (user) {
-      throw response.redirect(paths.index);
-    }
-  });
+  if (result.error) {
+    return result;
+  }
+
+  throw event.redirect(302, paths.signIn);
+});
 
 export default component$(() => {
-  const resource = useEndpoint<typeof onPost>();
+  getData.use();
 
   return (
     <div class="flex flex-col gap-2">
       <h1>Sign Up</h1>
-      <Resource
-        value={resource}
-        onResolved={(data) => <RegisterForm error={data?.error} />}
-      />
+      <RegisterForm />
     </div>
   );
 });

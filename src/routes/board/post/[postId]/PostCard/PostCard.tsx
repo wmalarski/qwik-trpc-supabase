@@ -1,20 +1,32 @@
-import { component$ } from "@builder.io/qwik";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
-import type { Comment, Post } from "@prisma/client";
+import { component$, PropFunction } from "@builder.io/qwik";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
+import type { Post } from "~/server/db/types";
 import { paths } from "~/utils/paths";
+import {
+  createComment,
+  deleteComment,
+  deletePost,
+  getComments,
+  updateComment,
+  updatePost,
+} from "..";
 
 type Props = {
-  comments: Comment[];
-  commentsCount: number;
+  onUpdateSuccess$: PropFunction<(post: Post) => void>;
   post: Post;
 };
 
 export const PostCard = component$<Props>((props) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const resource = getComments.use();
+
+  const deletePostAction = deletePost.use();
+  const updatePostAction = updatePost.use();
+
+  const deleteCommentAction = deleteComment.use();
+  const updateCommentAction = updateComment.use();
+  const createCommentAction = createComment.use();
 
   return (
     <div>
@@ -23,22 +35,21 @@ export const PostCard = component$<Props>((props) => {
       </a>
       <pre>{JSON.stringify(props.post, null, 2)}</pre>
       <PostActions
+        updatePostAction={updatePostAction}
+        deletePostAction={deletePostAction}
         post={props.post}
-        onDeleteSuccess$={() => {
-          navigate.path = paths.board;
-        }}
-        onUpdateSuccess$={() => {
-          window.location.replace(location.pathname);
-        }}
       />
       <CreateCommentForm
+        action={createCommentAction}
         parentId={null}
         postId={props.post.id}
-        onSuccess$={() => {
-          window.location.replace(location.pathname);
-        }}
       />
-      <CommentsList comments={props.comments} count={props.commentsCount} />
+      <CommentsList
+        comments={resource.value.comments}
+        count={resource.value.count}
+        deleteCommentAction={deleteCommentAction}
+        updateCommentAction={updateCommentAction}
+      />
     </div>
   );
 });

@@ -1,42 +1,26 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
+import { FormProps } from "@builder.io/qwik-city";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
-import { useTrpcContext } from "~/routes/context";
+import { useTrpcAction } from "~/utils/trpc";
 
 type Props = {
-  onSuccess$?: PropFunction<() => void>;
+  action: FormProps<void>["action"];
 };
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
-};
-
-export const CreatePostForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
-
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
-  const isLoading = state.status === "loading";
+export const CreatePostForm = component$((props: Props) => {
+  const action = useTrpcAction(props.action).post.create();
 
   return (
     <div>
       <PostForm
-        isLoading={isLoading}
-        onSubmit$={async ({ content }) => {
-          try {
-            state.status = "loading";
-            const trpc = await trpcContext();
-            await trpc?.post.create.mutate({ text: content });
-            onSuccess$?.();
-            state.status = "success";
-          } catch (error) {
-            state.status = "error";
-          }
+        isLoading={props.action.isPending}
+        onSubmit$={({ content }) => {
+          action.execute({ content });
         }}
       />
-
-      {state.status === "success" ? (
+      {props.action.status === 200 ? (
         <span>Success</span>
-      ) : state.status === "error" ? (
+      ) : typeof props.action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </div>

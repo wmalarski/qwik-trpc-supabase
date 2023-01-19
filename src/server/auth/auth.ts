@@ -1,4 +1,5 @@
-import type { Cookie, RequestContext } from "@builder.io/qwik-city";
+import type { Cookie } from "@builder.io/qwik-city";
+import type { RequestContext } from "@builder.io/qwik-city/middleware/request-handler";
 import { createClient, Session } from "@supabase/supabase-js";
 import { serverEnv } from "../serverEnv";
 
@@ -55,5 +56,5 @@ export const getUserByCookie = async (cookie: Cookie) => {
   }
 
   const { data } = await supabase.auth.getUser(token);
-  return data;
+  return data.user;
 };

@@ -1,61 +1,57 @@
-import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
-import { withUser } from "~/server/auth/withUser";
-import { withTrpc } from "~/server/trpc/withTrpc";
-import { endpointBuilder } from "~/utils/endpointBuilder";
+import { component$ } from "@builder.io/qwik";
+import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { supabase, updateAuthCookies } from "~/server/auth/auth";
+import { getUserFromEvent } from "~/server/loaders";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
-import { Login } from "./Login/Login";
+import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
+import { PasswordForm } from "./PasswordForm/PasswordForm";
 
-export const onPost = endpointBuilder()
-  .use(withUser())
-  .use(withTrpc())
-  .resolver(async ({ request, response, supabase, cookie }) => {
-    const form = await request.formData();
-    const email = form.get("email") as string;
-    const password = form.get("password") as string | undefined;
+export const signInPassword = action$(async (form, event) => {
+  const email = form.get("email") as string;
+  const password = form.get("password") as string;
 
-    if (!password) {
-      const otpResult = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
-      });
-      return { otpError: otpResult.error, otpSuccess: !otpResult.error };
-    }
-
-    const result = await supabase.auth.signInWithPassword({ email, password });
-    if (result.error || !result.data.session) {
-      return { passError: result.error };
-    }
-
-    const { updateAuthCookies } = await import("~/server/auth/auth");
-    updateAuthCookies(result.data.session, cookie);
-
-    throw response.redirect(paths.board);
+  const result = await supabase.auth.signInWithPassword({
+    email,
+    password,
   });
 
-export const onGet = endpointBuilder()
-  .use(withUser())
-  .resolver((ev) => {
-    if (ev.user) {
-      throw ev.response.redirect(paths.index);
-    }
+  if (result.error || !result.data.session) {
+    return "error";
+  }
+
+  updateAuthCookies(result.data.session, event.cookie);
+
+  event.redirect(302, paths.board);
+});
+
+export const signInOtp = action$((form) => {
+  const email = form.get("email") as string;
+
+  return supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
   });
+});
+
+export const getData = loader$(async (event) => {
+  const user = await getUserFromEvent(event);
+  if (user) {
+    throw event.redirect(302, paths.index);
+  }
+});
 
 export default component$(() => {
-  const resource = useEndpoint<typeof onPost>();
+  getData.use();
 
   return (
-    <Resource
-      value={resource}
-      onResolved={(data) => (
-        <Login
-          passError={data?.passError}
-          otpError={data?.otpError}
-          otpIsSuccess={data?.otpSuccess}
-        />
-      )}
-    />
+    <div class="flex flex-col gap-2">
+      <h1>Sign In</h1>
+      <div class="flex flex-col gap-6">
+        <MagicLinkForm />
+        <PasswordForm />
+      </div>
+    </div>
   );
 });
 

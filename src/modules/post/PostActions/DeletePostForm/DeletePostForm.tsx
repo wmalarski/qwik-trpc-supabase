@@ -1,50 +1,43 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
-import type { Post } from "@prisma/client";
-import { useTrpcContext } from "~/routes/context";
-
-type State = {
-  status: "idle" | "loading" | "success" | "error";
-};
+import { component$ } from "@builder.io/qwik";
+import { FormProps, useNavigate } from "@builder.io/qwik-city";
+import type { Post } from "~/server/db/types";
+import { paths } from "~/utils/paths";
+import { useTrpcAction } from "~/utils/trpc";
 
 type Props = {
-  onSuccess$?: PropFunction<() => void>;
+  action: FormProps<void>["action"];
   post: Post;
 };
 
 export const DeletePostForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
-  const postId = props.post.id;
+  const navigate = useNavigate();
 
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
+  const action = useTrpcAction(props.action).post.delete();
 
   return (
-    <>
+    <form
+      preventdefault:submit
+      onSubmit$={async () => {
+        await action.execute({ id: props.post.id });
+        navigate(paths.board);
+      }}
+    >
+      <input type="hidden" name="id" value={props.post.id} />
       <button
+        type="submit"
         class={{
           "btn btn-ghost btn-sm": true,
-          loading: state.status === "loading",
-        }}
-        onClick$={async () => {
-          try {
-            state.status = "loading";
-            const trpc = await trpcContext();
-            await trpc?.post.delete.mutate({ id: postId });
-            onSuccess$?.();
-            state.status = "success";
-          } catch (error) {
-            state.status = "error";
-          }
+          loading: props.action.isPending,
         }}
       >
         Remove
       </button>
 
-      {state.status === "success" ? (
+      {props.action.status === 200 ? (
         <span>Success</span>
-      ) : state.status === "error" ? (
+      ) : typeof props.action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
-    </>
+    </form>
   );
 });

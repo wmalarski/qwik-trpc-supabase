@@ -1,12 +1,13 @@
-import { component$, PropFunction } from "@builder.io/qwik";
-import type { Comment } from "@prisma/client";
+import { component$ } from "@builder.io/qwik";
+import { FormProps } from "@builder.io/qwik-city";
+import type { Comment } from "~/server/db/types";
 import { DeleteCommentForm } from "./DeleteCommentForm/DeleteCommentForm";
 import { UpdateCommentForm } from "./UpdateCommentForm/UpdateCommentForm";
 
 type Props = {
   comment: Comment;
-  onDeleteSuccess$?: PropFunction<() => void>;
-  onUpdateSuccess$?: PropFunction<() => void>;
+  deleteCommentAction: FormProps<void>["action"];
+  updateCommentAction: FormProps<Comment>["action"];
 };
 
 export const CommentActions = component$<Props>((props) => {
@@ -14,11 +15,11 @@ export const CommentActions = component$<Props>((props) => {
     <>
       <DeleteCommentForm
         comment={props.comment}
-        onSuccess$={props.onDeleteSuccess$}
+        action={props.deleteCommentAction}
       />
       <UpdateCommentForm
         comment={props.comment}
-        onSuccess$={props.onUpdateSuccess$}
+        action={props.updateCommentAction}
       />
     </>
   );

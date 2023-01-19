@@ -1,25 +1,31 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
-import { withProtected } from "~/server/auth/withUser";
-import { withTrpc } from "~/server/trpc/withTrpc";
-import { endpointBuilder } from "~/utils/endpointBuilder";
+import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { getTrpcFromEvent } from "~/server/loaders";
+import { trpcAction } from "~/server/trpc/action";
 import { PostCard } from "./PostCard/PostCard";
 
-export const onGet = endpointBuilder()
-  .use(withProtected())
-  .use(withTrpc())
-  .resolver(async ({ trpc, params }) => {
-    const postId = params.postId;
-    const [post, comments] = await Promise.all([
-      trpc.post.get({ id: postId }),
-      trpc.comment.listForPost({ postId, skip: 0, take: 10 }),
-    ]);
+export const getData = loader$(async (event) => {
+  const trpc = await getTrpcFromEvent(event);
+  return trpc.post.get({ id: event.params.postId });
+});
 
-    return { comments, post };
+export const getComments = loader$(async (event) => {
+  const trpc = await getTrpcFromEvent(event);
+  return trpc.comment.listForPost({
+    postId: event.params.postId,
+    skip: 0,
+    take: 10,
   });
+});
+
+export const deleteComment = action$(trpcAction);
+export const updateComment = action$(trpcAction);
+export const createComment = action$(trpcAction);
+export const updatePost = action$(trpcAction);
+export const deletePost = action$(trpcAction);
 
 export default component$(() => {
-  const resource = useEndpoint<typeof onGet>();
+  const resource = getData.use();
 
   return (
     <div class="flex flex-col gap-2">
@@ -29,9 +35,10 @@ export default component$(() => {
         onPending={() => <div>Loading...</div>}
         onResolved={(result) => (
           <PostCard
-            comments={result.comments?.comments || []}
-            commentsCount={result.comments?.count || 0}
-            post={result.post}
+            post={result}
+            onUpdateSuccess$={(post) => {
+              resource.value = post;
+            }}
           />
         )}
       />

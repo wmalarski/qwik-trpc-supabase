@@ -2,41 +2,40 @@ import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
 import { trpcAction } from "~/server/trpc/action";
-import { CommentCard } from "./CommentCard/CommentCard";
+import { useTrpcAction } from "~/utils/trpc";
+import { PostsList } from "../PostsList/PostsList";
 
 export const getData = loader$(async (event) => {
   const trpc = await getTrpcFromEvent(event);
-  return trpc.comment.get({ id: event.params.commentId });
+  const result = await trpc.post.list({ skip: 0, take: 10 });
+  return result;
 });
 
-export const getComments = loader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.comment.listForParent({
-    parentId: event.params.commentId,
-    skip: 0,
-    take: 10,
-  });
-});
-
-export const deleteComment = action$(trpcAction);
-export const updateComment = action$(trpcAction);
-export const createComment = action$(trpcAction);
+export const createPost = action$(trpcAction);
 
 export default component$(() => {
   const resource = getData.use();
 
+  const action = useTrpcAction(createPost.use()).post.create();
+
   return (
     <div class="flex flex-col gap-2">
-      <h1>Comment</h1>
+      <button
+        onClick$={() => {
+          action.execute({ content: "Hello123" });
+        }}
+      >
+        Create Post
+      </button>
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}
-        onResolved={(result) => <CommentCard comment={result} />}
+        onResolved={(result) => <PostsList posts={result.posts} />}
       />
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Board - Welcome to Qwik",
+  title: "Testing - Welcome to Qwik",
 };

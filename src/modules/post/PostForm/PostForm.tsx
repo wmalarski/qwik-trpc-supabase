@@ -15,12 +15,11 @@ export const PostForm = component$<Props>((props) => {
 
   return (
     <form
-      preventdefault:submit
-      method="post"
       class="flex flex-col gap-2"
+      preventdefault:submit
       onSubmit$={(event) => {
         const form = new FormData(event.target as HTMLFormElement);
-        const content = (form.get("content") as string) || "";
+        const content = form.get("content") as string;
         onSubmit$({ content });
       }}
     >

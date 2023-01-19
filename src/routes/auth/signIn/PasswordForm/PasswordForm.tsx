@@ -1,13 +1,12 @@
 import { component$ } from "@builder.io/qwik";
-import { AuthError } from "@supabase/supabase-js";
+import { Form } from "@builder.io/qwik-city";
+import { signInPassword } from "..";
 
-type Props = {
-  error?: AuthError | null;
-};
+export const PasswordForm = component$(() => {
+  const action = signInPassword.use();
 
-export const PasswordForm = component$<Props>((props) => {
   return (
-    <form class="flex flex-col gap-2" method="post">
+    <Form class="flex flex-col gap-2" action={action}>
       <h2 class="text-xl">Sign in with password</h2>
 
       <div class="form-control w-full">
@@ -38,7 +37,7 @@ export const PasswordForm = component$<Props>((props) => {
       <button class="btn btn-primary mt-2" type="submit">
         Sign In
       </button>
-      <pre>{JSON.stringify(props.error, null, 2)}</pre>
-    </form>
+      <pre>{JSON.stringify(action.value, null, 2)}</pre>
+    </Form>
   );
 });

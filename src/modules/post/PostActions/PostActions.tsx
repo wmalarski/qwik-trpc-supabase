@@ -1,19 +1,20 @@
-import { component$, PropFunction } from "@builder.io/qwik";
-import type { Post } from "@prisma/client";
+import { component$ } from "@builder.io/qwik";
+import { FormProps } from "@builder.io/qwik-city";
+import type { Post } from "~/server/db/types";
 import { DeletePostForm } from "./DeletePostForm/DeletePostForm";
 import { UpdatePostForm } from "./UpdatePostForm/UpdatePostForm";
 
 type Props = {
-  onDeleteSuccess$?: PropFunction<() => void>;
-  onUpdateSuccess$?: PropFunction<() => void>;
+  deletePostAction: FormProps<void>["action"];
+  updatePostAction: FormProps<void>["action"];
   post: Post;
 };
 
 export const PostActions = component$<Props>((props) => {
   return (
     <div>
-      <DeletePostForm post={props.post} onSuccess$={props.onDeleteSuccess$} />
-      <UpdatePostForm post={props.post} onSuccess$={props.onUpdateSuccess$} />
+      <DeletePostForm post={props.post} action={props.deletePostAction} />
+      <UpdatePostForm post={props.post} action={props.updatePostAction} />
     </div>
   );
 });

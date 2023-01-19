@@ -1,50 +1,34 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
-import { useTrpcContext } from "~/routes/context";
+import { component$ } from "@builder.io/qwik";
+import { FormProps } from "@builder.io/qwik-city";
+import type { Comment } from "~/server/db/types";
+import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-type State = {
-  status: "idle" | "loading" | "success" | "error";
-};
-
 type Props = {
+  action: FormProps<Comment>["action"];
   parentId: string | null;
   postId: string;
-  onSuccess$?: PropFunction<() => void>;
 };
 
 export const CreateCommentForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
-  const parentId = props.parentId;
-  const postId = props.postId;
-
-  const state = useStore<State>({ status: "idle" });
-  const trpcContext = useTrpcContext();
-  const isLoading = state.status === "loading";
+  const action = useTrpcAction(props.action).comment.create();
 
   return (
     <div>
       <CommentForm
-        isLoading={isLoading}
-        onSubmit$={async ({ content }) => {
-          try {
-            state.status = "loading";
-            const trpc = await trpcContext();
-            await trpc?.comment.create.mutate({
-              parentId,
-              postId,
-              text: content,
-            });
-            onSuccess$?.();
-            state.status = "success";
-          } catch (error) {
-            state.status = "error";
-          }
+        isLoading={props.action.isPending}
+        onSubmit$={({ content }) => {
+          action.execute({
+            content,
+            parentId: props.parentId,
+            postId: props.postId,
+          });
         }}
       />
 
-      {state.status === "success" ? (
+      {props.action.status === 200 ? (
         <span>Success</span>
-      ) : state.status === "error" ? (
+      ) : typeof props.action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </div>

@@ -1,6 +1,7 @@
 import { RequestEvent } from "@builder.io/qwik-city";
 import { User } from "@supabase/supabase-js";
 import * as trpc from "@trpc/server";
+import type { RequestEventLoader } from "~/utils/types";
 import { getUserByCookie, supabase } from "../auth/auth";
 import { prisma } from "../db/client";
 
@@ -13,9 +14,15 @@ export const createContextInner = (opts: CreateContextOptions) => {
 };
 
 export const createContext = async (ev: RequestEvent) => {
-  const data = await getUserByCookie(ev.cookie);
+  const user = await getUserByCookie(ev.cookie);
 
-  return createContextInner({ user: data?.user });
+  return createContextInner({ user });
+};
+
+export const createLoaderContext = async (ev: RequestEventLoader) => {
+  const user = await getUserByCookie(ev.cookie);
+
+  return createContextInner({ user });
 };
 
 export type Context = trpc.inferAsyncReturnType<typeof createContext>;

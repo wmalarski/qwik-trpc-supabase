@@ -1,63 +1,44 @@
-import { component$, PropFunction, useStore } from "@builder.io/qwik";
-import type { Comment } from "@prisma/client";
-import { useTrpcContext } from "~/routes/context";
+import { component$, useSignal } from "@builder.io/qwik";
+import { FormProps } from "@builder.io/qwik-city";
+import type { Comment } from "~/server/db/types";
+import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
-
-type State = {
-  isOpen: boolean;
-  status: "idle" | "loading" | "success" | "error";
-};
 
 type Props = {
   comment: Comment;
-  onSuccess$?: PropFunction<() => void>;
+  action: FormProps<Comment>["action"];
 };
 
 export const UpdateCommentForm = component$<Props>((props) => {
-  const onSuccess$ = props.onSuccess$;
-  const parentId = props.comment.parentId;
-  const postId = props.comment.postId;
+  const isOpen = useSignal(false);
 
-  const state = useStore<State>({ isOpen: false, status: "idle" });
-  const trpcContext = useTrpcContext();
-  const isLoading = state.status === "loading";
+  const action = useTrpcAction(props.action).comment.update();
 
   return (
     <>
       <button
         class="btn"
         onClick$={() => {
-          state.isOpen = !state.isOpen;
+          isOpen.value = !isOpen.value;
         }}
       >
         Edit
       </button>
 
-      {state.isOpen && (
+      {isOpen.value && (
         <>
           <CommentForm
             initialValue={props.comment}
-            isLoading={isLoading}
+            isLoading={props.action.isPending}
             onSubmit$={async ({ content }) => {
-              try {
-                state.status = "loading";
-                const trpc = await trpcContext();
-                await trpc?.comment.create.mutate({
-                  parentId,
-                  postId,
-                  text: content,
-                });
-                onSuccess$?.();
-                state.status = "success";
-              } catch (error) {
-                state.status = "error";
-              }
+              await action.execute({ content, id: props.comment.id });
+              isOpen.value = false;
             }}
           />
 
-          {state.status === "success" ? (
+          {props.action.status === 200 ? (
             <span>Success</span>
-          ) : state.status === "error" ? (
+          ) : typeof props.action.status !== "undefined" ? (
             <span>Error</span>
           ) : null}
         </>

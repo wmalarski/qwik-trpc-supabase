@@ -1,15 +1,16 @@
 import { component$ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
-import type { Post } from "@prisma/client";
+import { PostActions } from "~/modules/post/PostActions/PostActions";
+import type { Post } from "~/server/db/types";
 import { paths } from "~/utils/paths";
-import { PostActions } from "../../../../modules/post/PostActions/PostActions";
+import { deletePost, updatePost } from "../..";
 
 type Props = {
   post: Post;
 };
 
 export const PostListItem = component$<Props>((props) => {
-  const location = useLocation();
+  const deletePostAction = deletePost.use();
+  const updatePostAction = updatePost.use();
 
   return (
     <div class="card card-bordered card-compact overflow-visible">
@@ -20,10 +21,9 @@ export const PostListItem = component$<Props>((props) => {
             Show comments
           </a>
           <PostActions
+            updatePostAction={updatePostAction}
+            deletePostAction={deletePostAction}
             post={props.post}
-            onUpdateSuccess$={() => {
-              window.location.replace(location.pathname);
-            }}
           />
         </div>
       </div>

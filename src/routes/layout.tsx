@@ -1,8 +1,6 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { useTrpcContextProvider } from "./context";
 
 export default component$(() => {
-  useTrpcContextProvider();
   return (
     <>
       <main class="mx-auto max-w-3xl overflow-hidden rounded-md bg-white shadow-xl">

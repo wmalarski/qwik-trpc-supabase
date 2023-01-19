@@ -1,31 +1,29 @@
 import { component$, Resource } from "@builder.io/qwik";
-import { DocumentHead, useEndpoint } from "@builder.io/qwik-city";
-import { withProtected } from "~/server/auth/withUser";
-import { withTrpc } from "~/server/trpc/withTrpc";
-import { endpointBuilder } from "~/utils/endpointBuilder";
+import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { getTrpcFromEvent } from "~/server/loaders";
+import { trpcAction } from "~/server/trpc/action";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
-export const onGet = endpointBuilder()
-  .use(withProtected())
-  .use(withTrpc())
-  .resolver(async ({ trpc }) => {
-    const posts = await trpc.post.list({ skip: 0, take: 10 });
+export const getData = loader$(async (event) => {
+  const trpc = await getTrpcFromEvent(event);
+  const result = await trpc.post.list({ skip: 0, take: 10 });
+  return result;
+});
 
-    return posts;
-  });
+export const deletePost = action$(trpcAction);
+export const updatePost = action$(trpcAction);
+export const createPost = action$(trpcAction);
 
 export default component$(() => {
-  const resource = useEndpoint<typeof onGet>();
+  const resource = getData.use();
+
+  const createPostAction = createPost.use();
 
   return (
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
-      <CreatePostForm
-        onSuccess$={() => {
-          window.location.replace(location.pathname);
-        }}
-      />
+      <CreatePostForm action={createPostAction} />
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}
