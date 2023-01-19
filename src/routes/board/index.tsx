@@ -2,7 +2,7 @@ import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
 import { trpcAction } from "~/server/trpc/action";
-import { useTrpcAction } from "~/utils/tinyTrpc2";
+import { useTrpcAction } from "~/utils/trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
