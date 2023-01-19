@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, FormProps } from "@builder.io/qwik-city";
+import { FormProps } from "@builder.io/qwik-city";
+import { useTinyTrpc } from "~/utils/tinyTrpc";
 
 type FormResult = {
   id: string;
@@ -13,8 +14,19 @@ type Props = {
 };
 
 export const PostForm = component$<Props>((props) => {
+  const trpcContext = useTinyTrpc();
+
   return (
-    <Form class="flex flex-col gap-2" action={props.action}>
+    <form
+      class="flex flex-col gap-2"
+      preventdefault:submit
+      onSubmit$={async () => {
+        const trpc = await trpcContext();
+        await trpc().post.create.mutate(props.action, {
+          content: "Crazy hack",
+        });
+      }}
+    >
       <h2 class="text-xl">Add post</h2>
 
       {props.initialValue?.id ? (
@@ -44,6 +56,6 @@ export const PostForm = component$<Props>((props) => {
       >
         Save
       </button>
-    </Form>
+    </form>
   );
 });

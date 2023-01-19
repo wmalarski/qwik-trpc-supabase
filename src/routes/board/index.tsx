@@ -2,7 +2,7 @@ import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
 import { trpcAction } from "~/server/trpc/action";
-import { useTinyTrpc } from "~/utils/tinyTrpc";
+import { useTrpcAction } from "~/utils/tinyTrpc2";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
@@ -41,17 +41,15 @@ export default component$(() => {
 
   const createPostAction = createPost.use();
 
-  const yl = yolo.use();
-  const yoloAction = useTinyTrpc();
+  const yolo2 = useTrpcAction(yolo).post.create();
 
   return (
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
       <button
         onClick$={async () => {
-          const trpc = await yoloAction();
-          await trpc().post.create.mutate(yl, {
-            content: "Crazy hack",
+          await yolo2.execute({
+            content: "This is weird!",
           });
         }}
       >
