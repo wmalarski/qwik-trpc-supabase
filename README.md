@@ -11,8 +11,6 @@
 - [ ] Auth refresh token
 - [x] Redirect navigation after login
 - [x] Protected routes
-- [ ] Auth context
-- [ ] Top bar conditional rendering
 - [x] tRPC setup
 - [x] tRPC + cookies auth guard setup
 - [x] tRPC queries/mutation on client side
@@ -23,7 +21,6 @@
 - [x] Crud on Comments
 - [x] Cache invalidation after mutations
 - [ ] Optimistic updates
-- [ ] Example with infinite posts scroll
 - [x] Tailwind setup + DaisyUI
 - [x] Opinionated eslint setup
 - [ ] Deploy damn thing
