@@ -1,7 +1,7 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
-import { paths } from "~/utils/paths";
+import { trpcAction } from "~/server/trpc/action";
 import { CommentCard } from "./CommentCard/CommentCard";
 
 export const getData = loader$(async (event) => {
@@ -18,43 +18,9 @@ export const getComments = loader$(async (event) => {
   });
 });
 
-export const deleteComment = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const id = form.get("id") as string;
-
-  const comment = await trpc.comment.get({ id });
-
-  await trpc.comment.delete({ id });
-
-  const path = comment.parentId
-    ? paths.comment(comment.parentId)
-    : paths.post(comment.postId);
-
-  event.redirect(302, path);
-});
-
-export const updateComment = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const id = form.get("id") as string;
-  const text = form.get("text") as string;
-
-  await trpc.comment.update({ id, text });
-
-  return trpc.comment.get({ id });
-});
-
-export const createComment = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const text = form.get("text") as string;
-  const parentId = form.get("parentId") as string;
-  const postId = form.get("postId") as string;
-
-  return trpc.comment.create({
-    parentId,
-    postId,
-    text,
-  });
-});
+export const deleteComment = action$(trpcAction);
+export const updateComment = action$(trpcAction);
+export const createComment = action$(trpcAction);
 
 export default component$(() => {
   const resource = getData.use();

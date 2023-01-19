@@ -1,4 +1,4 @@
-import { action$ } from "@builder.io/qwik-city";
+import type { action$ } from "@builder.io/qwik-city";
 
 type ActionParameter = Parameters<typeof action$>[0];
 export type RequestEventLoader = Parameters<ActionParameter>[1];

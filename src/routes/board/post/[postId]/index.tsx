@@ -1,7 +1,7 @@
 import { component$, Resource } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
-import { paths } from "~/utils/paths";
+import { trpcAction } from "~/server/trpc/action";
 import { PostCard } from "./PostCard/PostCard";
 
 export const getData = loader$(async (event) => {
@@ -18,51 +18,11 @@ export const getComments = loader$(async (event) => {
   });
 });
 
-export const deleteComment = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const id = form.get("id") as string;
-  await trpc.comment.delete({ id });
-});
-
-export const updateComment = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const id = form.get("id") as string;
-  const text = form.get("text") as string;
-
-  await trpc.comment.update({ id, text });
-
-  return trpc.comment.get({ id });
-});
-
-export const createComment = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const text = form.get("text") as string;
-  const parentId = form.get("parentId") as string;
-  const postId = form.get("postId") as string;
-
-  return trpc.comment.create({
-    parentId,
-    postId,
-    text,
-  });
-});
-
-export const updatePost = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const id = form.get("id") as string;
-  const content = form.get("content") as string;
-
-  await trpc.post.update({ content, id });
-});
-
-export const deletePost = action$(async (form, event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const id = form.get("id") as string;
-
-  await trpc.post.delete({ id });
-
-  throw event.redirect(302, paths.board);
-});
+export const deleteComment = action$(trpcAction);
+export const updateComment = action$(trpcAction);
+export const createComment = action$(trpcAction);
+export const updatePost = action$(trpcAction);
+export const deletePost = action$(trpcAction);
 
 export default component$(() => {
   const resource = getData.use();

@@ -1,25 +1,29 @@
-import { component$ } from "@builder.io/qwik";
-import { Form, FormProps } from "@builder.io/qwik-city";
+import { component$, PropFunction } from "@builder.io/qwik";
 
 type FormResult = {
-  id: string;
   content: string;
 };
 
 type Props = {
-  action: FormProps<void>["action"];
   initialValue?: FormResult;
   isLoading: boolean;
+  onSubmit$: PropFunction<(result: FormResult) => void>;
 };
 
 export const PostForm = component$<Props>((props) => {
-  return (
-    <Form class="flex flex-col gap-2" action={props.action}>
-      <h2 class="text-xl">Add post</h2>
+  const onSubmit$ = props.onSubmit$;
 
-      {props.initialValue?.id ? (
-        <input type="hidden" name="id" value={props.initialValue.id} />
-      ) : null}
+  return (
+    <form
+      class="flex flex-col gap-2"
+      preventdefault:submit
+      onSubmit$={(event) => {
+        const form = new FormData(event.target as HTMLFormElement);
+        const content = form.get("content") as string;
+        onSubmit$({ content });
+      }}
+    >
+      <h2 class="text-xl">Add post</h2>
 
       <div class="form-control w-full">
         <label for="content" class="label">
@@ -44,6 +48,6 @@ export const PostForm = component$<Props>((props) => {
       >
         Save
       </button>
-    </Form>
+    </form>
   );
 });

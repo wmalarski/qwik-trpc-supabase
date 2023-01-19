@@ -17,7 +17,7 @@ import type {
 import { TRPCResponse } from "@trpc/server/rpc";
 import superjson from "superjson";
 import type { AppRouter } from "~/server/trpc/router";
-import type { ServerAction, ServerActionUtils } from "./types";
+import type { ServerActionUtils } from "./types";
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -52,9 +52,7 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
     : never;
 };
 
-export const useTrpcAction = (action: ServerAction<any>) => {
-  const utils = action.use();
-
+export const useTrpcAction = (action: ServerActionUtils<any>) => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
       apply(_1, _2, args) {
@@ -84,9 +82,9 @@ export const useTrpcAction = (action: ServerAction<any>) => {
         formData.set("body", stringifiedInput);
       }
 
-      await utils.execute(formData);
+      await action.execute(formData);
 
-      const json: TRPCResponse = utils.value;
+      const json: TRPCResponse = action.value;
 
       if (json && "error" in json) {
         throw new Error(`Error: ${json.error.message}`);
@@ -96,7 +94,7 @@ export const useTrpcAction = (action: ServerAction<any>) => {
       return superjson.parse(JSON.stringify(json.result.data));
     });
 
-    return { ...utils, execute };
+    return { ...action, execute };
   }, []) as DecoratedProcedureRecord<AppRouter["_def"]["record"]>;
 };
 

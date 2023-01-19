@@ -11,15 +11,15 @@ export const commentRouter = t.router({
   create: protectedProcedure
     .input(
       z.object({
+        content: z.string(),
         parentId: z.string().cuid().nullable(),
         postId: z.string().cuid(),
-        text: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const comment = await ctx.prisma.comment.create({
         data: {
-          content: input.text,
+          content: input.content,
           createdById: ctx.user.id,
           parentId: input.parentId,
           postId: input.postId,
@@ -92,10 +92,10 @@ export const commentRouter = t.router({
       return { comments, count };
     }),
   update: protectedProcedure
-    .input(z.object({ id: z.string().cuid(), text: z.string() }))
+    .input(z.object({ content: z.string(), id: z.string().cuid() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.comment.updateMany({
-        data: { content: input.text },
+        data: { content: input.content },
         where: { createdById: ctx.user.id, id: input.id },
       });
     }),

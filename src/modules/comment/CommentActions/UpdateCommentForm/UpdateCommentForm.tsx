@@ -1,6 +1,7 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { FormProps } from "@builder.io/qwik-city";
 import type { Comment } from "~/server/db/types";
+import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
 type Props = {
@@ -10,6 +11,8 @@ type Props = {
 
 export const UpdateCommentForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
+
+  const action = useTrpcAction(props.action).comment.update();
 
   return (
     <>
@@ -27,7 +30,10 @@ export const UpdateCommentForm = component$<Props>((props) => {
           <CommentForm
             initialValue={props.comment}
             isLoading={props.action.isPending}
-            action={props.action}
+            onSubmit$={async ({ content }) => {
+              await action.execute({ content, id: props.comment.id });
+              isOpen.value = false;
+            }}
           />
 
           {props.action.status === 200 ? (
