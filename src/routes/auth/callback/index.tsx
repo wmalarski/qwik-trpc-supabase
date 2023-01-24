@@ -29,19 +29,6 @@ export default component$(() => {
 
   const action = setSession.use();
 
-  useClientEffect$(() => {
-    // This is triggering container to startup
-    // and then actions are working as expected
-    // needs to be debugged more
-    document.getElementById("callback-button")?.dispatchEvent(
-      new MouseEvent("click", {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-      })
-    );
-  });
-
   const handleSendSession = $(async () => {
     const hash = window.location.hash.substring(1);
 
@@ -71,17 +58,15 @@ export default component$(() => {
     navigate(paths.index);
   });
 
+  useClientEffect$(() => {
+    handleSendSession();
+  });
+
   return (
     <div>
       <h1>
         Welcome to Qwik <span class="lightning">⚡️</span>
       </h1>
-      <button
-        aria-hidden
-        class="hidden"
-        id="callback-button"
-        onClick$={handleSendSession}
-      />
     </div>
   );
 });
