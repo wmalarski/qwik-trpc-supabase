@@ -13,7 +13,7 @@ export const getData = loader$(async (event) => {
   }
 });
 
-export const signUp = action$(async (form, event) => {
+export const signUp = action$(async (form) => {
   const email = form.get("email") as string;
   const password = form.get("password") as string;
 
@@ -25,10 +25,10 @@ export const signUp = action$(async (form, event) => {
   });
 
   if (result.error) {
-    return result;
+    return { status: "error" };
   }
 
-  throw event.redirect(302, paths.signIn);
+  throw { status: "success" };
 });
 
 export default component$(() => {

@@ -17,12 +17,12 @@ export const signInPassword = action$(async (form, event) => {
   });
 
   if (result.error || !result.data.session) {
-    return "error";
+    return { status: "error" };
   }
 
   updateAuthCookies(result.data.session, event.cookie);
 
-  event.redirect(302, paths.board);
+  return { status: "success" };
 });
 
 export const signInOtp = action$((form) => {

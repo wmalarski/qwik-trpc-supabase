@@ -1,9 +1,22 @@
-import { component$ } from "@builder.io/qwik";
-import { Form } from "@builder.io/qwik-city";
+import { component$, useTask$ } from "@builder.io/qwik";
+import { Form, useNavigate } from "@builder.io/qwik-city";
+import { paths } from "~/utils/paths";
 import { signInPassword } from "..";
 
 export const PasswordForm = component$(() => {
+  const navigate = useNavigate();
+
   const action = signInPassword.use();
+
+  useTask$(({ track }) => {
+    const status = track(() => action.value?.status);
+
+    if (status !== "success") {
+      return;
+    }
+
+    navigate(paths.index);
+  });
 
   return (
     <Form class="flex flex-col gap-2" action={action}>
