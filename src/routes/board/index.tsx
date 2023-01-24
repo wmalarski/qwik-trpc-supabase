@@ -27,6 +27,7 @@ export default component$(() => {
       <Resource
         value={resource}
         onPending={() => <div>Loading...</div>}
+        onRejected={() => <div>Rejected</div>}
         onResolved={(result) => <PostsList posts={result.posts} />}
       />
     </div>
