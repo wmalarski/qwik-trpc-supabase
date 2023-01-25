@@ -13,14 +13,8 @@ export const createContextInner = (opts: CreateContextOptions) => {
   return { prisma, supabase, user: opts.user };
 };
 
-export const createContext = async (ev: RequestEvent) => {
-  const user = await getUserByCookie(ev.cookie);
-
-  return createContextInner({ user });
-};
-
-export const createLoaderContext = async (ev: RequestEventLoader) => {
-  const user = await getUserByCookie(ev.cookie);
+export const createContext = async (ev: RequestEvent | RequestEventLoader) => {
+  const user = await getUserByCookie(ev);
 
   return createContextInner({ user });
 };

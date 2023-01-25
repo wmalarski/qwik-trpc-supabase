@@ -1,6 +1,6 @@
 import { resolveHTTPResponse } from "@trpc/server/http";
 import type { RequestEventLoader } from "~/utils/types";
-import { createLoaderContext } from "./context";
+import { createContext } from "./context";
 import { appRouter } from "./router/index";
 
 export const trpcAction = async (form: FormData, event: RequestEventLoader) => {
@@ -14,7 +14,7 @@ export const trpcAction = async (form: FormData, event: RequestEventLoader) => {
     const path = form.get("path") as string;
 
     const res = await resolveHTTPResponse({
-      createContext: () => createLoaderContext(event),
+      createContext: () => createContext(event),
       path,
       req: {
         body,

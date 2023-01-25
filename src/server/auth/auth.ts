@@ -1,6 +1,6 @@
-import type { Cookie } from "@builder.io/qwik-city";
-import type { RequestContext } from "@builder.io/qwik-city/middleware/request-handler";
+import type { Cookie, RequestEvent } from "@builder.io/qwik-city";
 import { createClient, Session } from "@supabase/supabase-js";
+import type { RequestEventLoader } from "~/utils/types";
 import { serverEnv } from "../serverEnv";
 
 export const supabase = createClient(
@@ -8,53 +8,46 @@ export const supabase = createClient(
   serverEnv.VITE_SUPABASE_ANON_KEY
 );
 
-const cookieName = "RJ-auth";
+const accessTokenCookieName = "sb-access-token";
+const refreshTokenCookieName = "sb-refresh-token";
 
 export const updateAuthCookies = (
-  session: Partial<Session>,
+  session: Pick<Session, "refresh_token" | "expires_in" | "access_token">,
   cookie: Cookie
 ) => {
-  const value = JSON.stringify({
-    "access-token": session.access_token,
-    "refresh-token": session.refresh_token,
-  });
-  cookie.set(cookieName, value, {
+  const options = {
     httpOnly: true,
     maxAge: session.expires_in,
     path: "/",
     sameSite: "lax",
-  });
-};
+  } as const;
 
-export const setAuthCookies = async (
-  request: RequestContext,
-  cookie: Cookie
-) => {
-  const json = await request.json();
-
-  updateAuthCookies(json, cookie);
+  cookie.set(accessTokenCookieName, session.access_token, options);
+  cookie.set(refreshTokenCookieName, session.refresh_token, options);
 };
 
 export const removeAuthCookies = (cookie: Cookie) => {
-  cookie.set(cookieName, "value", {
+  const options = {
     httpOnly: true,
     maxAge: -1,
     path: "/",
     sameSite: "lax",
-  });
+  } as const;
+
+  cookie.set(accessTokenCookieName, "", options);
+  cookie.set(refreshTokenCookieName, "", options);
 };
 
-export const getUserByCookie = async (cookie: Cookie) => {
-  const cookieHeader = cookie.get(cookieName);
+export const getUserByCookie = async (
+  event: RequestEventLoader | RequestEvent
+) => {
+  const accessToken = event.cookie.get(accessTokenCookieName);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const value = cookieHeader?.json() as any;
-  const token = value?.["access-token"];
-
-  if (!token) {
+  if (!accessToken?.value) {
     return null;
   }
 
-  const { data } = await supabase.auth.getUser(token);
+  const { data } = await supabase.auth.getUser(accessToken.value);
+
   return data.user;
 };
