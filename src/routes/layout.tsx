@@ -7,8 +7,8 @@ export default component$(() => {
         <Slot />
       </main>
       <footer class="p-4 text-center text-xs">
-        <a class="link" href="https://www.builder.io/" target="_blank">
-          Made with ♡ by Builder.io
+        <a class="link" href="https://github.com/wmalarski" target="_blank">
+          Made with ♡ by wmalarski
         </a>
       </footer>
     </>
