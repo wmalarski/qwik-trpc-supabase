@@ -8,7 +8,7 @@ export const getProtectedUser = loader$(async (event) => {
   const user = await getUserFromEvent(event);
 
   if (!user) {
-    throw event.redirect(302, paths.signIn);
+    event.redirect(302, paths.signIn);
   }
 });
 

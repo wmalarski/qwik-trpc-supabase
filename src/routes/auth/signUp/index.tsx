@@ -9,7 +9,7 @@ import { RegisterForm } from "./RegisterForm/RegisterForm";
 export const getData = loader$(async (event) => {
   const user = await getUserFromEvent(event);
   if (user) {
-    throw event.redirect(302, paths.index);
+    event.redirect(302, paths.index);
   }
 });
 
@@ -28,7 +28,7 @@ export const signUp = action$(async (form) => {
     return { status: "error" };
   }
 
-  throw { status: "success" };
+  return { status: "success" };
 });
 
 export default component$(() => {

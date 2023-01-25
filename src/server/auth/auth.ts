@@ -17,7 +17,7 @@ export const updateAuthCookies = (
 ) => {
   const options = {
     httpOnly: true,
-    maxAge: session.expires_in,
+    maxAge: 610000,
     path: "/",
     sameSite: "lax",
   } as const;
@@ -27,27 +27,58 @@ export const updateAuthCookies = (
 };
 
 export const removeAuthCookies = (cookie: Cookie) => {
-  const options = {
-    httpOnly: true,
-    maxAge: -1,
-    path: "/",
-    sameSite: "lax",
-  } as const;
+  // const options = {
+  //   httpOnly: true,
+  //   maxAge: 0,
+  //   path: "/",
+  //   sameSite: "lax",
+  // } as const;
 
-  cookie.set(accessTokenCookieName, "", options);
-  cookie.set(refreshTokenCookieName, "", options);
+  cookie.delete(accessTokenCookieName, { path: "/", domain: "localhost" });
+  cookie.delete(refreshTokenCookieName, { path: "/", domain: "localhost" });
+  // cookie.set(accessTokenCookieName, "", options);
+  // cookie.set(refreshTokenCookieName, "", options);
 };
 
 export const getUserByCookie = async (
   event: RequestEventLoader | RequestEvent
 ) => {
-  const accessToken = event.cookie.get(accessTokenCookieName);
+  const accessToken = event.cookie.get(accessTokenCookieName)?.value;
+  const refreshToken = event.cookie.get(refreshTokenCookieName)?.value;
 
-  if (!accessToken?.value) {
+  if (!accessToken || !refreshToken) {
     return null;
   }
 
-  const { data } = await supabase.auth.getUser(accessToken.value);
+  const userResponse = await supabase.auth.getUser(accessToken);
 
-  return data.user;
+  console.log(
+    JSON.stringify({ userResponse, accessToken, refreshToken }, null, 2)
+  );
+
+  if (userResponse.data.user) {
+    return userResponse.data.user;
+  }
+
+  const refreshResponse = await supabase.auth.refreshSession({
+    refresh_token: refreshToken,
+  });
+
+  console.log(JSON.stringify({ refreshResponse }, null, 2));
+
+  if (!refreshResponse.data.session) {
+    removeAuthCookies(event.cookie);
+
+    console.log("remove", event.cookie.headers());
+
+    return null;
+  }
+
+  const session = refreshResponse.data.session;
+
+  updateAuthCookies(session, event.cookie);
+
+  console.log("update", event.cookie.headers());
+
+  return session.user;
 };

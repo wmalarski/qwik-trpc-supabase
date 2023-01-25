@@ -37,7 +37,7 @@ export const signInOtp = action$((form) => {
 export const getData = loader$(async (event) => {
   const user = await getUserFromEvent(event);
   if (user) {
-    throw event.redirect(302, paths.index);
+    event.redirect(302, paths.index);
   }
 });
 

@@ -3,10 +3,10 @@ import { DocumentHead, RequestEvent } from "@builder.io/qwik-city";
 import { removeAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const onGet = ({ cookie, redirect }: RequestEvent) => {
-  removeAuthCookies(cookie);
+export const onGet = (event: RequestEvent) => {
+  removeAuthCookies(event.cookie);
 
-  throw redirect(302, paths.index);
+  event.redirect(302, paths.index);
 };
 
 export default component$(() => {
