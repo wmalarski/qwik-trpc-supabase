@@ -1,4 +1,4 @@
-import { component$, Resource } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
 import { trpcAction } from "~/server/trpc/action";
@@ -27,11 +27,7 @@ export default component$(() => {
       >
         Create Post
       </button>
-      <Resource
-        value={resource}
-        onPending={() => <div>Loading...</div>}
-        onResolved={(result) => <PostsList posts={result.posts} />}
-      />
+      <PostsList posts={resource.value.posts} />
     </div>
   );
 });

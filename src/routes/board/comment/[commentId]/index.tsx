@@ -1,4 +1,4 @@
-import { component$, Resource } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
 import { trpcAction } from "~/server/trpc/action";
@@ -28,11 +28,7 @@ export default component$(() => {
   return (
     <div class="flex flex-col gap-2">
       <h1>Comment</h1>
-      <Resource
-        value={resource}
-        onPending={() => <div>Loading...</div>}
-        onResolved={(result) => <CommentCard comment={result} />}
-      />
+      <CommentCard comment={resource.value} />
     </div>
   );
 });
