@@ -1,28 +1,28 @@
 import { $, component$, useClientEffect$ } from "@builder.io/qwik";
-import { action$, DocumentHead, useNavigate } from "@builder.io/qwik-city";
+import {
+  action$,
+  DocumentHead,
+  useNavigate,
+  zod$,
+} from "@builder.io/qwik-city";
 import { z } from "zod";
 import { updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const setSession = action$((form, event) => {
-  const input = Object.fromEntries(form.entries());
+export const setSession = action$(
+  (data, event) => {
+    updateAuthCookies(data, event.cookie);
 
-  const parsed = z
-    .object({
+    return { status: "success" };
+  },
+  zod$(
+    z.object({
       access_token: z.string(),
       expires_in: z.coerce.number(),
       refresh_token: z.string(),
-    })
-    .safeParse(input);
-
-  if (!parsed.success) {
-    return { status: "error" };
-  }
-
-  updateAuthCookies(parsed.data, event.cookie);
-
-  return { status: "success" };
-});
+    }).shape
+  )
+);
 
 export default component$(() => {
   const navigate = useNavigate();

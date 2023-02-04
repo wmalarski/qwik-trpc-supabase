@@ -6,7 +6,7 @@ import { UpdateCommentForm } from "./UpdateCommentForm/UpdateCommentForm";
 
 type Props = {
   comment: Comment;
-  deleteCommentAction: FormProps<void>["action"];
+  deleteCommentAction: FormProps<unknown>["action"];
   updateCommentAction: FormProps<Comment>["action"];
 };
 

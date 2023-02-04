@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { action$, DocumentHead, loader$, zod$ } from "@builder.io/qwik-city";
+import { z } from "zod";
 import { supabase, updateAuthCookies } from "~/server/auth/auth";
 import { getUserFromEvent } from "~/server/loaders";
 import { getBaseUrl } from "~/utils/getBaseUrl";
@@ -7,32 +8,39 @@ import { paths } from "~/utils/paths";
 import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
 import { PasswordForm } from "./PasswordForm/PasswordForm";
 
-export const signInPassword = action$(async (form, event) => {
-  const email = form.get("email") as string;
-  const password = form.get("password") as string;
+export const signInPassword = action$(
+  async (data, event) => {
+    const result = await supabase.auth.signInWithPassword(data);
 
-  const result = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    if (result.error || !result.data.session) {
+      return { status: "error" };
+    }
 
-  if (result.error || !result.data.session) {
-    return { status: "error" };
-  }
+    updateAuthCookies(result.data.session, event.cookie);
 
-  updateAuthCookies(result.data.session, event.cookie);
+    return { status: "success" };
+  },
+  zod$(
+    z.object({
+      email: z.string().email(),
+      password: z.string(),
+    }).shape
+  )
+);
 
-  return { status: "success" };
-});
-
-export const signInOtp = action$((form) => {
-  const email = form.get("email") as string;
-
-  return supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
-  });
-});
+export const signInOtp = action$(
+  (data) => {
+    return supabase.auth.signInWithOtp({
+      email: data.email,
+      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
+    });
+  },
+  zod$(
+    z.object({
+      email: z.string().email(),
+    }).shape
+  )
+);
 
 export const getData = loader$(async (event) => {
   const user = await getUserFromEvent(event);

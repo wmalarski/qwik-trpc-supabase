@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { action$, DocumentHead, loader$, z, zod$ } from "@builder.io/qwik-city";
 import { supabase } from "~/server/auth/auth";
 import { getUserFromEvent } from "~/server/loaders";
 import { getBaseUrl } from "~/utils/getBaseUrl";
@@ -13,23 +13,27 @@ export const getData = loader$(async (event) => {
   }
 });
 
-export const signUp = action$(async (form) => {
-  const email = form.get("email") as string;
-  const password = form.get("password") as string;
+export const signUp = action$(
+  async (data) => {
+    const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
+    const result = await supabase.auth.signUp({
+      ...data,
+      options: { emailRedirectTo },
+    });
 
-  const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
-  const result = await supabase.auth.signUp({
-    email,
-    options: { emailRedirectTo },
-    password,
-  });
+    if (result.error) {
+      return { status: "error" };
+    }
 
-  if (result.error) {
-    return { status: "error" };
-  }
-
-  return { status: "success" };
-});
+    return { status: "success" };
+  },
+  zod$(
+    z.object({
+      email: z.string().email(),
+      password: z.string(),
+    }).shape
+  )
+);
 
 export default component$(() => {
   getData.use();
