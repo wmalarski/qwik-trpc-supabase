@@ -14,14 +14,11 @@ export const trpcAction = async (
   });
 
   try {
-    const body = form.get("body");
-    const path = form.get("path") as string;
-
     const res = await resolveHTTPResponse({
       createContext: () => createContext(event),
-      path,
+      path: form.path as string,
       req: {
-        body,
+        body: form.body,
         headers,
         method: "POST",
         query: new URLSearchParams(),

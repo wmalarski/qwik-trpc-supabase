@@ -1,11 +1,10 @@
 import { component$, useSignal } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
 import type { Post } from "~/server/db/types";
-import { useTrpcAction } from "~/utils/trpc";
+import { TrpcActionStore, useTrpcAction } from "~/utils/trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
 type Props = {
-  action: FormProps<void>["action"];
+  action: TrpcActionStore;
   post: Post;
 };
 
@@ -29,7 +28,7 @@ export const UpdatePostForm = component$<Props>((props) => {
         <>
           <PostForm
             initialValue={props.post}
-            isLoading={props.action.isPending}
+            isLoading={props.action.isRunning}
             onSubmit$={async ({ content }) => {
               await action.execute({ content, id: props.post.id });
               isOpen.value = false;

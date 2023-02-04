@@ -1,10 +1,9 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
-import { useTrpcAction } from "~/utils/trpc";
+import { TrpcActionStore, useTrpcAction } from "~/utils/trpc";
 
 type Props = {
-  action: FormProps<void>["action"];
+  action: TrpcActionStore;
 };
 
 export const CreatePostForm = component$((props: Props) => {
@@ -13,7 +12,7 @@ export const CreatePostForm = component$((props: Props) => {
   return (
     <div>
       <PostForm
-        isLoading={props.action.isPending}
+        isLoading={props.action.isRunning}
         onSubmit$={({ content }) => {
           action.execute({ content });
         }}

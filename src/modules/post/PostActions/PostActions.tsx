@@ -1,12 +1,12 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
 import type { Post } from "~/server/db/types";
+import { TrpcActionStore } from "~/utils/trpc";
 import { DeletePostForm } from "./DeletePostForm/DeletePostForm";
 import { UpdatePostForm } from "./UpdatePostForm/UpdatePostForm";
 
 type Props = {
-  deletePostAction: FormProps<void>["action"];
-  updatePostAction: FormProps<void>["action"];
+  deletePostAction: TrpcActionStore;
+  updatePostAction: TrpcActionStore;
   post: Post;
 };
 

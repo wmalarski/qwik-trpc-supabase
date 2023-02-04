@@ -1,12 +1,12 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps, useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "~/server/db/types";
 import { paths } from "~/utils/paths";
-import { useTrpcAction } from "~/utils/trpc";
+import { TrpcActionStore, useTrpcAction } from "~/utils/trpc";
 
 type Props = {
   comment: Comment;
-  action: FormProps<void>["action"];
+  action: TrpcActionStore<void>;
 };
 
 export const DeleteCommentForm = component$<Props>((props) => {
@@ -31,7 +31,7 @@ export const DeleteCommentForm = component$<Props>((props) => {
         type="submit"
         class={{
           "btn btn-ghost mt-2": true,
-          loading: props.action.isPending,
+          loading: props.action.isRunning,
         }}
       >
         Remove

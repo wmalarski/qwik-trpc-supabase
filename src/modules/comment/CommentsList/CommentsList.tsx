@@ -1,13 +1,13 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
 import type { Comment } from "~/server/db/types";
+import { TrpcActionStore } from "~/utils/trpc";
 import { CommentsListItem } from "./CommentsListItem/CommentsListItem";
 
 type Props = {
   comments: Comment[];
   count: number;
-  deleteCommentAction: FormProps<void>["action"];
-  updateCommentAction: FormProps<Comment>["action"];
+  deleteCommentAction: TrpcActionStore;
+  updateCommentAction: TrpcActionStore<Comment>;
 };
 
 export const CommentsList = component$<Props>((props) => {

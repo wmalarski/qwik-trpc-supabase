@@ -3,6 +3,7 @@
  * @see https://trpc.io/blog/tinyrpc-client
  */
 import { $, QRL } from "@builder.io/qwik";
+import { ActionStore } from "@builder.io/qwik-city";
 import type {
   AnyMutationProcedure,
   AnyProcedure,
@@ -82,7 +83,7 @@ export const useTrpcAction = (action: ServerActionUtils<any>) => {
         formData.set("body", stringifiedInput);
       }
 
-      await action.execute(formData);
+      await action.run(formData);
 
       const json: TRPCResponse = action.value;
 
@@ -100,3 +101,4 @@ export const useTrpcAction = (action: ServerActionUtils<any>) => {
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
+export type TrpcActionStore<T = any> = ActionStore<T, Record<string, any>>;

@@ -1,11 +1,10 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
 import type { Comment } from "~/server/db/types";
-import { useTrpcAction } from "~/utils/trpc";
+import { TrpcActionStore, useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
 type Props = {
-  action: FormProps<Comment>["action"];
+  action: TrpcActionStore<Comment>;
   parentId: string | null;
   postId: string;
 };
@@ -16,7 +15,7 @@ export const CreateCommentForm = component$<Props>((props) => {
   return (
     <div>
       <CommentForm
-        isLoading={props.action.isPending}
+        isLoading={props.action.isRunning}
         onSubmit$={({ content }) => {
           action.execute({
             content,

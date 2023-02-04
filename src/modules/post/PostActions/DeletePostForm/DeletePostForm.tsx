@@ -1,11 +1,11 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps, useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@builder.io/qwik-city";
 import type { Post } from "~/server/db/types";
 import { paths } from "~/utils/paths";
-import { useTrpcAction } from "~/utils/trpc";
+import { TrpcActionStore, useTrpcAction } from "~/utils/trpc";
 
 type Props = {
-  action: FormProps<void>["action"];
+  action: TrpcActionStore;
   post: Post;
 };
 
@@ -27,7 +27,7 @@ export const DeletePostForm = component$<Props>((props) => {
         type="submit"
         class={{
           "btn btn-ghost btn-sm": true,
-          loading: props.action.isPending,
+          loading: props.action.isRunning,
         }}
       >
         Remove
