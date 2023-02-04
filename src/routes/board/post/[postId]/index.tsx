@@ -18,11 +18,15 @@ export const getComments = loader$(async (event) => {
   });
 });
 
-export const deleteComment = action$(trpcAction);
-export const updateComment = action$(trpcAction);
-export const createComment = action$(trpcAction);
-export const updatePost = action$(trpcAction);
-export const deletePost = action$(trpcAction);
+export const deleteComment = action$((data, event) => trpcAction(data, event));
+
+export const updateComment = action$((data, event) => trpcAction(data, event));
+
+export const createComment = action$((data, event) => trpcAction(data, event));
+
+export const updatePost = action$((data, event) => trpcAction(data, event));
+
+export const deletePost = action$((data, event) => trpcAction(data, event));
 
 export default component$(() => {
   const resource = getData.use();

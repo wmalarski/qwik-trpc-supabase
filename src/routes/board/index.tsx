@@ -11,9 +11,11 @@ export const getData = loader$(async (event) => {
   return result;
 });
 
-export const deletePost = action$(trpcAction);
-export const updatePost = action$(trpcAction);
-export const createPost = action$(trpcAction);
+export const deletePost = action$((data, event) => trpcAction(data, event));
+
+export const updatePost = action$((data, event) => trpcAction(data, event));
+
+export const createPost = action$((data, event) => trpcAction(data, event));
 
 export default component$(() => {
   const resource = getData.use();

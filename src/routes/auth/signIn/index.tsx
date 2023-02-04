@@ -20,12 +20,10 @@ export const signInPassword = action$(
 
     return { status: "success" };
   },
-  zod$(
-    z.object({
-      email: z.string().email(),
-      password: z.string(),
-    }).shape
-  )
+  zod$({
+    email: z.string().email(),
+    password: z.string(),
+  })
 );
 
 export const signInOtp = action$(
@@ -35,11 +33,9 @@ export const signInOtp = action$(
       options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
     });
   },
-  zod$(
-    z.object({
-      email: z.string().email(),
-    }).shape
-  )
+  zod$({
+    email: z.string().email(),
+  })
 );
 
 export const getData = loader$(async (event) => {

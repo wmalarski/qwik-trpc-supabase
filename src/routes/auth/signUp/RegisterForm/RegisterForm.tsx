@@ -19,7 +19,7 @@ export const RegisterForm = component$(() => {
   });
 
   return (
-    <Form class="flex flex-col gap-2" method="post" action={action}>
+    <Form class="flex flex-col gap-2" action={action}>
       <h2 class="text-xl">Sign up with password</h2>
 
       <div class="form-control w-full">

@@ -11,7 +11,7 @@ export const getData = loader$(async (event) => {
   return result;
 });
 
-export const createPost = action$(trpcAction);
+export const createPost = action$((data, event) => trpcAction(data, event));
 
 export default component$(() => {
   const resource = getData.use();

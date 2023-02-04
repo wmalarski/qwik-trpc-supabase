@@ -15,13 +15,11 @@ export const setSession = action$(
 
     return { status: "success" };
   },
-  zod$(
-    z.object({
-      access_token: z.string(),
-      expires_in: z.coerce.number(),
-      refresh_token: z.string(),
-    }).shape
-  )
+  zod$({
+    access_token: z.string(),
+    expires_in: z.coerce.number(),
+    refresh_token: z.string(),
+  })
 );
 
 export default component$(() => {
@@ -45,9 +43,9 @@ export default component$(() => {
       return;
     }
 
-    await action.execute({
+    await action.run({
       access_token,
-      expires_in,
+      expires_in: +expires_in,
       refresh_token,
     });
 

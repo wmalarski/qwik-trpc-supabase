@@ -27,12 +27,10 @@ export const signUp = action$(
 
     return { status: "success" };
   },
-  zod$(
-    z.object({
-      email: z.string().email(),
-      password: z.string(),
-    }).shape
-  )
+  zod$({
+    email: z.string().email(),
+    password: z.string(),
+  })
 );
 
 export default component$(() => {
