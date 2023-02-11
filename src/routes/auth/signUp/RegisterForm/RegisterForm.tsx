@@ -1,5 +1,5 @@
-import { component$, useTask$ } from "@builder.io/qwik";
-import { action$, Form, useNavigate, z, zod$ } from "@builder.io/qwik-city";
+import { component$ } from "@builder.io/qwik";
+import { action$, Form, z, zod$ } from "@builder.io/qwik-city";
 import { supabase } from "~/server/auth/auth";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
@@ -15,8 +15,6 @@ export const signUp = action$(
     if (result.error) {
       return { status: "error" };
     }
-
-    return { status: "success" };
   },
   zod$({
     email: z.string().email(),
@@ -25,19 +23,7 @@ export const signUp = action$(
 );
 
 export const RegisterForm = component$(() => {
-  const navigate = useNavigate();
-
   const action = signUp.use();
-
-  useTask$(({ track }) => {
-    const status = track(() => action.value?.status);
-
-    if (status !== "success") {
-      return;
-    }
-
-    navigate(paths.signIn);
-  });
 
   return (
     <Form class="flex flex-col gap-2" action={action}>

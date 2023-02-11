@@ -7,6 +7,7 @@ import { PasswordForm } from "./PasswordForm/PasswordForm";
 
 export const getData = loader$(async (event) => {
   const user = await getUserFromEvent(event);
+
   if (user) {
     event.redirect(302, paths.index);
   }

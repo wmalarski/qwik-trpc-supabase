@@ -1,5 +1,5 @@
-import { component$, useTask$ } from "@builder.io/qwik";
-import { action$, Form, useNavigate, z, zod$ } from "@builder.io/qwik-city";
+import { component$ } from "@builder.io/qwik";
+import { action$, Form, z, zod$ } from "@builder.io/qwik-city";
 import { supabase, updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
@@ -13,7 +13,7 @@ export const signInPassword = action$(
 
     updateAuthCookies(event, result.data.session);
 
-    return { status: "success" };
+    event.redirect(302, paths.index);
   },
   zod$({
     email: z.string().email(),
@@ -22,19 +22,7 @@ export const signInPassword = action$(
 );
 
 export const PasswordForm = component$(() => {
-  const navigate = useNavigate();
-
   const action = signInPassword.use();
-
-  useTask$(({ track }) => {
-    const status = track(() => action.value?.status);
-
-    if (status !== "success") {
-      return;
-    }
-
-    navigate(paths.index);
-  });
 
   return (
     <Form class="flex flex-col gap-2" action={action}>
