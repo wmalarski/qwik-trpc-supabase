@@ -33,7 +33,7 @@ export const UpdatePostForm = component$<Props>((props) => {
             initialValue={props.post}
             isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.execute({ content, id: props.post.id });
+              await action.run({ content, id: props.post.id });
               isOpen.value = false;
             }}
           />

@@ -20,7 +20,7 @@ export const DeletePostForm = component$<Props>((props) => {
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await action.execute({ id: props.post.id });
+        await action.run({ id: props.post.id });
         navigate(paths.board);
       }}
     >

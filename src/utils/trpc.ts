@@ -32,9 +32,9 @@ type Resolver<TProcedure extends AnyProcedure> = (
 
 type TrpcActionUtils<TProcedure extends AnyProcedure> = Omit<
   ServerActionUtils<any>,
-  "execute"
+  "run"
 > & {
-  execute: QRL<Resolver<TProcedure>>;
+  run: QRL<Resolver<TProcedure>>;
 };
 
 type DecorateProcedure<TProcedure extends AnyProcedure> =
@@ -71,7 +71,7 @@ export const useTrpcAction = (action: ServerActionUtils<any>) => {
   return createRecursiveProxy((opts) => {
     const dotPath = opts.path.join(".");
 
-    const execute = $(async (input: any) => {
+    const run = $(async (input: any) => {
       const formData = new FormData();
       formData.set("path", dotPath);
 
@@ -94,7 +94,7 @@ export const useTrpcAction = (action: ServerActionUtils<any>) => {
       return superjson.parse(JSON.stringify(json.result.data));
     });
 
-    return { ...action, execute };
+    return { ...action, run };
   }, []) as DecoratedProcedureRecord<AppRouter["_def"]["record"]>;
 };
 
