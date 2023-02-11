@@ -9,10 +9,10 @@ type Props = {
   comment: Comment;
 };
 
-export const trpc = action$((data, event) => trpcAction(data, event));
+export const api = action$((data, event) => trpcAction(data, event));
 
 export const DeleteCommentForm = component$<Props>((props) => {
-  const action = useTrpcAction(trpc.use()).comment.delete();
+  const action = useTrpcAction(api).comment.delete();
 
   const navigate = useNavigate();
 

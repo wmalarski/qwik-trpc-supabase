@@ -3,7 +3,7 @@
  * @see https://trpc.io/blog/tinyrpc-client
  */
 import { $, QRL } from "@builder.io/qwik";
-import { ActionStore } from "@builder.io/qwik-city";
+import { Action, ActionStore } from "@builder.io/qwik-city";
 import type {
   AnyMutationProcedure,
   AnyProcedure,
@@ -58,7 +58,9 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
     : never;
 };
 
-export const useTrpcAction = (action: ActionStore<any, any>) => {
+export const useTrpcAction = (action: Action<any, any>) => {
+  const actionStore = action.use();
+
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
       apply(_1, _2, args) {
@@ -88,9 +90,9 @@ export const useTrpcAction = (action: ActionStore<any, any>) => {
         formData.set("body", stringifiedInput);
       }
 
-      await action.run(formData);
+      await actionStore.run(formData);
 
-      const json: TRPCResponse = action.value;
+      const json: TRPCResponse = actionStore.value;
 
       if (json && "error" in json) {
         throw new Error(`Error: ${json.error.message}`);

@@ -4,10 +4,10 @@ import { PostForm } from "~/modules/post/PostForm/PostForm";
 import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 
-export const trpc = action$((data, event) => trpcAction(data, event));
+export const api = action$((data, event) => trpcAction(data, event));
 
 export const CreatePostForm = component$(() => {
-  const action = useTrpcAction(trpc.use()).post.create();
+  const action = useTrpcAction(api).post.create();
 
   return (
     <div>

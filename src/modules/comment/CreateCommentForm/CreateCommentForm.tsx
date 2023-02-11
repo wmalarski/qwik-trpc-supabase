@@ -4,7 +4,7 @@ import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-export const trpc = action$((data, event) => trpcAction(data, event));
+export const api = action$((data, event) => trpcAction(data, event));
 
 type Props = {
   parentId: string | null;
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const CreateCommentForm = component$<Props>((props) => {
-  const action = useTrpcAction(trpc.use()).comment.create();
+  const action = useTrpcAction(api).comment.create();
 
   return (
     <div>

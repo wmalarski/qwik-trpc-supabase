@@ -5,7 +5,7 @@ import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
-export const trpc = action$((data, event) => trpcAction(data, event));
+export const api = action$((data, event) => trpcAction(data, event));
 
 type Props = {
   post: Post;
@@ -14,7 +14,7 @@ type Props = {
 export const UpdatePostForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const action = useTrpcAction(trpc.use()).post.update();
+  const action = useTrpcAction(api).post.update();
 
   return (
     <>

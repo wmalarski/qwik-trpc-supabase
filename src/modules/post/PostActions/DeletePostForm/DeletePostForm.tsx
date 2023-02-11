@@ -5,7 +5,7 @@ import { trpcAction } from "~/server/trpc/action";
 import { paths } from "~/utils/paths";
 import { useTrpcAction } from "~/utils/trpc";
 
-export const trpc = action$((data, event) => trpcAction(data, event));
+export const api = action$((data, event) => trpcAction(data, event));
 
 type Props = {
   post: Post;
@@ -14,7 +14,7 @@ type Props = {
 export const DeletePostForm = component$<Props>((props) => {
   const navigate = useNavigate();
 
-  const action = useTrpcAction(trpc.use()).post.delete();
+  const action = useTrpcAction(api).post.delete();
 
   return (
     <form
