@@ -11,12 +11,12 @@ export const getData = loader$(async (event) => {
   return result;
 });
 
-export const createPost = action$((data, event) => trpcAction(data, event));
+export const trpc = action$((data, event) => trpcAction(data, event));
 
 export default component$(() => {
   const resource = getData.use();
 
-  const action = useTrpcAction(createPost.use()).post.create();
+  const action = useTrpcAction(trpc.use()).post.create();
 
   return (
     <div class="flex flex-col gap-2">

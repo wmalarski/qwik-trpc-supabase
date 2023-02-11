@@ -1,17 +1,20 @@
 import { component$, useSignal } from "@builder.io/qwik";
+import { action$ } from "@builder.io/qwik-city";
 import type { Comment } from "~/server/db/types";
-import { TrpcActionStore, useTrpcAction } from "~/utils/trpc";
+import { trpcAction } from "~/server/trpc/action";
+import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
+
+export const trpc = action$((data, event) => trpcAction(data, event));
 
 type Props = {
   comment: Comment;
-  action: TrpcActionStore<Comment>;
 };
 
 export const UpdateCommentForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const action = useTrpcAction(props.action).comment.update();
+  const action = useTrpcAction(trpc.use()).comment.update();
 
   return (
     <>
@@ -28,16 +31,16 @@ export const UpdateCommentForm = component$<Props>((props) => {
         <>
           <CommentForm
             initialValue={props.comment}
-            isLoading={props.action.isRunning}
+            isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
               await action.execute({ content, id: props.comment.id });
               isOpen.value = false;
             }}
           />
 
-          {props.action.status === 200 ? (
+          {action.status === 200 ? (
             <span>Success</span>
-          ) : typeof props.action.status !== "undefined" ? (
+          ) : typeof action.status !== "undefined" ? (
             <span>Error</span>
           ) : null}
         </>

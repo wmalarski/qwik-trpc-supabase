@@ -1,6 +1,20 @@
 import { component$ } from "@builder.io/qwik";
-import { Form } from "@builder.io/qwik-city";
-import { signInOtp } from "..";
+import { action$, Form, z, zod$ } from "@builder.io/qwik-city";
+import { supabase } from "~/server/auth/auth";
+import { getBaseUrl } from "~/utils/getBaseUrl";
+import { paths } from "~/utils/paths";
+
+export const signInOtp = action$(
+  (data) => {
+    return supabase.auth.signInWithOtp({
+      email: data.email,
+      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
+    });
+  },
+  zod$({
+    email: z.string().email(),
+  })
+);
 
 export const MagicLinkForm = component$(() => {
   const action = signInOtp.use();

@@ -1,7 +1,28 @@
 import { component$, useTask$ } from "@builder.io/qwik";
-import { Form, useNavigate } from "@builder.io/qwik-city";
+import { action$, Form, useNavigate, z, zod$ } from "@builder.io/qwik-city";
+import { supabase } from "~/server/auth/auth";
+import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
-import { signUp } from "..";
+
+export const signUp = action$(
+  async (data) => {
+    const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
+    const result = await supabase.auth.signUp({
+      ...data,
+      options: { emailRedirectTo },
+    });
+
+    if (result.error) {
+      return { status: "error" };
+    }
+
+    return { status: "success" };
+  },
+  zod$({
+    email: z.string().email(),
+    password: z.string(),
+  })
+);
 
 export const RegisterForm = component$(() => {
   const navigate = useNavigate();

@@ -1,7 +1,25 @@
 import { component$, useTask$ } from "@builder.io/qwik";
-import { Form, useNavigate } from "@builder.io/qwik-city";
+import { action$, Form, useNavigate, z, zod$ } from "@builder.io/qwik-city";
+import { supabase, updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
-import { signInPassword } from "..";
+
+export const signInPassword = action$(
+  async (data, event) => {
+    const result = await supabase.auth.signInWithPassword(data);
+
+    if (result.error || !result.data.session) {
+      return { status: "error" };
+    }
+
+    updateAuthCookies(result.data.session, event.cookie);
+
+    return { status: "success" };
+  },
+  zod$({
+    email: z.string().email(),
+    password: z.string(),
+  })
+);
 
 export const PasswordForm = component$(() => {
   const navigate = useNavigate();

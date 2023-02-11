@@ -1,17 +1,20 @@
 import { component$, useSignal } from "@builder.io/qwik";
+import { action$ } from "@builder.io/qwik-city";
 import type { Post } from "~/server/db/types";
-import { TrpcActionStore, useTrpcAction } from "~/utils/trpc";
+import { trpcAction } from "~/server/trpc/action";
+import { useTrpcAction } from "~/utils/trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
+export const trpc = action$((data, event) => trpcAction(data, event));
+
 type Props = {
-  action: TrpcActionStore;
   post: Post;
 };
 
 export const UpdatePostForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const action = useTrpcAction(props.action).post.update();
+  const action = useTrpcAction(trpc.use()).post.update();
 
   return (
     <>
@@ -28,16 +31,16 @@ export const UpdatePostForm = component$<Props>((props) => {
         <>
           <PostForm
             initialValue={props.post}
-            isLoading={props.action.isRunning}
+            isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
               await action.execute({ content, id: props.post.id });
               isOpen.value = false;
             }}
           />
 
-          {props.action.status === 200 ? (
+          {action.status === 200 ? (
             <span>Success</span>
-          ) : typeof props.action.status !== "undefined" ? (
+          ) : typeof action.status !== "undefined" ? (
             <span>Error</span>
           ) : null}
         </>
