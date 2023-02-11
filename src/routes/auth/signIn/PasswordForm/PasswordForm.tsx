@@ -8,7 +8,10 @@ export const signInPassword = action$(
     const result = await supabase.auth.signInWithPassword(data);
 
     if (result.error || !result.data.session) {
-      return { status: "error" };
+      const status = result.error?.status || 400;
+      return event.fail(status, {
+        formErrors: [result.error?.message],
+      });
     }
 
     updateAuthCookies(event, result.data.session);
@@ -39,6 +42,9 @@ export const PasswordForm = component$(() => {
           name="email"
           type="email"
         />
+        <span class="label text-red-500">
+          {action.value?.fieldErrors?.email?.[0]}
+        </span>
       </div>
 
       <div class="form-control w-full">
@@ -51,12 +57,15 @@ export const PasswordForm = component$(() => {
           name="password"
           type="password"
         />
+        <span class="label text-red-500">
+          {action.value?.fieldErrors?.password?.[0]}
+        </span>
       </div>
 
+      <span class="label text-red-500">{action.value?.formErrors?.[0]}</span>
       <button class="btn btn-primary mt-2" type="submit">
         Sign In
       </button>
-      <pre>{JSON.stringify(action.value, null, 2)}</pre>
     </Form>
   );
 });

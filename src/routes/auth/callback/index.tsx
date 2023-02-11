@@ -12,8 +12,6 @@ import { paths } from "~/utils/paths";
 export const setSession = action$(
   (data, event) => {
     updateAuthCookies(event, data);
-
-    return { status: "success" };
   },
   zod$({
     access_token: z.string(),

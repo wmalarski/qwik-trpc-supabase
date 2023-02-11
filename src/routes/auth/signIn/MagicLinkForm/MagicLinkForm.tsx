@@ -34,16 +34,15 @@ export const MagicLinkForm = component$(() => {
           name="email"
           type="email"
         />
+        <span class="label text-red-500">
+          {action.value?.fieldErrors?.email?.[0]}
+        </span>
       </div>
 
+      <span class="label text-red-500">{action.value?.formErrors?.[0]}</span>
       <button class="btn btn-primary mt-2" type="submit">
         Send
       </button>
-
-      {action.status === 200 ? <span>Success</span> : null}
-      {action.status !== 200 ? (
-        <pre>{JSON.stringify(action.value, null, 2)}</pre>
-      ) : null}
     </Form>
   );
 });
