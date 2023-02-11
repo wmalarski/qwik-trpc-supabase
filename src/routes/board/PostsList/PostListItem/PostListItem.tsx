@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
+import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import type { Post } from "~/server/db/types";
 import { paths } from "~/utils/paths";
 
 type Props = {

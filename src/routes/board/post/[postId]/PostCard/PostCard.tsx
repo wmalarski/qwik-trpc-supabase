@@ -1,8 +1,8 @@
 import { component$, PropFunction } from "@builder.io/qwik";
+import type { Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import type { Post } from "~/server/db/types";
 import { paths } from "~/utils/paths";
 import { getComments } from "..";
 

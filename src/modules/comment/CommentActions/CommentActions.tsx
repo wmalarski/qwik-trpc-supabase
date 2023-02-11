@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import type { Comment } from "~/server/db/types";
+import type { Comment } from "@prisma/client";
 import { DeleteCommentForm } from "./DeleteCommentForm/DeleteCommentForm";
 import { UpdateCommentForm } from "./UpdateCommentForm/UpdateCommentForm";
 

@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import type { Post } from "~/server/db/types";
+import type { Post } from "@prisma/client";
 import { DeletePostForm } from "./DeletePostForm/DeletePostForm";
 import { UpdatePostForm } from "./UpdatePostForm/UpdatePostForm";
 

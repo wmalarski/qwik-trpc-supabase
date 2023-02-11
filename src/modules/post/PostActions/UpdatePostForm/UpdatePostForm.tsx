@@ -1,6 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { action$ } from "@builder.io/qwik-city";
-import type { Post } from "~/server/db/types";
+import type { Post } from "@prisma/client";
 import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 import { PostForm } from "../../PostForm/PostForm";

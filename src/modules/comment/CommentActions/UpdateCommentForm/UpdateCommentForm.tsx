@@ -1,6 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { action$ } from "@builder.io/qwik-city";
-import type { Comment } from "~/server/db/types";
+import type { Comment } from "@prisma/client";
 import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";

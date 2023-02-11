@@ -1,8 +1,8 @@
 import { component$ } from "@builder.io/qwik";
+import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
-import type { Comment } from "~/server/db/types";
 import { paths } from "~/utils/paths";
 import { getComments } from "..";
 

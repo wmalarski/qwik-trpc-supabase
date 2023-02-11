@@ -1,11 +1,5 @@
-import type { Comment as PrismaComment } from "@prisma/client";
 import { z } from "zod";
-import type { Comment } from "../../db/types";
 import { protectedProcedure, t } from "../trpc";
-
-const stringifyCommentDate = (comment: PrismaComment): Comment => {
-  return { ...comment, createdAt: comment.createdAt.toISOString() };
-};
 
 export const commentRouter = t.router({
   create: protectedProcedure
@@ -16,8 +10,8 @@ export const commentRouter = t.router({
         postId: z.string().cuid(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const comment = await ctx.prisma.comment.create({
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.comment.create({
         data: {
           content: input.content,
           createdById: ctx.user.id,
@@ -25,7 +19,6 @@ export const commentRouter = t.router({
           postId: input.postId,
         },
       });
-      return stringifyCommentDate(comment);
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.string().cuid() }))
@@ -37,11 +30,9 @@ export const commentRouter = t.router({
   get: protectedProcedure
     .input(z.object({ id: z.string().cuid() }))
     .query(({ input, ctx }) => {
-      return ctx.prisma.comment
-        .findFirstOrThrow({
-          where: { id: input.id },
-        })
-        .then(stringifyCommentDate);
+      return ctx.prisma.comment.findFirstOrThrow({
+        where: { id: input.id },
+      });
     }),
   listForParent: protectedProcedure
     .input(
@@ -53,14 +44,12 @@ export const commentRouter = t.router({
     )
     .query(async ({ input, ctx }) => {
       const [comments, count] = await Promise.all([
-        ctx.prisma.comment
-          .findMany({
-            orderBy: { createdAt: "desc" },
-            skip: input.skip,
-            take: input.take,
-            where: { parentId: input.parentId },
-          })
-          .then((comments) => comments.map(stringifyCommentDate)),
+        ctx.prisma.comment.findMany({
+          orderBy: { createdAt: "desc" },
+          skip: input.skip,
+          take: input.take,
+          where: { parentId: input.parentId },
+        }),
         ctx.prisma.comment.count({
           where: { parentId: input.parentId },
         }),
@@ -77,14 +66,12 @@ export const commentRouter = t.router({
     )
     .query(async ({ input, ctx }) => {
       const [comments, count] = await Promise.all([
-        ctx.prisma.comment
-          .findMany({
-            orderBy: { createdAt: "desc" },
-            skip: input.skip,
-            take: input.take,
-            where: { parentId: null, postId: input.postId },
-          })
-          .then((comments) => comments.map(stringifyCommentDate)),
+        ctx.prisma.comment.findMany({
+          orderBy: { createdAt: "desc" },
+          skip: input.skip,
+          take: input.take,
+          where: { parentId: null, postId: input.postId },
+        }),
         ctx.prisma.comment.count({
           where: { parentId: null, postId: input.postId },
         }),
