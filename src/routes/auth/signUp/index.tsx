@@ -1,8 +1,6 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
-import { supabase } from "~/server/auth/auth";
+import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getUserFromEvent } from "~/server/loaders";
-import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 import { RegisterForm } from "./RegisterForm/RegisterForm";
 
@@ -11,24 +9,6 @@ export const getData = loader$(async (event) => {
   if (user) {
     event.redirect(302, paths.index);
   }
-});
-
-export const signUp = action$(async (form) => {
-  const email = form.get("email") as string;
-  const password = form.get("password") as string;
-
-  const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
-  const result = await supabase.auth.signUp({
-    email,
-    options: { emailRedirectTo },
-    password,
-  });
-
-  if (result.error) {
-    return { status: "error" };
-  }
-
-  return { status: "success" };
 });
 
 export default component$(() => {

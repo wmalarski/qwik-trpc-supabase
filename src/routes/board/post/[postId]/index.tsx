@@ -1,7 +1,6 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
-import { trpcAction } from "~/server/trpc/action";
 import { PostCard } from "./PostCard/PostCard";
 
 export const getData = loader$(async (event) => {
@@ -17,12 +16,6 @@ export const getComments = loader$(async (event) => {
     take: 10,
   });
 });
-
-export const deleteComment = action$(trpcAction);
-export const updateComment = action$(trpcAction);
-export const createComment = action$(trpcAction);
-export const updatePost = action$(trpcAction);
-export const deletePost = action$(trpcAction);
 
 export default component$(() => {
   const resource = getData.use();

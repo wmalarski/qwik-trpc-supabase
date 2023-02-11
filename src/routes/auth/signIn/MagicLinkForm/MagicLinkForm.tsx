@@ -1,6 +1,20 @@
 import { component$ } from "@builder.io/qwik";
-import { Form } from "@builder.io/qwik-city";
-import { signInOtp } from "..";
+import { action$, Form, z, zod$ } from "@builder.io/qwik-city";
+import { supabase } from "~/server/auth/auth";
+import { getBaseUrl } from "~/utils/getBaseUrl";
+import { paths } from "~/utils/paths";
+
+export const signInOtp = action$(
+  (data) => {
+    return supabase.auth.signInWithOtp({
+      email: data.email,
+      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
+    });
+  },
+  zod$({
+    email: z.string().email(),
+  })
+);
 
 export const MagicLinkForm = component$(() => {
   const action = signInOtp.use();
@@ -20,16 +34,15 @@ export const MagicLinkForm = component$(() => {
           name="email"
           type="email"
         />
+        <span class="label text-red-500">
+          {action.value?.fieldErrors?.email?.[0]}
+        </span>
       </div>
 
+      <span class="label text-red-500">{action.value?.formErrors?.[0]}</span>
       <button class="btn btn-primary mt-2" type="submit">
         Send
       </button>
-
-      {action.status === 200 ? <span>Success</span> : null}
-      {action.status !== 200 ? (
-        <pre>{JSON.stringify(action.value, null, 2)}</pre>
-      ) : null}
     </Form>
   );
 });

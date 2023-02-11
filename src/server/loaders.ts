@@ -1,12 +1,10 @@
 import type { User } from "@supabase/supabase-js";
 import { prisma } from "~/server/db/client";
 import { appRouter } from "~/server/trpc/router";
-import type { RequestEventLoader } from "~/utils/types";
 import { getUserByCookie, supabase } from "./auth/auth";
+import type { ServerEvent } from "./types";
 
-export const getUserFromEvent = (
-  event: RequestEventLoader
-): Promise<User | null> => {
+export const getUserFromEvent = (event: ServerEvent): Promise<User | null> => {
   const cachedPromise = event.sharedMap.get("user");
   if (cachedPromise) {
     return cachedPromise;
@@ -18,7 +16,7 @@ export const getUserFromEvent = (
 };
 
 export const getTrpcFromEvent = async (
-  event: RequestEventLoader
+  event: ServerEvent
 ): Promise<ReturnType<typeof appRouter.createCaller>> => {
   const cachedTrpc = event.sharedMap.get("trpc");
   if (cachedTrpc) {

@@ -1,18 +1,20 @@
 import { component$, useSignal } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
-import type { Comment } from "~/server/db/types";
+import { action$ } from "@builder.io/qwik-city";
+import type { Comment } from "@prisma/client";
+import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
+export const api = action$((data, event) => trpcAction(data, event));
+
 type Props = {
   comment: Comment;
-  action: FormProps<Comment>["action"];
 };
 
 export const UpdateCommentForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const action = useTrpcAction(props.action).comment.update();
+  const [action, run] = useTrpcAction(api).comment.update();
 
   return (
     <>
@@ -29,16 +31,16 @@ export const UpdateCommentForm = component$<Props>((props) => {
         <>
           <CommentForm
             initialValue={props.comment}
-            isLoading={props.action.isPending}
+            isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.execute({ content, id: props.comment.id });
+              await run({ content, id: props.comment.id });
               isOpen.value = false;
             }}
           />
 
-          {props.action.status === 200 ? (
+          {action.status === 200 ? (
             <span>Success</span>
-          ) : typeof props.action.status !== "undefined" ? (
+          ) : typeof action.status !== "undefined" ? (
             <span>Error</span>
           ) : null}
         </>

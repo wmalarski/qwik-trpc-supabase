@@ -1,24 +1,25 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
-import type { Comment } from "~/server/db/types";
+import { action$ } from "@builder.io/qwik-city";
+import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
+export const api = action$((data, event) => trpcAction(data, event));
+
 type Props = {
-  action: FormProps<Comment>["action"];
   parentId: string | null;
   postId: string;
 };
 
 export const CreateCommentForm = component$<Props>((props) => {
-  const action = useTrpcAction(props.action).comment.create();
+  const [action, run] = useTrpcAction(api).comment.create();
 
   return (
     <div>
       <CommentForm
-        isLoading={props.action.isPending}
+        isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.execute({
+          run({
             content,
             parentId: props.parentId,
             postId: props.postId,
@@ -26,9 +27,9 @@ export const CreateCommentForm = component$<Props>((props) => {
         }}
       />
 
-      {props.action.status === 200 ? (
+      {action.status === 200 ? (
         <span>Success</span>
-      ) : typeof props.action.status !== "undefined" ? (
+      ) : typeof action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </div>

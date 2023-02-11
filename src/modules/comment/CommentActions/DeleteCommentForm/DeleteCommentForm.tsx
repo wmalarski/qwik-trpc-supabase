@@ -1,16 +1,18 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps, useNavigate } from "@builder.io/qwik-city";
-import type { Comment } from "~/server/db/types";
+import { action$, useNavigate } from "@builder.io/qwik-city";
+import type { Comment } from "@prisma/client";
+import { trpcAction } from "~/server/trpc/action";
 import { paths } from "~/utils/paths";
 import { useTrpcAction } from "~/utils/trpc";
 
 type Props = {
   comment: Comment;
-  action: FormProps<void>["action"];
 };
 
+export const api = action$((data, event) => trpcAction(data, event));
+
 export const DeleteCommentForm = component$<Props>((props) => {
-  const action = useTrpcAction(props.action).comment.delete();
+  const [action, run] = useTrpcAction(api).comment.delete();
 
   const navigate = useNavigate();
 
@@ -18,7 +20,7 @@ export const DeleteCommentForm = component$<Props>((props) => {
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await action.execute({ id: props.comment.id });
+        await run({ id: props.comment.id });
         navigate(
           props.comment.parentId
             ? paths.comment(props.comment.parentId)
@@ -31,15 +33,15 @@ export const DeleteCommentForm = component$<Props>((props) => {
         type="submit"
         class={{
           "btn btn-ghost mt-2": true,
-          loading: props.action.isPending,
+          loading: action.isRunning,
         }}
       >
         Remove
       </button>
 
-      {props.action.status === 200 ? (
+      {action.status === 200 ? (
         <span>Success</span>
-      ) : typeof props.action.status !== "undefined" ? (
+      ) : typeof action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </form>

@@ -1,28 +1,24 @@
 import { $, component$, useClientEffect$ } from "@builder.io/qwik";
-import { action$, DocumentHead, useNavigate } from "@builder.io/qwik-city";
-import { z } from "zod";
+import {
+  action$,
+  DocumentHead,
+  useNavigate,
+  z,
+  zod$,
+} from "@builder.io/qwik-city";
 import { updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const setSession = action$((form, event) => {
-  const input = Object.fromEntries(form.entries());
-
-  const parsed = z
-    .object({
-      access_token: z.string(),
-      expires_in: z.coerce.number(),
-      refresh_token: z.string(),
-    })
-    .safeParse(input);
-
-  if (!parsed.success) {
-    return { status: "error" };
-  }
-
-  updateAuthCookies(parsed.data, event.cookie);
-
-  return { status: "success" };
-});
+export const setSession = action$(
+  (data, event) => {
+    updateAuthCookies(event, data);
+  },
+  zod$({
+    access_token: z.string(),
+    expires_in: z.coerce.number(),
+    refresh_token: z.string(),
+  })
+);
 
 export default component$(() => {
   const navigate = useNavigate();
@@ -45,9 +41,9 @@ export default component$(() => {
       return;
     }
 
-    await action.execute({
+    await action.run({
       access_token,
-      expires_in,
+      expires_in: +expires_in,
       refresh_token,
     });
 

@@ -3,6 +3,7 @@
  * @see https://trpc.io/blog/tinyrpc-client
  */
 import { $, QRL } from "@builder.io/qwik";
+import { Action, ActionStore } from "@builder.io/qwik-city";
 import type {
   AnyMutationProcedure,
   AnyProcedure,
@@ -13,11 +14,12 @@ import type {
   inferRouterInputs,
   inferRouterOutputs,
   ProcedureRouterRecord,
+  TRPCError,
 } from "@trpc/server";
-import { TRPCResponse } from "@trpc/server/rpc";
-import superjson from "superjson";
 import type { AppRouter } from "~/server/trpc/router";
-import type { ServerActionUtils } from "./types";
+
+export type RouterInput = inferRouterInputs<AppRouter>;
+export type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -26,22 +28,33 @@ type ProxyCallbackOptions = {
 
 type ProxyCallback = (opts: ProxyCallbackOptions) => unknown;
 
+type TrpcActionResultOptional<TProcedure extends AnyProcedure> =
+  | {
+      failed: false;
+      data: inferProcedureOutput<TProcedure>;
+    }
+  | {
+      failed: true;
+      error: TRPCError[];
+    };
+
 type Resolver<TProcedure extends AnyProcedure> = (
   input: inferProcedureInput<TProcedure>
-) => Promise<inferProcedureOutput<TProcedure>>;
+) => Promise<TrpcActionResultOptional<TProcedure>>;
 
-type TrpcActionUtils<TProcedure extends AnyProcedure> = Omit<
-  ServerActionUtils<any>,
-  "execute"
-> & {
-  execute: QRL<Resolver<TProcedure>>;
-};
+type UseTrpcActionResult<TProcedure extends AnyProcedure> = [
+  ActionStore<
+    TrpcActionResultOptional<TProcedure>,
+    inferProcedureInput<TProcedure>
+  >,
+  QRL<Resolver<TProcedure>>
+];
 
 type DecorateProcedure<TProcedure extends AnyProcedure> =
   TProcedure extends AnyQueryProcedure
-    ? () => TrpcActionUtils<TProcedure>
+    ? () => UseTrpcActionResult<TProcedure>
     : TProcedure extends AnyMutationProcedure
-    ? () => TrpcActionUtils<TProcedure>
+    ? () => UseTrpcActionResult<TProcedure>
     : never;
 
 type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
@@ -52,7 +65,8 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
     : never;
 };
 
-export const useTrpcAction = (action: ServerActionUtils<any>) => {
+export const useTrpcAction = (action: Action<any, any>) => {
+  const actionStore = action.use();
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
       apply(_1, _2, args) {
@@ -71,32 +85,27 @@ export const useTrpcAction = (action: ServerActionUtils<any>) => {
   return createRecursiveProxy((opts) => {
     const dotPath = opts.path.join(".");
 
-    const execute = $(async (input: any) => {
+    const run = $(async (input: any) => {
       const formData = new FormData();
       formData.set("path", dotPath);
 
-      const stringifiedInput =
-        input !== undefined && JSON.stringify({ json: input });
+      const stringifiedInput = input !== undefined && JSON.stringify(input);
 
       if (stringifiedInput !== false) {
         formData.set("body", stringifiedInput);
       }
 
-      await action.execute(formData);
+      await actionStore.run(formData);
 
-      const json: TRPCResponse = action.value;
+      const value = actionStore.value;
 
-      if (json && "error" in json) {
-        throw new Error(`Error: ${json.error.message}`);
+      if (value.failed) {
+        return value;
       }
 
-      // TODO find better way to parse it
-      return superjson.parse(JSON.stringify(json.result.data));
+      return { data: value };
     });
 
-    return { ...action, execute };
+    return [actionStore, run];
   }, []) as DecoratedProcedureRecord<AppRouter["_def"]["record"]>;
 };
-
-export type RouterInput = inferRouterInputs<AppRouter>;
-export type RouterOutput = inferRouterOutputs<AppRouter>;

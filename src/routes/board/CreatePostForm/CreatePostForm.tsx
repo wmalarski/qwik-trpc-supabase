@@ -1,26 +1,26 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
+import { action$ } from "@builder.io/qwik-city";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
+import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 
-type Props = {
-  action: FormProps<void>["action"];
-};
+export const api = action$((data, event) => trpcAction(data, event));
 
-export const CreatePostForm = component$((props: Props) => {
-  const action = useTrpcAction(props.action).post.create();
+export const CreatePostForm = component$(() => {
+  const [action, run] = useTrpcAction(api).post.create();
 
   return (
     <div>
       <PostForm
-        isLoading={props.action.isPending}
+        isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.execute({ content });
+          run({ content });
         }}
       />
-      {props.action.status === 200 ? (
+      <pre>{JSON.stringify(action.value, null, 2)}</pre>
+      {action.status === 200 ? (
         <span>Success</span>
-      ) : typeof props.action.status !== "undefined" ? (
+      ) : typeof action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </div>

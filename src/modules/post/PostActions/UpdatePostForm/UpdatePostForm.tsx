@@ -1,18 +1,20 @@
 import { component$, useSignal } from "@builder.io/qwik";
-import { FormProps } from "@builder.io/qwik-city";
-import type { Post } from "~/server/db/types";
+import { action$ } from "@builder.io/qwik-city";
+import type { Post } from "@prisma/client";
+import { trpcAction } from "~/server/trpc/action";
 import { useTrpcAction } from "~/utils/trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
+export const api = action$((data, event) => trpcAction(data, event));
+
 type Props = {
-  action: FormProps<void>["action"];
   post: Post;
 };
 
 export const UpdatePostForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const action = useTrpcAction(props.action).post.update();
+  const [action, run] = useTrpcAction(api).post.update();
 
   return (
     <>
@@ -29,16 +31,16 @@ export const UpdatePostForm = component$<Props>((props) => {
         <>
           <PostForm
             initialValue={props.post}
-            isLoading={props.action.isPending}
+            isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.execute({ content, id: props.post.id });
+              await run({ content, id: props.post.id });
               isOpen.value = false;
             }}
           />
 
-          {props.action.status === 200 ? (
+          {action.status === 200 ? (
             <span>Success</span>
-          ) : typeof props.action.status !== "undefined" ? (
+          ) : typeof action.status !== "undefined" ? (
             <span>Error</span>
           ) : null}
         </>

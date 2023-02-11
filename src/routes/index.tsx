@@ -11,7 +11,7 @@ export default component$(() => {
 
   return (
     <div class="flex flex-col">
-      {user ? <ProtectedHeader /> : <PublicHeader />}
+      {user.value ? <ProtectedHeader /> : <PublicHeader />}
       <section class="border-b-8 border-solid border-primary p-5">
         <h1>
           Welcome to Qwik <span>⚡️</span>

@@ -1,24 +1,26 @@
 import { component$ } from "@builder.io/qwik";
-import { FormProps, useNavigate } from "@builder.io/qwik-city";
-import type { Post } from "~/server/db/types";
+import { action$, useNavigate } from "@builder.io/qwik-city";
+import type { Post } from "@prisma/client";
+import { trpcAction } from "~/server/trpc/action";
 import { paths } from "~/utils/paths";
 import { useTrpcAction } from "~/utils/trpc";
 
+export const api = action$((data, event) => trpcAction(data, event));
+
 type Props = {
-  action: FormProps<void>["action"];
   post: Post;
 };
 
 export const DeletePostForm = component$<Props>((props) => {
   const navigate = useNavigate();
 
-  const action = useTrpcAction(props.action).post.delete();
+  const [action, run] = useTrpcAction(api).post.delete();
 
   return (
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await action.execute({ id: props.post.id });
+        await run({ id: props.post.id });
         navigate(paths.board);
       }}
     >
@@ -27,15 +29,15 @@ export const DeletePostForm = component$<Props>((props) => {
         type="submit"
         class={{
           "btn btn-ghost btn-sm": true,
-          loading: props.action.isPending,
+          loading: action.isRunning,
         }}
       >
         Remove
       </button>
 
-      {props.action.status === 200 ? (
+      {action.status === 200 ? (
         <span>Success</span>
-      ) : typeof props.action.status !== "undefined" ? (
+      ) : typeof action.status !== "undefined" ? (
         <span>Error</span>
       ) : null}
     </form>
