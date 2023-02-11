@@ -1,6 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, DocumentHead, loader$, zod$ } from "@builder.io/qwik-city";
-import { z } from "zod";
+import { action$, DocumentHead, loader$, z, zod$ } from "@builder.io/qwik-city";
 import { supabase, updateAuthCookies } from "~/server/auth/auth";
 import { getUserFromEvent } from "~/server/loaders";
 import { getBaseUrl } from "~/utils/getBaseUrl";

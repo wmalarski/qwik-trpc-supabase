@@ -3,9 +3,9 @@ import {
   action$,
   DocumentHead,
   useNavigate,
+  z,
   zod$,
 } from "@builder.io/qwik-city";
-import { z } from "zod";
 import { updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
