@@ -1,7 +1,6 @@
-import type { Cookie, RequestEvent } from "@builder.io/qwik-city";
 import { createClient, Session } from "@supabase/supabase-js";
-import type { RequestEventLoader } from "~/utils/types";
 import { serverEnv } from "../serverEnv";
+import type { ServerEvent } from "../types";
 
 export const supabase = createClient(
   serverEnv.VITE_SUPABASE_URL,
@@ -12,8 +11,8 @@ const accessTokenCookieName = "sb-access-token";
 const refreshTokenCookieName = "sb-refresh-token";
 
 export const updateAuthCookies = (
-  session: Pick<Session, "refresh_token" | "expires_in" | "access_token">,
-  cookie: Cookie
+  event: ServerEvent,
+  session: Pick<Session, "refresh_token" | "expires_in" | "access_token">
 ) => {
   const options = {
     httpOnly: true,
@@ -22,18 +21,16 @@ export const updateAuthCookies = (
     sameSite: "lax",
   } as const;
 
-  cookie.set(accessTokenCookieName, session.access_token, options);
-  cookie.set(refreshTokenCookieName, session.refresh_token, options);
+  event.cookie.set(accessTokenCookieName, session.access_token, options);
+  event.cookie.set(refreshTokenCookieName, session.refresh_token, options);
 };
 
-export const removeAuthCookies = (cookie: Cookie) => {
-  cookie.delete(accessTokenCookieName);
-  cookie.delete(refreshTokenCookieName);
+export const removeAuthCookies = (event: ServerEvent) => {
+  event.cookie.delete(accessTokenCookieName);
+  event.cookie.delete(refreshTokenCookieName);
 };
 
-export const getUserByCookie = async (
-  event: RequestEventLoader | RequestEvent
-) => {
+export const getUserByCookie = async (event: ServerEvent) => {
   const accessToken = event.cookie.get(accessTokenCookieName)?.value;
   const refreshToken = event.cookie.get(refreshTokenCookieName)?.value;
 
@@ -55,11 +52,11 @@ export const getUserByCookie = async (
   });
 
   if (!refreshResponse.data.session) {
-    removeAuthCookies(event.cookie);
+    removeAuthCookies(event);
     return null;
   }
 
   const session = refreshResponse.data.session;
-  updateAuthCookies(session, event.cookie);
+  updateAuthCookies(event, session);
   return session.user;
 };

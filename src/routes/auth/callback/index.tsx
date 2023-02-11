@@ -11,7 +11,7 @@ import { paths } from "~/utils/paths";
 
 export const setSession = action$(
   (data, event) => {
-    updateAuthCookies(data, event.cookie);
+    updateAuthCookies(event, data);
 
     return { status: "success" };
   },

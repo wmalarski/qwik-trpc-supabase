@@ -4,7 +4,7 @@ import { removeAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
 export const onGet = (event: RequestEvent) => {
-  removeAuthCookies(event.cookie);
+  removeAuthCookies(event);
 
   event.redirect(302, paths.index);
 };

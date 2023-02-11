@@ -3,6 +3,7 @@
  * @see https://trpc.io/blog/tinyrpc-client
  */
 import { $, QRL } from "@builder.io/qwik";
+import { ActionStore } from "@builder.io/qwik-city";
 import type {
   AnyMutationProcedure,
   AnyProcedure,
@@ -17,7 +18,9 @@ import type {
 import { TRPCResponse } from "@trpc/server/rpc";
 import superjson from "superjson";
 import type { AppRouter } from "~/server/trpc/router";
-import type { ServerActionUtils } from "./types";
+
+export type RouterInput = inferRouterInputs<AppRouter>;
+export type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -31,7 +34,10 @@ type Resolver<TProcedure extends AnyProcedure> = (
 ) => Promise<inferProcedureOutput<TProcedure>>;
 
 type TrpcActionUtils<TProcedure extends AnyProcedure> = Omit<
-  ServerActionUtils<any>,
+  ActionStore<
+    inferProcedureInput<TProcedure>,
+    inferProcedureOutput<TProcedure>
+  >,
   "run"
 > & {
   run: QRL<Resolver<TProcedure>>;
@@ -52,7 +58,7 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
     : never;
 };
 
-export const useTrpcAction = (action: ServerActionUtils<any>) => {
+export const useTrpcAction = (action: ActionStore<any, any>) => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
       apply(_1, _2, args) {
@@ -97,6 +103,3 @@ export const useTrpcAction = (action: ServerActionUtils<any>) => {
     return { ...action, run };
   }, []) as DecoratedProcedureRecord<AppRouter["_def"]["record"]>;
 };
-
-export type RouterInput = inferRouterInputs<AppRouter>;
-export type RouterOutput = inferRouterOutputs<AppRouter>;

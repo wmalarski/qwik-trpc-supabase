@@ -1,13 +1,10 @@
 import { resolveHTTPResponse } from "@trpc/server/http";
 import type { JSONObject } from "superjson/dist/types";
-import type { RequestEventLoader } from "~/utils/types";
+import type { ServerEvent } from "../types";
 import { createContext } from "./context";
 import { appRouter } from "./router/index";
 
-export const trpcAction = async (
-  form: JSONObject,
-  event: RequestEventLoader
-) => {
+export const trpcAction = async (form: JSONObject, event: ServerEvent) => {
   const headers: Record<string, string> = {};
   event.request.headers.forEach((value, key) => {
     headers[key] = value;

@@ -11,7 +11,7 @@ export const signInPassword = action$(
       return { status: "error" };
     }
 
-    updateAuthCookies(result.data.session, event.cookie);
+    updateAuthCookies(event, result.data.session);
 
     return { status: "success" };
   },
