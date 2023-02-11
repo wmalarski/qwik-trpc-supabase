@@ -63,7 +63,6 @@
     "@trpc/server": "10.11.0",
     "cookie": "^0.5.0",
     "daisyui": "^2.50.0",
-    "superjson": "^1.12.2",
     "undici": "^5.18.0",
     "zod": "^3.20.6"
   }

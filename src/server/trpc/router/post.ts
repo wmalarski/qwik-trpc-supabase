@@ -3,7 +3,7 @@ import { protectedProcedure, t } from "../trpc";
 
 export const postRouter = t.router({
   create: protectedProcedure
-    .input(z.object({ content: z.string() }))
+    .input(z.object({ content: z.string().min(2) }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.post.create({
         data: { content: input.content, createdById: ctx.user.id },

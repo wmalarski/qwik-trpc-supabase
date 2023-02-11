@@ -14,7 +14,7 @@ type Props = {
 export const UpdateCommentForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const action = useTrpcAction(api).comment.update();
+  const [action, run] = useTrpcAction(api).comment.update();
 
   return (
     <>
@@ -33,7 +33,7 @@ export const UpdateCommentForm = component$<Props>((props) => {
             initialValue={props.comment}
             isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.run({ content, id: props.comment.id });
+              await run({ content, id: props.comment.id });
               isOpen.value = false;
             }}
           />

@@ -14,13 +14,13 @@ type Props = {
 export const DeletePostForm = component$<Props>((props) => {
   const navigate = useNavigate();
 
-  const action = useTrpcAction(api).post.delete();
+  const [action, run] = useTrpcAction(api).post.delete();
 
   return (
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await action.run({ id: props.post.id });
+        await run({ id: props.post.id });
         navigate(paths.board);
       }}
     >

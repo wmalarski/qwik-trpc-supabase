@@ -12,14 +12,14 @@ type Props = {
 };
 
 export const CreateCommentForm = component$<Props>((props) => {
-  const action = useTrpcAction(api).comment.create();
+  const [action, run] = useTrpcAction(api).comment.create();
 
   return (
     <div>
       <CommentForm
         isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.run({
+          run({
             content,
             parentId: props.parentId,
             postId: props.postId,

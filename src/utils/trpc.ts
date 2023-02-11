@@ -14,9 +14,8 @@ import type {
   inferRouterInputs,
   inferRouterOutputs,
   ProcedureRouterRecord,
+  TRPCError,
 } from "@trpc/server";
-import { TRPCResponse } from "@trpc/server/rpc";
-import superjson from "superjson";
 import type { AppRouter } from "~/server/trpc/router";
 
 export type RouterInput = inferRouterInputs<AppRouter>;
@@ -29,25 +28,33 @@ type ProxyCallbackOptions = {
 
 type ProxyCallback = (opts: ProxyCallbackOptions) => unknown;
 
+type TrpcActionResultOptional<TProcedure extends AnyProcedure> =
+  | {
+      failed: false;
+      data: inferProcedureOutput<TProcedure>;
+    }
+  | {
+      failed: true;
+      error: TRPCError[];
+    };
+
 type Resolver<TProcedure extends AnyProcedure> = (
   input: inferProcedureInput<TProcedure>
-) => Promise<inferProcedureOutput<TProcedure>>;
+) => Promise<TrpcActionResultOptional<TProcedure>>;
 
-type TrpcActionUtils<TProcedure extends AnyProcedure> = Omit<
+type UseTrpcActionResult<TProcedure extends AnyProcedure> = [
   ActionStore<
-    inferProcedureInput<TProcedure>,
-    inferProcedureOutput<TProcedure>
+    TrpcActionResultOptional<TProcedure>,
+    inferProcedureInput<TProcedure>
   >,
-  "run"
-> & {
-  run: QRL<Resolver<TProcedure>>;
-};
+  QRL<Resolver<TProcedure>>
+];
 
 type DecorateProcedure<TProcedure extends AnyProcedure> =
   TProcedure extends AnyQueryProcedure
-    ? () => TrpcActionUtils<TProcedure>
+    ? () => UseTrpcActionResult<TProcedure>
     : TProcedure extends AnyMutationProcedure
-    ? () => TrpcActionUtils<TProcedure>
+    ? () => UseTrpcActionResult<TProcedure>
     : never;
 
 type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
@@ -60,7 +67,6 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
 
 export const useTrpcAction = (action: Action<any, any>) => {
   const actionStore = action.use();
-
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
       apply(_1, _2, args) {
@@ -83,8 +89,7 @@ export const useTrpcAction = (action: Action<any, any>) => {
       const formData = new FormData();
       formData.set("path", dotPath);
 
-      const stringifiedInput =
-        input !== undefined && JSON.stringify({ json: input });
+      const stringifiedInput = input !== undefined && JSON.stringify(input);
 
       if (stringifiedInput !== false) {
         formData.set("body", stringifiedInput);
@@ -92,16 +97,15 @@ export const useTrpcAction = (action: Action<any, any>) => {
 
       await actionStore.run(formData);
 
-      const json: TRPCResponse = actionStore.value;
+      const value = actionStore.value;
 
-      if (json && "error" in json) {
-        throw new Error(`Error: ${json.error.message}`);
+      if (value.failed) {
+        return value;
       }
 
-      // TODO find better way to parse it
-      return superjson.parse(JSON.stringify(json.result.data));
+      return { data: value };
     });
 
-    return { ...action, run };
+    return [actionStore, run];
   }, []) as DecoratedProcedureRecord<AppRouter["_def"]["record"]>;
 };

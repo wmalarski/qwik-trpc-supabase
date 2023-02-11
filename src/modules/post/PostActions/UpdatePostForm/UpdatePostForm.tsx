@@ -14,7 +14,7 @@ type Props = {
 export const UpdatePostForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const action = useTrpcAction(api).post.update();
+  const [action, run] = useTrpcAction(api).post.update();
 
   return (
     <>
@@ -33,7 +33,7 @@ export const UpdatePostForm = component$<Props>((props) => {
             initialValue={props.post}
             isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.run({ content, id: props.post.id });
+              await run({ content, id: props.post.id });
               isOpen.value = false;
             }}
           />

@@ -7,16 +7,17 @@ import { useTrpcAction } from "~/utils/trpc";
 export const api = action$((data, event) => trpcAction(data, event));
 
 export const CreatePostForm = component$(() => {
-  const action = useTrpcAction(api).post.create();
+  const [action, run] = useTrpcAction(api).post.create();
 
   return (
     <div>
       <PostForm
         isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.run({ content });
+          run({ content });
         }}
       />
+      <pre>{JSON.stringify(action.value, null, 2)}</pre>
       {action.status === 200 ? (
         <span>Success</span>
       ) : typeof action.status !== "undefined" ? (

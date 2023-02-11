@@ -12,7 +12,7 @@ type Props = {
 export const api = action$((data, event) => trpcAction(data, event));
 
 export const DeleteCommentForm = component$<Props>((props) => {
-  const action = useTrpcAction(api).comment.delete();
+  const [action, run] = useTrpcAction(api).comment.delete();
 
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ export const DeleteCommentForm = component$<Props>((props) => {
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await action.run({ id: props.comment.id });
+        await run({ id: props.comment.id });
         navigate(
           props.comment.parentId
             ? paths.comment(props.comment.parentId)
