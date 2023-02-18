@@ -3,12 +3,12 @@ import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { getTrpcFromEvent } from "~/server/loaders";
 import { PostCard } from "./PostCard/PostCard";
 
-export const getData = loader$(async (event) => {
+export const usePostLoader = loader$(async (event) => {
   const trpc = await getTrpcFromEvent(event);
   return trpc.post.get({ id: event.params.postId });
 });
 
-export const getComments = loader$(async (event) => {
+export const useCommentsLoader = loader$(async (event) => {
   const trpc = await getTrpcFromEvent(event);
   return trpc.comment.listForPost({
     postId: event.params.postId,
@@ -18,15 +18,15 @@ export const getComments = loader$(async (event) => {
 });
 
 export default component$(() => {
-  const resource = getData.use();
+  const post = usePostLoader();
 
   return (
     <div class="flex flex-col gap-2">
       <h1>Post</h1>
       <PostCard
-        post={resource.value}
-        onUpdateSuccess$={(post) => {
-          resource.value = post;
+        post={post.value}
+        onUpdateSuccess$={() => {
+          // resource.value = post;
         }}
       />
     </div>

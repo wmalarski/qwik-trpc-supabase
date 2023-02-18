@@ -3,7 +3,7 @@ import { action$, Form, z, zod$ } from "@builder.io/qwik-city";
 import { supabase, updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const signInPassword = action$(
+export const useSignInPasswordAction = action$(
   async (data, event) => {
     const result = await supabase.auth.signInWithPassword(data);
 
@@ -25,7 +25,7 @@ export const signInPassword = action$(
 );
 
 export const PasswordForm = component$(() => {
-  const action = signInPassword.use();
+  const action = useSignInPasswordAction();
 
   return (
     <Form class="flex flex-col gap-2" action={action}>

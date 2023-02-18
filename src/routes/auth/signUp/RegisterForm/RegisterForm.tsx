@@ -4,7 +4,7 @@ import { supabase } from "~/server/auth/auth";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 
-export const signUp = action$(
+export const useSignUpAction = action$(
   async (data, event) => {
     const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
     const result = await supabase.auth.signUp({
@@ -26,10 +26,10 @@ export const signUp = action$(
 );
 
 export const RegisterForm = component$(() => {
-  const action = signUp.use();
+  const signUp = useSignUpAction();
 
   return (
-    <Form class="flex flex-col gap-2" action={action}>
+    <Form class="flex flex-col gap-2" action={signUp}>
       <h2 class="text-xl">Sign up with password</h2>
 
       <div class="form-control w-full">
@@ -44,7 +44,7 @@ export const RegisterForm = component$(() => {
           type="email"
         />
         <span class="label text-red-500">
-          {action.value?.fieldErrors?.email?.[0]}
+          {signUp.value?.fieldErrors?.email?.[0]}
         </span>
       </div>
 
@@ -59,11 +59,11 @@ export const RegisterForm = component$(() => {
           type="password"
         />
         <span class="label text-red-500">
-          {action.value?.fieldErrors?.password?.[0]}
+          {signUp.value?.fieldErrors?.password?.[0]}
         </span>
       </div>
 
-      <span class="label text-red-500">{action.value?.formErrors?.[0]}</span>
+      <span class="label text-red-500">{signUp.value?.formErrors?.[0]}</span>
       <button class={"btn btn-primary mt-2"} type="submit">
         Sign Up
       </button>

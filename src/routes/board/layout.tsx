@@ -4,7 +4,7 @@ import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeade
 import { getUserFromEvent } from "~/server/loaders";
 import { paths } from "~/utils/paths";
 
-export const getProtectedUser = loader$(async (event) => {
+export const useProtectedUserLoader = loader$(async (event) => {
   const user = await getUserFromEvent(event);
 
   if (!user) {
@@ -13,7 +13,7 @@ export const getProtectedUser = loader$(async (event) => {
 });
 
 export default component$(() => {
-  getProtectedUser.use();
+  useProtectedUserLoader();
   return (
     <>
       <ProtectedHeader />

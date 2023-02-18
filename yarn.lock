@@ -9,21 +9,21 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
-"@builder.io/qwik-city@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.1.1.tgz#3c4bcd043597ed2afc26ee53a14b38c45ae678fd"
-  integrity sha512-1KVxfAkhvxtb9hE5uzq94VoyauU6HmOkg+aiOMx0YzmOtmlvyFuzQxWkUbw/Z5trnzjTghypX5W5ON2BCJwzsA==
+"@builder.io/qwik-city@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.2.1.tgz#c57f481a75534ff54ddb0f38403acc66b5d02f41"
+  integrity sha512-g+ZC4Neo1XYQ/8uquUp6GKwr0eagpuCyQ3LkAtFhaIARaO67+cZfR6EFLJzf9wz5AVSt8/0QSD7wJEpni1i4IA==
   dependencies:
-    "@mdx-js/mdx" "2.2.1"
+    "@mdx-js/mdx" "2.3.0"
     "@types/mdx" "2.0.3"
     source-map "0.7.4"
-    vfile "5.3.6"
-    zod "^3.20.2"
+    vfile "5.3.7"
+    zod "^3.20.6"
 
-"@builder.io/qwik@0.17.5":
-  version "0.17.5"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.17.5.tgz#784a1139112a405789b49ffaaa45f9f7ec6ddf73"
-  integrity sha512-eckU4GHo98hVgGfFIh72LZo2e3aj4eIvM2zDvJ+7gW1sQheiUGX70zUrKYTC4/+k6wsYp82ItwoyhJhL3SqpbQ==
+"@builder.io/qwik@0.18.1":
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.18.1.tgz#341d01c5749a07230c700a5e4df859b857654cd0"
+  integrity sha512-11qx5Wh6WRxgvHDJDppJORhykzkACUYuu9qRKEGdS3vTkBQ2Rr8NFDjYon2x6+8Wu9WukHk84ANywWnS91gS/w==
 
 "@esbuild/android-arm64@0.16.17":
   version "0.16.17"
@@ -169,10 +169,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@mdx-js/mdx@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-2.2.1.tgz#611af1b68135c94eb467eb07e006fa1d8eebe029"
-  integrity sha512-hZ3ex7exYLJn6FfReq8yTvA6TE53uW9UHJQM9IlSauOuS55J9y8RtA7W+dzp6Yrzr00/U1sd7q+Wf61q6SfiTQ==
+"@mdx-js/mdx@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-2.3.0.tgz#d65d8c3c28f3f46bb0e7cb3bf7613b39980671a9"
+  integrity sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==
   dependencies:
     "@types/estree-jsx" "^1.0.0"
     "@types/mdx" "^2.0.0"
@@ -1278,10 +1278,10 @@ eslint-plugin-promise@^6.1.1:
   resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.1.1.tgz#269a3e2772f62875661220631bd4dafcb4083816"
   integrity sha512-tjqWDwVZQo7UIPMeDReOpUgHCmCiH+ePnVT+5zVapL0uuHnegBUs2smM13CzOs2Xb5+MHMRFTs9v24yjba4Oig==
 
-eslint-plugin-qwik@0.17.5:
-  version "0.17.5"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-qwik/-/eslint-plugin-qwik-0.17.5.tgz#90c12125e081947440bd5935daa206090c5a0900"
-  integrity sha512-hjqxmTtB3+fWLIIhnAC0bhGqg6uheuQYks3omyMASFsk8QCoU4lv7T4FBMDTA8p0eUVga5wfMgUMmpwe3FT5DA==
+eslint-plugin-qwik@0.18.1:
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-qwik/-/eslint-plugin-qwik-0.18.1.tgz#8c578c4df286b26c267028463c49fce77329a4ea"
+  integrity sha512-1dBx3iBpl4QdADiT3V1J8XNlcOf/3YqBl8WZc149ZfttVjbg56UMphgmqPKq0Tp4Fhw88Clf8B78U5bdF3XHig==
 
 eslint-plugin-sort-keys-fix@^1.1.2:
   version "1.1.2"
@@ -3585,10 +3585,10 @@ vfile-message@^3.0.0:
     "@types/unist" "^2.0.0"
     unist-util-stringify-position "^3.0.0"
 
-vfile@5.3.6:
-  version "5.3.6"
-  resolved "https://registry.yarnpkg.com/vfile/-/vfile-5.3.6.tgz#61b2e70690cc835a5d0d0fd135beae74e5a39546"
-  integrity sha512-ADBsmerdGBs2WYckrLBEmuETSPyTD4TuLxTrw0DvjirxW1ra4ZwkbzG8ndsv3Q57smvHxo677MHaQrY9yxH8cA==
+vfile@5.3.7:
+  version "5.3.7"
+  resolved "https://registry.yarnpkg.com/vfile/-/vfile-5.3.7.tgz#de0677e6683e3380fafc46544cfe603118826ab7"
+  integrity sha512-r7qlzkgErKjobAmyNIkkSpizsFPYiUPuJb5pNW1RB4JcYVZhs4lIbVqk8XPk033CV/1z8ss5pkax8SuhGpcG8g==
   dependencies:
     "@types/unist" "^2.0.0"
     is-buffer "^2.0.0"
@@ -3730,11 +3730,6 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
-
-zod@^3.20.2:
-  version "3.20.2"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.20.2.tgz#068606642c8f51b3333981f91c0a8ab37dfc2807"
-  integrity sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==
 
 zod@^3.20.6:
   version "3.20.6"

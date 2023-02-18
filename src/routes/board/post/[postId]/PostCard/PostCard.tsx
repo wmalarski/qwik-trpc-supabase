@@ -4,7 +4,7 @@ import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { paths } from "~/utils/paths";
-import { getComments } from "..";
+import { useCommentsLoader } from "..";
 
 type Props = {
   onUpdateSuccess$: PropFunction<(post: Post) => void>;
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const PostCard = component$<Props>((props) => {
-  const resource = getComments.use();
+  const comments = useCommentsLoader();
 
   return (
     <div>
@@ -23,8 +23,8 @@ export const PostCard = component$<Props>((props) => {
       <PostActions post={props.post} />
       <CreateCommentForm parentId={null} postId={props.post.id} />
       <CommentsList
-        comments={resource.value.comments}
-        count={resource.value.count}
+        comments={comments.value.comments}
+        count={comments.value.count}
       />
     </div>
   );
