@@ -119,11 +119,25 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
       const args = opts.args[1];
       return handleRequest({ args, dotPath, event });
     }
-
     if (action === "action$") {
-      return action$((args, event) => {
+      const useAction = action$((args, event) => {
+        console.log({ args, dotPath });
         return handleRequest({ args, dotPath, event });
       });
+
+      return () => {
+        const action = useAction();
+        return new Proxy(action, {
+          get(target, prop, receiver) {
+            const value = (target as any)[prop];
+            if (typeof value === "function") {
+              console.log("RUN", prop, receiver);
+              return Reflect.get(target, prop, receiver);
+            }
+            return Reflect.get(target, prop, receiver);
+          },
+        });
+      };
     }
   }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 };

@@ -36,10 +36,10 @@ export const UpdateCommentForm = component$<Props>((props) => {
             }}
           />
 
-          {action.status === 200 ? (
+          {action.value?.status === "success" ? (
             <span>Success</span>
-          ) : typeof action.status !== "undefined" ? (
-            <span>Error</span>
+          ) : action.value?.status === "error" ? (
+            <pre>{JSON.stringify(action.value, null, 2)}</pre>
           ) : null}
         </>
       )}
