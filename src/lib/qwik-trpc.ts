@@ -23,7 +23,6 @@ import type {
 } from "@trpc/server";
 import { ZodIssue } from "zod";
 import { getTrpcFromEvent } from "~/server/loaders";
-import type { AppRouter } from "~/server/trpc/router";
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -79,7 +78,7 @@ type HandleRequestArgs = {
   dotPath: string[];
 };
 
-export const serverTrpc = () => {
+export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
       apply(_1, _2, args) {
@@ -134,5 +133,5 @@ export const serverTrpc = () => {
         return handleRequest({ event, args, dotPath });
       });
     }
-  }, []) as DecoratedProcedureRecord<AppRouter["_def"]["record"]>;
+  }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 };

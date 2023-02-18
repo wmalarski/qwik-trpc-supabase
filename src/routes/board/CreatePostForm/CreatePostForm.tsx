@@ -1,13 +1,13 @@
 import { component$ } from "@builder.io/qwik";
 import { action$ } from "@builder.io/qwik-city";
-import { serverTrpc } from "~/lib/qwik-trpc/server";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
 import { trpcAction } from "~/server/trpc/action";
+import { trpc } from "~/server/trpc/serverApi";
 import { useTrpcAction } from "~/utils/trpc";
 
 export const api = action$((data, event) => trpcAction(data, event));
 
-export const api2 = serverTrpc().post.create.action$();
+export const api2 = trpc.post.create.action$();
 
 export const CreatePostForm = component$(() => {
   const [action] = useTrpcAction(api).post.create();
