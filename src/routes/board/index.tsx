@@ -1,13 +1,12 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, loader$ } from "@builder.io/qwik-city";
-import { getTrpcFromEvent } from "~/server/loaders";
+import { DocumentHead } from "@builder.io/qwik-city";
+import { serverTrpc } from "~/lib/qwik-trpc/server";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
-export const usePostsLoader = loader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  const result = await trpc.post.list({ skip: 0, take: 10 });
-  return result;
+export const usePostsLoader = serverTrpc().post.list.loader$({
+  skip: 0,
+  take: 10,
 });
 
 export default component$(() => {
@@ -17,7 +16,9 @@ export default component$(() => {
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
       <CreatePostForm />
-      <PostsList posts={posts.value.posts} />
+      {posts.value.status === "success" ? (
+        <PostsList posts={posts.value.result.posts} />
+      ) : null}
     </div>
   );
 });
