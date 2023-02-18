@@ -1,15 +1,19 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead } from "@builder.io/qwik-city";
+import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { trpc } from "~/server/trpc/api";
 import { CommentCard } from "./CommentCard/CommentCard";
 
-export const useComment = trpc.comment.get.loader$((event) => {
-  return { id: event.params.commentId };
-});
+export const useComment = loader$((event) =>
+  trpc.comment.get.loader(event, { id: event.params.commentId })
+);
 
-export const useComments = trpc.comment.listForParent.loader$((event) => {
-  return { parentId: event.params.commentId, skip: 0, take: 10 };
-});
+export const useComments = loader$((event) =>
+  trpc.comment.listForParent.loader(event, {
+    parentId: event.params.commentId,
+    skip: 0,
+    take: 10,
+  })
+);
 
 export default component$(() => {
   const comment = useComment();

@@ -1,10 +1,12 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead } from "@builder.io/qwik-city";
+import { DocumentHead, loader$ } from "@builder.io/qwik-city";
 import { trpc } from "~/server/trpc/api";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
-export const usePosts = trpc.post.list.loader$({ skip: 0, take: 10 });
+export const usePosts = loader$((event) =>
+  trpc.post.list.loader(event, { skip: 0, take: 10 })
+);
 
 export default component$(() => {
   const posts = usePosts();

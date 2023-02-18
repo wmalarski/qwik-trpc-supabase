@@ -6,8 +6,6 @@ import { $ } from "@builder.io/qwik";
 import {
   Action,
   action$,
-  Loader,
-  loader$,
   RequestEventCommon,
   RequestEventLoader,
 } from "@builder.io/qwik-city";
@@ -45,14 +43,10 @@ type TrpcProcedureOutput<TProcedure extends AnyProcedure> =
 type DecorateProcedure<TProcedure extends AnyProcedure> =
   TProcedure extends AnyQueryProcedure
     ? {
-        loader$: (
-          args:
-            | inferProcedureInput<TProcedure>
-            | ((event: RequestEventLoader) => inferProcedureInput<TProcedure>)
-            | ((
-                event: RequestEventLoader
-              ) => Promise<inferProcedureInput<TProcedure>>)
-        ) => Loader<TrpcProcedureOutput<TProcedure>>;
+        loader: (
+          event: RequestEventLoader,
+          input: inferProcedureInput<TProcedure>
+        ) => TrpcProcedureOutput<TProcedure>;
       }
     : TProcedure extends AnyMutationProcedure
     ? {
@@ -120,17 +114,15 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
     const dotPath = opts.path.slice(0, -1);
     const action = opts.path[opts.path.length - 1];
 
-    if (action === "loader$") {
-      return loader$(async (event) => {
-        const input = opts.args[0];
-        const args = typeof input === "function" ? await input(event) : input;
-        return handleRequest({ args, dotPath, event });
-      });
+    if (action === "loader") {
+      const event = opts.args[0] as RequestEventLoader;
+      const args = opts.args[1];
+      return handleRequest({ args, dotPath, event });
     }
 
     if (action === "action$") {
-      return action$(async (args, event) => {
-        return handleRequest({ event, args, dotPath });
+      return action$((args, event) => {
+        return handleRequest({ args, dotPath, event });
       });
     }
   }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
