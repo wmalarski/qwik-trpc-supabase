@@ -1,18 +1,18 @@
 import { component$ } from "@builder.io/qwik";
 import { DocumentHead } from "@builder.io/qwik-city";
-import { trpc } from "~/server/trpc/serverApi";
+import { trpc } from "~/server/trpc/api";
 import { PostCard } from "./PostCard/PostCard";
 
-export const usePostLoader = trpc.post.get.loader$((event) => {
+export const usePost = trpc.post.get.loader$((event) => {
   return { id: event.params.postId };
 });
 
-export const useCommentsLoader = trpc.comment.listForPost.loader$((event) => {
+export const useComments = trpc.comment.listForPost.loader$((event) => {
   return { postId: event.params.postId, skip: 0, take: 10 };
 });
 
 export default component$(() => {
-  const post = usePostLoader();
+  const post = usePost();
 
   return (
     <div class="flex flex-col gap-2">

@@ -1,6 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
-import { trpc } from "~/server/trpc/serverApi";
+import { trpc } from "~/server/trpc/api";
 import { PostForm } from "../../PostForm/PostForm";
 
 export const useUpdatePostAction = trpc.post.update.action$();

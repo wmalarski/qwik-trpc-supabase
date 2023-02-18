@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { trpc } from "~/server/trpc/serverApi";
+import { trpc } from "~/server/trpc/api";
 import { paths } from "~/utils/paths";
 
 type Props = {

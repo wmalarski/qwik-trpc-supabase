@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { trpc } from "~/server/trpc/serverApi";
+import { trpc } from "~/server/trpc/api";
 import { CommentForm } from "../CommentForm/CommentForm";
 
 export const useCreateComment = trpc.comment.create.action$();

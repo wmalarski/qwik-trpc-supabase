@@ -4,14 +4,14 @@ import { CommentActions } from "~/modules/comment/CommentActions/CommentActions"
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { paths } from "~/utils/paths";
-import { useCommentsLoader } from "..";
+import { useComments } from "..";
 
 type Props = {
   comment: Comment;
 };
 
 export const CommentCard = component$<Props>((props) => {
-  const comments = useCommentsLoader();
+  const comments = useComments();
 
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)

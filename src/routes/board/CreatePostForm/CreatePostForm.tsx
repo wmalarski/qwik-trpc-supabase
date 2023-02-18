@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
-import { trpc } from "~/server/trpc/serverApi";
+import { trpc } from "~/server/trpc/api";
 
 export const useCreatePostAction = trpc.post.create.action$();
 

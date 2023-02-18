@@ -1,16 +1,13 @@
 import { component$ } from "@builder.io/qwik";
 import { DocumentHead } from "@builder.io/qwik-city";
-import { trpc } from "~/server/trpc/serverApi";
+import { trpc } from "~/server/trpc/api";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 import { PostsList } from "./PostsList/PostsList";
 
-export const usePostsLoader = trpc.post.list.loader$({
-  skip: 0,
-  take: 10,
-});
+export const usePosts = trpc.post.list.loader$({ skip: 0, take: 10 });
 
 export default component$(() => {
-  const posts = usePostsLoader();
+  const posts = usePosts();
 
   return (
     <div class="flex flex-col gap-2">

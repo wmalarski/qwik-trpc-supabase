@@ -4,7 +4,7 @@ import { getUserFromEvent } from "~/server/loaders";
 import { paths } from "~/utils/paths";
 import { RegisterForm } from "./RegisterForm/RegisterForm";
 
-export const useAnonymousLoader = loader$(async (event) => {
+export const useAnonymousRoute = loader$(async (event) => {
   const user = await getUserFromEvent(event);
   if (user) {
     event.redirect(302, paths.index);
@@ -12,7 +12,7 @@ export const useAnonymousLoader = loader$(async (event) => {
 });
 
 export default component$(() => {
-  useAnonymousLoader();
+  useAnonymousRoute();
 
   return (
     <div class="flex flex-col gap-2">

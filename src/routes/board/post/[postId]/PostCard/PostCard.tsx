@@ -4,14 +4,14 @@ import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { paths } from "~/utils/paths";
-import { useCommentsLoader } from "..";
+import { useComments } from "..";
 
 type Props = {
   post: Post;
 };
 
 export const PostCard = component$<Props>((props) => {
-  const comments = useCommentsLoader();
+  const comments = useComments();
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
-import { trpc } from "~/server/trpc/serverApi";
+import { trpc } from "~/server/trpc/api";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
 export const useUpdateCommentAction = trpc.comment.update.action$();
