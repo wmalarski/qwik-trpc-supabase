@@ -1,10 +1,8 @@
 import { component$ } from "@builder.io/qwik";
-import { action$ } from "@builder.io/qwik-city";
-import { trpcAction } from "~/server/trpc/action";
-import { useTrpcAction } from "~/utils/trpc";
+import { trpc } from "~/server/trpc/serverApi";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-export const api = action$((data, event) => trpcAction(data, event));
+export const useCreateComment = trpc.comment.create.action$();
 
 type Props = {
   parentId: string | null;
@@ -12,14 +10,14 @@ type Props = {
 };
 
 export const CreateCommentForm = component$<Props>((props) => {
-  const [action, run] = useTrpcAction(api).comment.create();
+  const action = useCreateComment();
 
   return (
     <div>
       <CommentForm
         isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          run({
+          action.run({
             content,
             parentId: props.parentId,
             postId: props.postId,

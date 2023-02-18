@@ -1,18 +1,17 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { trpcAction } from "~/server/trpc/action";
+import { trpc } from "~/server/trpc/serverApi";
 import { paths } from "~/utils/paths";
-import { useTrpcAction } from "~/utils/trpc";
 
 type Props = {
   comment: Comment;
 };
 
-export const api = action$((data, event) => trpcAction(data, event));
+export const useDeleteCommentAction = trpc.comment.delete.action$();
 
 export const DeleteCommentForm = component$<Props>((props) => {
-  const [action, run] = useTrpcAction(api).comment.delete();
+  const action = useDeleteCommentAction();
 
   const navigate = useNavigate();
 
@@ -20,7 +19,7 @@ export const DeleteCommentForm = component$<Props>((props) => {
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await run({ id: props.comment.id });
+        await action.run({ id: props.comment.id });
         navigate(
           props.comment.parentId
             ? paths.comment(props.comment.parentId)

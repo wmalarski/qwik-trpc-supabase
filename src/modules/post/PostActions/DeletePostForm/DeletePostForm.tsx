@@ -1,11 +1,10 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
-import { trpcAction } from "~/server/trpc/action";
+import { trpc } from "~/server/trpc/serverApi";
 import { paths } from "~/utils/paths";
-import { useTrpcAction } from "~/utils/trpc";
 
-export const api = action$((data, event) => trpcAction(data, event));
+export const useDeletePost = trpc.post.delete.action$();
 
 type Props = {
   post: Post;
@@ -14,13 +13,13 @@ type Props = {
 export const DeletePostForm = component$<Props>((props) => {
   const navigate = useNavigate();
 
-  const [action, run] = useTrpcAction(api).post.delete();
+  const action = useDeletePost();
 
   return (
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await run({ id: props.post.id });
+        await action.run({ id: props.post.id });
         navigate(paths.board);
       }}
     >

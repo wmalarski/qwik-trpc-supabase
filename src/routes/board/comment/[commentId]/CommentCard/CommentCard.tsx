@@ -28,10 +28,12 @@ export const CommentCard = component$<Props>((props) => {
         parentId={props.comment.id}
         postId={props.comment.postId}
       />
-      <CommentsList
-        comments={comments.value.comments}
-        count={comments.value.count}
-      />
+      {comments.value.status === "success" ? (
+        <CommentsList
+          comments={comments.value.result.comments}
+          count={comments.value.result.count}
+        />
+      ) : null}
     </div>
   );
 });

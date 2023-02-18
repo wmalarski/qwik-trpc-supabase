@@ -1,20 +1,14 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, loader$ } from "@builder.io/qwik-city";
-import { getTrpcFromEvent } from "~/server/loaders";
+import { DocumentHead } from "@builder.io/qwik-city";
+import { trpc } from "~/server/trpc/serverApi";
 import { PostCard } from "./PostCard/PostCard";
 
-export const usePostLoader = loader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.post.get({ id: event.params.postId });
+export const usePostLoader = trpc.post.get.loader$((event) => {
+  return { id: event.params.postId };
 });
 
-export const useCommentsLoader = loader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.comment.listForPost({
-    postId: event.params.postId,
-    skip: 0,
-    take: 10,
-  });
+export const useCommentsLoader = trpc.comment.listForPost.loader$((event) => {
+  return { postId: event.params.postId, skip: 0, take: 10 };
 });
 
 export default component$(() => {
@@ -23,12 +17,9 @@ export default component$(() => {
   return (
     <div class="flex flex-col gap-2">
       <h1>Post</h1>
-      <PostCard
-        post={post.value}
-        onUpdateSuccess$={() => {
-          // resource.value = post;
-        }}
-      />
+      {post.value.status === "success" ? (
+        <PostCard post={post.value.result} />
+      ) : null}
     </div>
   );
 });

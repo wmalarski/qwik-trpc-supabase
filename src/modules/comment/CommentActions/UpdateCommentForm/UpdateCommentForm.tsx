@@ -1,11 +1,9 @@
 import { component$, useSignal } from "@builder.io/qwik";
-import { action$ } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { trpcAction } from "~/server/trpc/action";
-import { useTrpcAction } from "~/utils/trpc";
+import { trpc } from "~/server/trpc/serverApi";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
-export const api = action$((data, event) => trpcAction(data, event));
+export const useUpdateCommentAction = trpc.comment.update.action$();
 
 type Props = {
   comment: Comment;
@@ -14,7 +12,7 @@ type Props = {
 export const UpdateCommentForm = component$<Props>((props) => {
   const isOpen = useSignal(false);
 
-  const [action, run] = useTrpcAction(api).comment.update();
+  const action = useUpdateCommentAction();
 
   return (
     <>
@@ -33,7 +31,7 @@ export const UpdateCommentForm = component$<Props>((props) => {
             initialValue={props.comment}
             isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await run({ content, id: props.comment.id });
+              await action.run({ content, id: props.comment.id });
               isOpen.value = false;
             }}
           />

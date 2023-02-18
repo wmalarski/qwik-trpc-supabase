@@ -1,4 +1,4 @@
-import { component$, PropFunction } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
@@ -7,7 +7,6 @@ import { paths } from "~/utils/paths";
 import { useCommentsLoader } from "..";
 
 type Props = {
-  onUpdateSuccess$: PropFunction<(post: Post) => void>;
   post: Post;
 };
 
@@ -22,10 +21,12 @@ export const PostCard = component$<Props>((props) => {
       <pre>{JSON.stringify(props.post, null, 2)}</pre>
       <PostActions post={props.post} />
       <CreateCommentForm parentId={null} postId={props.post.id} />
-      <CommentsList
-        comments={comments.value.comments}
-        count={comments.value.count}
-      />
+      {comments.value.status === "success" ? (
+        <CommentsList
+          comments={comments.value.result.comments}
+          count={comments.value.result.count}
+        />
+      ) : null}
     </div>
   );
 });
