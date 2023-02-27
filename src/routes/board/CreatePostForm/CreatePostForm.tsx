@@ -15,9 +15,9 @@ export const CreatePostForm = component$(() => {
           action.run({ content });
         }}
       />
-      {action.status === 200 ? (
+      {action.value?.status === "success" ? (
         <span>Success</span>
-      ) : !action.status || action.status > 300 ? (
+      ) : action.value?.status === "error" ? (
         <pre>{JSON.stringify(action.value, null, 2)}</pre>
       ) : null}
     </div>
