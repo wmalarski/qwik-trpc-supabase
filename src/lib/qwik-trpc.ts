@@ -53,7 +53,7 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
         action$: () => Action<
           TrpcProcedureOutput<TProcedure>,
           inferProcedureInput<TProcedure>,
-          true
+          false
         >;
       }
     : never;
@@ -120,24 +120,16 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
       return handleRequest({ args, dotPath, event });
     }
     if (action === "action$") {
-      const useAction = action$((args, event) => {
-        console.log({ args, dotPath });
-        return handleRequest({ args, dotPath, event });
-      });
-
-      return () => {
-        const action = useAction();
-        return new Proxy(action, {
-          get(target, prop, receiver) {
-            const value = (target as any)[prop];
-            if (typeof value === "function") {
-              console.log("RUN", prop, receiver);
-              return Reflect.get(target, prop, receiver);
-            }
-            return Reflect.get(target, prop, receiver);
-          },
-        });
-      };
+      // kind of YOLO lifestyle
+      // eslint-disable-next-line qwik/loader-location
+      return action$(
+        (args, event) => {
+          const [, ...rest] = event.query.get("qaction")?.split("_") || [];
+          const dotPath = rest.join("_").split(".") || [];
+          return handleRequest({ args, dotPath, event });
+        },
+        { id: dotPath.join(".") }
+      );
     }
   }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 };
