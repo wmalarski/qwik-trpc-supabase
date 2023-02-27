@@ -4,7 +4,7 @@ import { supabase } from "~/server/auth/auth";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 
-export const signInOtp = action$(
+export const useSignInOtpAction = action$(
   (data) => {
     return supabase.auth.signInWithOtp({
       email: data.email,
@@ -17,7 +17,7 @@ export const signInOtp = action$(
 );
 
 export const MagicLinkForm = component$(() => {
-  const action = signInOtp.use();
+  const action = useSignInOtpAction();
 
   return (
     <Form class="flex flex-col gap-2" action={action}>

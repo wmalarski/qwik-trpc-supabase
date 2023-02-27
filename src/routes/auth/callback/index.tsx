@@ -1,4 +1,4 @@
-import { $, component$, useClientEffect$ } from "@builder.io/qwik";
+import { $, component$, useTask$ } from "@builder.io/qwik";
 import {
   action$,
   DocumentHead,
@@ -6,10 +6,11 @@ import {
   z,
   zod$,
 } from "@builder.io/qwik-city";
+import { isBrowser } from "@builder.io/qwik/build";
 import { updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const setSession = action$(
+export const useSetSessionAction = action$(
   (data, event) => {
     updateAuthCookies(event, data);
   },
@@ -23,7 +24,7 @@ export const setSession = action$(
 export default component$(() => {
   const navigate = useNavigate();
 
-  const action = setSession.use();
+  const action = useSetSessionAction();
 
   const handleSendSession = $(async () => {
     const hash = window.location.hash.substring(1);
@@ -54,8 +55,10 @@ export default component$(() => {
     navigate(paths.index);
   });
 
-  useClientEffect$(() => {
-    handleSendSession();
+  useTask$(() => {
+    if (isBrowser) {
+      handleSendSession();
+    }
   });
 
   return (

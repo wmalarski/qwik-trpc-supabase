@@ -4,14 +4,14 @@ import { CommentActions } from "~/modules/comment/CommentActions/CommentActions"
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { paths } from "~/utils/paths";
-import { getComments } from "..";
+import { useComments } from "..";
 
 type Props = {
   comment: Comment;
 };
 
 export const CommentCard = component$<Props>((props) => {
-  const resource = getComments.use();
+  const comments = useComments();
 
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)
@@ -28,10 +28,12 @@ export const CommentCard = component$<Props>((props) => {
         parentId={props.comment.id}
         postId={props.comment.postId}
       />
-      <CommentsList
-        comments={resource.value.comments}
-        count={resource.value.count}
-      />
+      {comments.value.status === "success" ? (
+        <CommentsList
+          comments={comments.value.result.comments}
+          count={comments.value.result.count}
+        />
+      ) : null}
     </div>
   );
 });

@@ -4,10 +4,10 @@ import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeade
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
 import { getUserFromEvent } from "~/server/loaders";
 
-export const getUser = loader$((event) => getUserFromEvent(event));
+export const useUser = loader$((event) => getUserFromEvent(event));
 
 export default component$(() => {
-  const user = getUser.use();
+  const user = useUser();
 
   return (
     <div class="flex flex-col">

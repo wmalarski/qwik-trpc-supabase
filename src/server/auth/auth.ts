@@ -1,7 +1,6 @@
-import { CookieOptions, z } from "@builder.io/qwik-city";
+import { CookieOptions, RequestEventCommon, z } from "@builder.io/qwik-city";
 import { createClient, Session } from "@supabase/supabase-js";
 import { serverEnv } from "../serverEnv";
-import type { ServerEvent } from "../types";
 
 export const supabase = createClient(
   serverEnv.VITE_SUPABASE_URL,
@@ -18,7 +17,7 @@ const options: CookieOptions = {
 };
 
 export const updateAuthCookies = (
-  event: ServerEvent,
+  event: RequestEventCommon,
   session: Pick<Session, "refresh_token" | "expires_in" | "access_token">
 ) => {
   event.cookie.set(cookieName, session, options);
@@ -26,13 +25,13 @@ export const updateAuthCookies = (
   event.headers.set("Set-Cookie", event.cookie.headers()[0]);
 };
 
-export const removeAuthCookies = (event: ServerEvent) => {
+export const removeAuthCookies = (event: RequestEventCommon) => {
   event.cookie.delete(cookieName, options);
   // somehow cookie.delete is not working right now
   event.headers.set("Set-Cookie", event.cookie.headers()[0]);
 };
 
-export const getUserByCookie = async (event: ServerEvent) => {
+export const getUserByCookie = async (event: RequestEventCommon) => {
   const value = event.cookie.get(cookieName)?.json();
 
   const parsed = z

@@ -5,7 +5,7 @@ import { paths } from "~/utils/paths";
 import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
 import { PasswordForm } from "./PasswordForm/PasswordForm";
 
-export const getData = loader$(async (event) => {
+export const useAnonymousRoute = loader$(async (event) => {
   const user = await getUserFromEvent(event);
 
   if (user) {
@@ -14,7 +14,7 @@ export const getData = loader$(async (event) => {
 });
 
 export default component$(() => {
-  getData.use();
+  useAnonymousRoute();
 
   return (
     <div class="flex flex-col gap-2">
