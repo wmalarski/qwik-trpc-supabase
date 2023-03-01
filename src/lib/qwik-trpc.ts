@@ -5,7 +5,7 @@
 import { $ } from "@builder.io/qwik";
 import {
   Action,
-  action$,
+  globalAction$,
   RequestEventCommon,
   RequestEventLoader,
 } from "@builder.io/qwik-city";
@@ -19,7 +19,7 @@ import type {
   ProcedureRouterRecord,
   TRPCError,
 } from "@trpc/server";
-import { ZodIssue } from "zod";
+import type { ZodIssue } from "zod";
 import { getTrpcFromEvent } from "~/server/loaders";
 
 type ProxyCallbackOptions = {
@@ -120,9 +120,7 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
       return handleRequest({ args, dotPath, event });
     }
     if (action === "action$") {
-      // kind of YOLO lifestyle
-      // eslint-disable-next-line qwik/loader-location
-      return action$(
+      return globalAction$(
         (args, event) => {
           const [, ...rest] = event.query.get("qaction")?.split("_") || [];
           const dotPath = rest.join("_").split(".") || [];

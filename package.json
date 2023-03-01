@@ -28,8 +28,8 @@
     "postinstall": "prisma generate"
   },
   "devDependencies": {
-    "@builder.io/qwik": "0.19.2",
-    "@builder.io/qwik-city": "0.4.0",
+    "@builder.io/qwik": "0.20.1",
+    "@builder.io/qwik-city": "0.5.2",
     "@types/cookie": "^0.5.1",
     "@types/eslint": "8.21.1",
     "@types/node": "latest",
@@ -44,25 +44,24 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-qwik": "0.19.2",
+    "eslint-plugin-qwik": "0.20.1",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
-    "eslint-plugin-tailwindcss": "^3.10.0",
+    "eslint-plugin-tailwindcss": "^3.10.1",
     "node-fetch": "3.3.0",
     "postcss": "^8.4.21",
     "prettier": "2.8.4",
-    "prisma": "^4.10.1",
+    "prisma": "^4.11.0",
     "tailwindcss": "^3.2.7",
     "typescript": "4.9.5",
     "vite": "4.1.4",
     "vite-tsconfig-paths": "4.0.5"
   },
   "dependencies": {
-    "@prisma/client": "4.10.1",
+    "@prisma/client": "4.11.0",
     "@supabase/supabase-js": "^2.8.0",
-    "@trpc/server": "10.13.0",
+    "@trpc/server": "10.13.2",
     "cookie": "^0.5.0",
-    "daisyui": "^2.51.2",
-    "undici": "^5.20.0",
-    "zod": "^3.20.6"
+    "daisyui": "^2.51.3",
+    "undici": "^5.20.0"
   }
 }

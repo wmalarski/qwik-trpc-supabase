@@ -1,10 +1,10 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
 import { getUserFromEvent } from "~/server/loaders";
 
-export const useUser = loader$((event) => getUserFromEvent(event));
+export const useUser = routeLoader$((event) => getUserFromEvent(event));
 
 export default component$(() => {
   const user = useUser();

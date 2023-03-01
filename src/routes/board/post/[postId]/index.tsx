@@ -1,13 +1,13 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
 import { trpc } from "~/server/trpc/api";
 import { PostCard } from "./PostCard/PostCard";
 
-export const usePost = loader$((event) =>
+export const usePost = routeLoader$((event) =>
   trpc.post.get.loader(event, { id: event.params.postId })
 );
 
-export const useComments = loader$((event) =>
+export const useComments = routeLoader$((event) =>
   trpc.comment.listForPost.loader(event, {
     postId: event.params.postId,
     skip: 0,

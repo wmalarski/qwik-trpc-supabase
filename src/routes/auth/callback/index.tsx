@@ -1,7 +1,7 @@
 import { $, component$, useTask$ } from "@builder.io/qwik";
 import {
-  action$,
   DocumentHead,
+  routeAction$,
   useNavigate,
   z,
   zod$,
@@ -10,7 +10,7 @@ import { isBrowser } from "@builder.io/qwik/build";
 import { updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const useSetSessionAction = action$(
+export const useSetSessionAction = routeAction$(
   (data, event) => {
     updateAuthCookies(event, data);
   },
@@ -48,7 +48,7 @@ export default component$(() => {
       refresh_token,
     });
 
-    if (action.value?.status !== "success") {
+    if (action.value?.failed) {
       return;
     }
 

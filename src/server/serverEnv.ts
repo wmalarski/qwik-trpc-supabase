@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@builder.io/qwik-city";
 
 const schema = z.object({
   VITE_SUPABASE_ANON_KEY: z.string(),

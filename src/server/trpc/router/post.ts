@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@builder.io/qwik-city";
 import { protectedProcedure, t } from "../trpc";
 
 export const postRouter = t.router({

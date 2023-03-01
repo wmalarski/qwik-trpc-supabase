@@ -1,10 +1,10 @@
 import { component$ } from "@builder.io/qwik";
-import { action$, Form, z, zod$ } from "@builder.io/qwik-city";
+import { Form, routeAction$, z, zod$ } from "@builder.io/qwik-city";
 import { supabase } from "~/server/auth/auth";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 
-export const useSignUpAction = action$(
+export const useSignUpAction = routeAction$(
   async (data, event) => {
     const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
     const result = await supabase.auth.signUp({

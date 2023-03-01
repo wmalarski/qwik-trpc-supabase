@@ -9,10 +9,10 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
-"@builder.io/qwik-city@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.4.0.tgz#9afb97ba0e11119e44a2527f545e0d84a8fe9759"
-  integrity sha512-XNpmHzSHam7ZYrd12kJdwFerMEck0iOk3Wgb9IlVIuaN/nLuN033qrNWLVq+ZzlhplUea9DGc4job8qMix7WWA==
+"@builder.io/qwik-city@0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.5.2.tgz#016d75c5ef5c47a10d3a0008eb1c576c114af769"
+  integrity sha512-ItpQw+A4nK7Uh+Ypdx+LGqPlOzoIGWg9VgnqWCKpAfJaLnD4ffvSPrgHKQx/DdsDFFl7nBMMq4ddUQSL7xp0Yw==
   dependencies:
     "@mdx-js/mdx" "2.3.0"
     "@types/mdx" "2.0.3"
@@ -20,10 +20,10 @@
     vfile "5.3.7"
     zod "^3.20.6"
 
-"@builder.io/qwik@0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.19.2.tgz#d2f7d39bf6adb6de8497690cb3c41ad62a5fc1c6"
-  integrity sha512-Rxdyx96ucx0+nABLsg1sH7SgrlMdHgpxbR+NR3c53Ux4Jj+Xf+QHNQSIKF9zTV8KClrzmDlqILgmkDU4uMTVcg==
+"@builder.io/qwik@0.20.1":
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.20.1.tgz#3cf6ee5d1a7cdf46ad8cda347affd2b77a46be75"
+  integrity sha512-GPhErG9+AaWXYKnDVQI3iAd2YNYNRBDvTS3BRx2yGbIB59t4OmnPB0vIcwJ5QtVTqNjF43NHSjhCMJYo543oLQ==
 
 "@esbuild/android-arm64@0.16.17":
   version "0.16.17"
@@ -230,22 +230,22 @@
     tiny-glob "^0.2.9"
     tslib "^2.4.0"
 
-"@prisma/client@4.10.1":
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-4.10.1.tgz#c47fd54661ee74b174cee63e9dc418ecf57a6ccd"
-  integrity sha512-VonXLJZybdt8e5XZH5vnIGCRNnIh6OMX1FS3H/yzMGLT3STj5TJ/OkMcednrvELgk8PK89Vo3aSh51MWNO0axA==
+"@prisma/client@4.11.0":
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-4.11.0.tgz#41d5664dea4172c954190a432f70b86d3e2e629b"
+  integrity sha512-0INHYkQIqgAjrt7NzhYpeDQi8x3Nvylc2uDngKyFDDj1tTRQ4uV1HnVmd1sQEraeVAN63SOK0dgCKQHlvjL0KA==
   dependencies:
-    "@prisma/engines-version" "4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19"
+    "@prisma/engines-version" "4.11.0-57.8fde8fef4033376662cad983758335009d522acb"
 
-"@prisma/engines-version@4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19":
-  version "4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19"
-  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-4.10.1-2.aead147aa326ccb985dcfed5b065b4fdabd44b19.tgz#312359d9d00e39e323136d0270876293d315658e"
-  integrity sha512-tsjTho7laDhf9EJ9EnDxAPEf7yrigSMDhniXeU4YoWc7azHAs4GPxRi2P9LTFonmHkJLMOLjR77J1oIP8Ife1w==
+"@prisma/engines-version@4.11.0-57.8fde8fef4033376662cad983758335009d522acb":
+  version "4.11.0-57.8fde8fef4033376662cad983758335009d522acb"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-4.11.0-57.8fde8fef4033376662cad983758335009d522acb.tgz#74af5ff56170c78e93ce46c56510160f58cd3c01"
+  integrity sha512-3Vd8Qq06d5xD8Ch5WauWcUUrsVPdMC6Ge8ILji8RFfyhUpqon6qSyGM0apvr1O8n8qH8cKkEFqRPsYjuz5r83g==
 
-"@prisma/engines@4.10.1":
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-4.10.1.tgz#c7062747f254e5d5fce98a8cae566c25f9f29fb2"
-  integrity sha512-B3tcTxjx196nuAu1GOTKO9cGPUgTFHYRdkPkTS4m5ptb2cejyBlH9X7GOfSt3xlI7p4zAJDshJP4JJivCg9ouA==
+"@prisma/engines@4.11.0":
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-4.11.0.tgz#c99749bfe20f58e8f4d2b5e04fee0785eba440e1"
+  integrity sha512-0AEBi2HXGV02cf6ASsBPhfsVIbVSDC9nbQed4iiY5eHttW9ZtMxHThuKZE1pnESbr8HRdgmFSa/Kn4OSNYuibg==
 
 "@supabase/functions-js@^2.0.0":
   version "2.0.0"
@@ -295,10 +295,10 @@
     "@supabase/storage-js" "^2.1.0"
     cross-fetch "^3.1.5"
 
-"@trpc/server@10.13.0":
-  version "10.13.0"
-  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-10.13.0.tgz#0945b5210a18934c2284c8679cb6692ecb5b054c"
-  integrity sha512-d/bu6utCC4ALxhTJkolEPAHMOSuCAu3mG79TZswa6wD2ob0/Z3AIvBF/meeSTqDxe4tvXY78lQqOkQI81dgi/g==
+"@trpc/server@10.13.2":
+  version "10.13.2"
+  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-10.13.2.tgz#53d5deb3a998c65cc5829e6c83302999fe9a4ee8"
+  integrity sha512-/5L09a7EHxRy1D6RIFsIt5fMJ8bBspMp/eDPjAH7T033f9AMyYx0jWU7r5lswoBVSbdUDJgxKyLzwXIrVNVisg==
 
 "@types/acorn@^4.0.0":
   version "4.0.6"
@@ -854,10 +854,10 @@ d@1, d@^1.0.1:
     es5-ext "^0.10.50"
     type "^1.0.1"
 
-daisyui@^2.51.2:
-  version "2.51.2"
-  resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-2.51.2.tgz#831440e02ea55f773f519a69b7f746824f4f5f84"
-  integrity sha512-Jnfknn9HrOBNzj1kUI9g/kqNSA5oP5B/r6X4Ff/cdMO27glisO2Oi9QAO8hKwMN9LzfWGdfyqvJGvc3Ji78CXA==
+daisyui@^2.51.3:
+  version "2.51.3"
+  resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-2.51.3.tgz#95dd0444f27f55326845db80076e76dcf8d31a92"
+  integrity sha512-AQa9exq/DsnvjyDi6bwOqHExQr9LJJag0iKRXNvRRtHXPo1gaAQ3ASJWylUB8J8KMH2M9zIpr7cvPHc7yGckyQ==
   dependencies:
     color "^4.2"
     css-selector-tokenizer "^0.8.0"
@@ -1278,10 +1278,10 @@ eslint-plugin-promise@^6.1.1:
   resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.1.1.tgz#269a3e2772f62875661220631bd4dafcb4083816"
   integrity sha512-tjqWDwVZQo7UIPMeDReOpUgHCmCiH+ePnVT+5zVapL0uuHnegBUs2smM13CzOs2Xb5+MHMRFTs9v24yjba4Oig==
 
-eslint-plugin-qwik@0.19.2:
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-qwik/-/eslint-plugin-qwik-0.19.2.tgz#ffa068cf2d8036769abb8d7c61518bdeaf2c30b9"
-  integrity sha512-dvJziAYCHu0Pw2GLD/IL2IoVtVsgEuEO20HhOUi6ZRCSZxCtODVaEr1sKV+rTUdUgLIghfKpalh7Y28dgzpPuQ==
+eslint-plugin-qwik@0.20.1:
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-qwik/-/eslint-plugin-qwik-0.20.1.tgz#41eceed4c1df2a2521f599aebb90ba462bfaa024"
+  integrity sha512-A5tNrtxakpBn64RmMfneu8WaIeDblWHHImTfuwOomFL18Pm5CT9DqsZ1nM0M3yvVcHxeav/avqYLsezKS4zfRw==
 
 eslint-plugin-sort-keys-fix@^1.1.2:
   version "1.1.2"
@@ -1293,10 +1293,10 @@ eslint-plugin-sort-keys-fix@^1.1.2:
     natural-compare "^1.4.0"
     requireindex "~1.2.0"
 
-eslint-plugin-tailwindcss@^3.10.0:
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-tailwindcss/-/eslint-plugin-tailwindcss-3.10.0.tgz#3c0669a8d376ad18d4ac936b9287a5d5f5024900"
-  integrity sha512-6fqvo9Dp3BqGntQoMHH3ri/nWKwUnYDqx67eKUgNPscaNxqjDEJvV6Cj8zgmCjJBAMrU+Cu6Eh4INKsgEwEbDQ==
+eslint-plugin-tailwindcss@^3.10.1:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-tailwindcss/-/eslint-plugin-tailwindcss-3.10.1.tgz#727193f78cc22b9b358ef5f99de2177d173a5209"
+  integrity sha512-NLPZ6b6nd/8CgGNMQ6NDiPUfBLQpSGu/u9RyX3MCZOwzNs2dFt1OamNAiRuo3Ixh7Gv4t5UcAcdNt8z74UDJkA==
   dependencies:
     fast-glob "^3.2.5"
     postcss "^8.4.4"
@@ -2955,12 +2955,12 @@ prettier@2.8.4:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.4.tgz#34dd2595629bfbb79d344ac4a91ff948694463c3"
   integrity sha512-vIS4Rlc2FNh0BySk3Wkd6xmwxB0FpOndW5fisM5H8hsZSxU2VWVB5CWIkIjWvrHjIhxk2g3bfMKM87zNTrZddw==
 
-prisma@^4.10.1:
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/prisma/-/prisma-4.10.1.tgz#88084695d7b364ae6bebf93d5006f84439c4e7d1"
-  integrity sha512-0jDxgg+DruB1kHVNlcspXQB9au62IFfVg9drkhzXudszHNUAQn0lVuu+T8np0uC2z1nKD5S3qPeCyR8u5YFLnA==
+prisma@^4.11.0:
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-4.11.0.tgz#9695ba4129a43eab3e76b5f7a033c6c020377725"
+  integrity sha512-4zZmBXssPUEiX+GeL0MUq/Yyie4ltiKmGu7jCJFnYMamNrrulTBc+D+QwAQSJ01tyzeGHlD13kOnqPwRipnlNw==
   dependencies:
-    "@prisma/engines" "4.10.1"
+    "@prisma/engines" "4.11.0"
 
 property-information@^6.0.0:
   version "6.1.1"
