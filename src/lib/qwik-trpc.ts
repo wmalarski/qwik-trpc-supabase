@@ -4,10 +4,10 @@
  */
 import { $ } from "@builder.io/qwik";
 import {
-  Action,
   globalAction$,
-  RequestEventCommon,
-  RequestEventLoader,
+  type Action,
+  type RequestEventCommon,
+  type RequestEventLoader,
 } from "@builder.io/qwik-city";
 import type {
   AnyMutationProcedure,
@@ -120,6 +120,7 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
       return handleRequest({ args, dotPath, event });
     }
     if (action === "action$") {
+      // eslint-disable-next-line qwik/loader-location
       return globalAction$(
         (args, event) => {
           const [, ...rest] = event.query.get("qaction")?.split("_") || [];

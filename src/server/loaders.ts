@@ -1,4 +1,4 @@
-import { RequestEventCommon } from "@builder.io/qwik-city";
+import type { RequestEventCommon } from "@builder.io/qwik-city";
 import type { User } from "@supabase/supabase-js";
 import { prisma } from "~/server/db/client";
 import { appRouter } from "~/server/trpc/router";

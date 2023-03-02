@@ -1,10 +1,10 @@
 import { $, component$, useTask$ } from "@builder.io/qwik";
 import {
-  DocumentHead,
   routeAction$,
   useNavigate,
   z,
   zod$,
+  type DocumentHead,
 } from "@builder.io/qwik-city";
 import { isBrowser } from "@builder.io/qwik/build";
 import { updateAuthCookies } from "~/server/auth/auth";

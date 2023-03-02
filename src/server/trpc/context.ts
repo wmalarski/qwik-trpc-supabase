@@ -1,6 +1,6 @@
-import { RequestEventCommon } from "@builder.io/qwik-city";
-import { User } from "@supabase/supabase-js";
-import * as trpc from "@trpc/server";
+import type { RequestEventCommon } from "@builder.io/qwik-city";
+import type { User } from "@supabase/supabase-js";
+import type * as trpc from "@trpc/server";
 import { getUserByCookie, supabase } from "../auth/auth";
 import { prisma } from "../db/client";
 

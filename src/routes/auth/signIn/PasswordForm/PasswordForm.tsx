@@ -1,9 +1,9 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, routeAction$, z, zod$ } from "@builder.io/qwik-city";
+import { Form, globalAction$, z, zod$ } from "@builder.io/qwik-city";
 import { supabase, updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const useSignInPasswordAction = routeAction$(
+export const useSignInPasswordAction = globalAction$(
   async (data, event) => {
     const result = await supabase.auth.signInWithPassword(data);
 

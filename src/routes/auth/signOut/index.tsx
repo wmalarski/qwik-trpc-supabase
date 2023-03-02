@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, RequestEvent } from "@builder.io/qwik-city";
+import type { DocumentHead, RequestEvent } from "@builder.io/qwik-city";
 import { removeAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
