@@ -1,7 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import type { Post } from "@prisma/client";
+import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
+import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
+import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { trpc } from "~/server/trpc/api";
-import { PostCard } from "./PostCard/PostCard";
+import { paths } from "~/utils/paths";
 
 export const usePost = routeLoader$((event) =>
   trpc.post.get.loader(event, { id: event.params.postId })
@@ -14,6 +18,31 @@ export const useComments = routeLoader$((event) =>
     take: 10,
   })
 );
+
+type PostCardProps = {
+  post: Post;
+};
+
+export const PostCard = component$<PostCardProps>((props) => {
+  const comments = useComments();
+
+  return (
+    <div>
+      <a class="link" href={paths.board}>
+        Back
+      </a>
+      <pre>{JSON.stringify(props.post, null, 2)}</pre>
+      <PostActions post={props.post} />
+      <CreateCommentForm parentId={null} postId={props.post.id} />
+      {comments.value.status === "success" ? (
+        <CommentsList
+          comments={comments.value.result.comments}
+          count={comments.value.result.count}
+        />
+      ) : null}
+    </div>
+  );
+});
 
 export default component$(() => {
   const post = usePost();
