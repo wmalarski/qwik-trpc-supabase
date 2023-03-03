@@ -1,5 +1,9 @@
-import { component$ } from "@builder.io/qwik";
-import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import {
+  routeLoader$,
+  server$,
+  type DocumentHead,
+} from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
@@ -19,12 +23,24 @@ export const useComments = routeLoader$((event) =>
   })
 );
 
+const queryMoreComments = server$(trpc.comment.listForParent.query());
+
 type CommentCardProps = {
   comment: Comment;
 };
 
 export const CommentCard = component$<CommentCardProps>((props) => {
   const comments = useComments();
+
+  const collection = useSignal<Comment[]>([]);
+  const page = useSignal(0);
+
+  useTask$(() => {
+    if (comments.value.status === "success") {
+      collection.value = comments.value.result.comments;
+      page.value = 0;
+    }
+  });
 
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)
@@ -47,6 +63,22 @@ export const CommentCard = component$<CommentCardProps>((props) => {
           count={comments.value.result.count}
         />
       ) : null}
+      <button
+        class="btn"
+        onClick$={async () => {
+          const value = await queryMoreComments({
+            parentId: props.comment.id,
+            skip: (page.value + 1) * 10,
+            take: 10,
+          });
+          const nextCollection = [...collection.value];
+          nextCollection.push(...value.comments);
+          collection.value = nextCollection;
+          page.value += 1;
+        }}
+      >
+        Load more
+      </button>
     </div>
   );
 });

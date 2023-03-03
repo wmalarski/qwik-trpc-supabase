@@ -21,6 +21,7 @@ import type {
 } from "@trpc/server";
 import type { ZodIssue } from "zod";
 import { getTrpcFromEvent } from "~/server/loaders";
+import type { ServerFunction, TypedServerFunction } from "~/utils/types";
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -47,6 +48,10 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
           event: RequestEventLoader,
           input: inferProcedureInput<TProcedure>
         ) => TrpcProcedureOutput<TProcedure>;
+        query: () => TypedServerFunction<
+          inferProcedureInput<TProcedure>,
+          inferProcedureOutput<TProcedure>
+        >;
       }
     : TProcedure extends AnyMutationProcedure
     ? {
@@ -54,6 +59,10 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
           TrpcProcedureOutput<TProcedure>,
           inferProcedureInput<TProcedure>,
           false
+        >;
+        mutate: () => TypedServerFunction<
+          inferProcedureInput<TProcedure>,
+          inferProcedureOutput<TProcedure>
         >;
       }
     : never;
@@ -95,14 +104,26 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
 
       const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
 
+      const safeParse = (data: string) => {
+        try {
+          return JSON.parse(data);
+        } catch {
+          return data;
+        }
+      };
+
       try {
         const result = await fnc(args);
+
+        console.log({ result });
+
         return { result, status: "success" };
       } catch (err) {
         const trpcError = err as TRPCError;
+        console.log({ err });
         const error = {
           code: trpcError.code,
-          issues: JSON.parse(trpcError.message),
+          issues: safeParse(trpcError.message),
           status: "error",
         };
         return error;
@@ -129,6 +150,12 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
         },
         { id: dotPath.join(".") }
       );
+    }
+    if (action === "query" || action === "mutate") {
+      const result: ServerFunction = function (args) {
+        return handleRequest({ args, dotPath, event: this });
+      };
+      return result;
     }
   }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 };

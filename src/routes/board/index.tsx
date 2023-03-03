@@ -1,5 +1,9 @@
-import { component$ } from "@builder.io/qwik";
-import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import {
+  routeLoader$,
+  server$,
+  type DocumentHead,
+} from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { trpc } from "~/server/trpc/api";
@@ -9,6 +13,8 @@ import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 export const usePosts = routeLoader$((event) =>
   trpc.post.list.loader(event, { skip: 0, take: 10 })
 );
+
+const queryMorePosts = server$(trpc.post.list.query());
 
 type PostListItemProps = {
   post: Post;
@@ -33,15 +39,41 @@ export const PostListItem = component$<PostListItemProps>((props) => {
 export default component$(() => {
   const posts = usePosts();
 
+  const collection = useSignal<Post[]>([]);
+  const page = useSignal(0);
+
+  useTask$(() => {
+    if (posts.value.status === "success") {
+      collection.value = posts.value.result.posts;
+      page.value = 0;
+    }
+  });
+
   return (
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
       <CreatePostForm />
       {posts.value.status === "success" ? (
         <div class="flex flex-col gap-4">
-          {posts.value.result.posts.map((post) => (
+          {collection.value.map((post) => (
             <PostListItem key={post.id} post={post} />
           ))}
+          <button
+            class="btn"
+            onClick$={async () => {
+              const value = await queryMorePosts({
+                skip: (page.value + 1) * 10,
+                take: 10,
+              });
+              console.log({ value });
+              const nextCollection = [...collection.value];
+              nextCollection.push(...value.posts);
+              collection.value = nextCollection;
+              page.value += 1;
+            }}
+          >
+            Load more
+          </button>
         </div>
       ) : null}
     </div>

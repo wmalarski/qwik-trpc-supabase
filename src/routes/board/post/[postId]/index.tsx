@@ -1,6 +1,10 @@
-import { component$ } from "@builder.io/qwik";
-import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import type { Post } from "@prisma/client";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import {
+  routeLoader$,
+  server$,
+  type DocumentHead,
+} from "@builder.io/qwik-city";
+import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
@@ -19,12 +23,24 @@ export const useComments = routeLoader$((event) =>
   })
 );
 
+const queryMoreComments = server$(trpc.comment.listForPost.query());
+
 type PostCardProps = {
   post: Post;
 };
 
 export const PostCard = component$<PostCardProps>((props) => {
   const comments = useComments();
+
+  const collection = useSignal<Comment[]>([]);
+  const page = useSignal(0);
+
+  useTask$(() => {
+    if (comments.value.status === "success") {
+      collection.value = comments.value.result.comments;
+      page.value = 0;
+    }
+  });
 
   return (
     <div>
@@ -40,6 +56,22 @@ export const PostCard = component$<PostCardProps>((props) => {
           count={comments.value.result.count}
         />
       ) : null}
+      <button
+        class="btn"
+        onClick$={async () => {
+          const value = await queryMoreComments({
+            postId: props.post.id,
+            skip: (page.value + 1) * 10,
+            take: 10,
+          });
+          const nextCollection = [...collection.value];
+          nextCollection.push(...value.comments);
+          collection.value = nextCollection;
+          page.value += 1;
+        }}
+      >
+        Load more
+      </button>
     </div>
   );
 });
