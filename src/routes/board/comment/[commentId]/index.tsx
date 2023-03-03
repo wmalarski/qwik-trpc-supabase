@@ -72,10 +72,13 @@ export const CommentCard = component$<CommentCardProps>((props) => {
             skip: (page.value + 1) * 10,
             take: 10,
           });
-          const nextCollection = [...collection.value];
-          nextCollection.push(...value.comments);
-          collection.value = nextCollection;
-          page.value += 1;
+
+          if (value.status === "success") {
+            const nextCollection = [...collection.value];
+            nextCollection.push(...value.result.comments);
+            collection.value = nextCollection;
+            page.value += 1;
+          }
         }}
       >
         Load more

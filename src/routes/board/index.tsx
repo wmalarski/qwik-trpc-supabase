@@ -44,7 +44,7 @@ export default component$(() => {
   const page = useSignal(0);
 
   useTask$(() => {
-    if (posts.value.status === "success") {
+    if (posts.value?.status === "success") {
       collection.value = posts.value.result.posts;
       page.value = 0;
     }
@@ -54,29 +54,29 @@ export default component$(() => {
     <div class="flex flex-col gap-2">
       <h1>Feed</h1>
       <CreatePostForm />
-      {posts.value.status === "success" ? (
-        <div class="flex flex-col gap-4">
-          {collection.value.map((post) => (
-            <PostListItem key={post.id} post={post} />
-          ))}
-          <button
-            class="btn"
-            onClick$={async () => {
-              const value = await queryMorePosts({
-                skip: (page.value + 1) * 10,
-                take: 10,
-              });
-              console.log({ value });
+      <div class="flex flex-col gap-4">
+        {collection.value.map((post) => (
+          <PostListItem key={post.id} post={post} />
+        ))}
+        <button
+          class="btn"
+          onClick$={async () => {
+            const value = await queryMorePosts({
+              skip: (page.value + 1) * 10,
+              take: 10,
+            });
+
+            if (value.status === "success") {
               const nextCollection = [...collection.value];
-              nextCollection.push(...value.posts);
+              nextCollection.push(...value.result.posts);
               collection.value = nextCollection;
               page.value += 1;
-            }}
-          >
-            Load more
-          </button>
-        </div>
-      ) : null}
+            }
+          }}
+        >
+          Load more
+        </button>
+      </div>
     </div>
   );
 });

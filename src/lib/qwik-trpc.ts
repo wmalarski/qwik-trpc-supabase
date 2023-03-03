@@ -50,7 +50,7 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
         ) => TrpcProcedureOutput<TProcedure>;
         query: () => TypedServerFunction<
           inferProcedureInput<TProcedure>,
-          inferProcedureOutput<TProcedure>
+          TrpcProcedureOutput<TProcedure>
         >;
       }
     : TProcedure extends AnyMutationProcedure
@@ -62,7 +62,7 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
         >;
         mutate: () => TypedServerFunction<
           inferProcedureInput<TProcedure>,
-          inferProcedureOutput<TProcedure>
+          TrpcProcedureOutput<TProcedure>
         >;
       }
     : never;
@@ -115,12 +115,9 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
       try {
         const result = await fnc(args);
 
-        console.log({ result });
-
         return { result, status: "success" };
       } catch (err) {
         const trpcError = err as TRPCError;
-        console.log({ err });
         const error = {
           code: trpcError.code,
           issues: safeParse(trpcError.message),
