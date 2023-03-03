@@ -1,5 +1,6 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import {
+  Link,
   routeLoader$,
   server$,
   type DocumentHead,
@@ -48,9 +49,9 @@ export const CommentCard = component$<CommentCardProps>((props) => {
 
   return (
     <div>
-      <a class="link" href={backPath}>
+      <Link class="link" href={backPath}>
         Back
-      </a>
+      </Link>
       <pre>{JSON.stringify(props.comment, null, 2)}</pre>
       <CommentActions comment={props.comment} />
       <CreateCommentForm

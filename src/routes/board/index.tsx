@@ -1,5 +1,6 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import {
+  Link,
   routeLoader$,
   server$,
   type DocumentHead,
@@ -26,9 +27,9 @@ export const PostListItem = component$<PostListItemProps>((props) => {
       <div class="card-body">
         <pre>{JSON.stringify(props.post, null, 2)}</pre>
         <div class="card-actions">
-          <a class="btn btn-link btn-sm" href={paths.post(props.post.id)}>
+          <Link class="btn btn-link btn-sm" href={paths.post(props.post.id)}>
             Show comments
-          </a>
+          </Link>
           <PostActions post={props.post} />
         </div>
       </div>

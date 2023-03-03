@@ -1,5 +1,6 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import {
+  Link,
   routeLoader$,
   server$,
   type DocumentHead,
@@ -44,9 +45,9 @@ export const PostCard = component$<PostCardProps>((props) => {
 
   return (
     <div>
-      <a class="link" href={paths.board}>
+      <Link class="link" href={paths.board}>
         Back
-      </a>
+      </Link>
       <pre>{JSON.stringify(props.post, null, 2)}</pre>
       <PostActions post={props.post} />
       <CreateCommentForm parentId={null} postId={props.post.id} />
