@@ -4,7 +4,7 @@
  */
 import { $ } from "@builder.io/qwik";
 import {
-  globalAction$,
+  routeAction$,
   type Action,
   type RequestEventCommon,
   type RequestEventLoader,
@@ -139,7 +139,7 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
     }
     if (action === "action$") {
       // eslint-disable-next-line qwik/loader-location
-      return globalAction$(
+      return routeAction$(
         (args, event) => {
           const [, ...rest] = event.query.get("qaction")?.split("_") || [];
           const dotPath = rest.join("_").split(".") || [];
@@ -149,10 +149,10 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
       );
     }
     if (action === "query" || action === "mutate") {
-      const result: ServerFunction = function (args) {
+      const serverFnc: ServerFunction = function (args) {
         return handleRequest({ args, dotPath, event: this });
       };
-      return result;
+      return serverFnc;
     }
   }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 };

@@ -21,6 +21,8 @@ type PostListItemProps = {
   post: Post;
 };
 
+export const useCreatePostAction = trpc.post.create.action$();
+
 export const PostListItem = component$<PostListItemProps>((props) => {
   return (
     <div class="card card-bordered card-compact overflow-visible">
