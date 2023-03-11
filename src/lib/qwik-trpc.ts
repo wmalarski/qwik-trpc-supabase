@@ -2,8 +2,9 @@
 /**
  * @see https://trpc.io/blog/tinyrpc-client
  */
-import { $ } from "@builder.io/qwik";
+import { $, implicit$FirstArg, type QRL } from "@builder.io/qwik";
 import {
+  globalAction$,
   routeAction$,
   type Action,
   type RequestEventCommon,
@@ -81,6 +82,36 @@ type HandleRequestArgs = {
   dotPath: string[];
 };
 
+export const handleRequest = $(
+  async ({ event, args, dotPath }: HandleRequestArgs) => {
+    const trpc = await getTrpcFromEvent(event);
+
+    const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
+
+    const safeParse = (data: string) => {
+      try {
+        return JSON.parse(data);
+      } catch {
+        return data;
+      }
+    };
+
+    try {
+      const result = await fnc(args);
+
+      return { result, status: "success" };
+    } catch (err) {
+      const trpcError = err as TRPCError;
+      const error = {
+        code: trpcError.code,
+        issues: safeParse(trpcError.message),
+        status: "error",
+      };
+      return error;
+    }
+  }
+);
+
 export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
@@ -98,36 +129,6 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
     return proxy;
   };
 
-  const handleRequest = $(
-    async ({ event, args, dotPath }: HandleRequestArgs) => {
-      const trpc = await getTrpcFromEvent(event);
-
-      const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
-
-      const safeParse = (data: string) => {
-        try {
-          return JSON.parse(data);
-        } catch {
-          return data;
-        }
-      };
-
-      try {
-        const result = await fnc(args);
-
-        return { result, status: "success" };
-      } catch (err) {
-        const trpcError = err as TRPCError;
-        const error = {
-          code: trpcError.code,
-          issues: safeParse(trpcError.message),
-          status: "error",
-        };
-        return error;
-      }
-    }
-  );
-
   return createRecursiveProxy((opts) => {
     const dotPath = opts.path.slice(0, -1);
     const action = opts.path[opts.path.length - 1];
@@ -135,6 +136,7 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
     if (action === "loader") {
       const event = opts.args[0] as RequestEventLoader;
       const args = opts.args[1];
+
       return handleRequest({ args, dotPath, event });
     }
     if (action === "action$") {
@@ -143,6 +145,7 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
         (args, event) => {
           const [, ...rest] = event.query.get("qaction")?.split("_") || [];
           const dotPath = rest.join("_").split(".") || [];
+
           return handleRequest({ args, dotPath, event });
         },
         { id: dotPath.join(".") }
@@ -156,3 +159,26 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
     }
   }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 };
+
+export const trpcActionQrl = (action: QRL<() => string[]>) => {
+  // eslint-disable-next-line qwik/loader-location
+  return globalAction$(async (args, event) => {
+    console.log("trpcAction", args);
+
+    const fnc = await action.resolve();
+
+    console.log("trpcAction", fnc);
+
+    const dotPath = fnc();
+
+    console.log("trpcAction", dotPath);
+
+    const result = await handleRequest({ args, dotPath, event });
+
+    console.log("trpcAction", result);
+
+    return result;
+  });
+};
+
+export const trpcAction$ = implicit$FirstArg(trpcActionQrl);

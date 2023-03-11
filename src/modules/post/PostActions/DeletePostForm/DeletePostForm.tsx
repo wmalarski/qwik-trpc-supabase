@@ -1,10 +1,12 @@
 import { component$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
-import { trpc } from "~/server/trpc/api";
+import { trpcAction$ } from "~/lib/qwik-trpc";
 import { paths } from "~/utils/paths";
 
-export const useDeletePost = trpc.post.delete.action$();
+// export const useDeletePost = trpc.post.delete.action$();
+
+export const useDeletePost = trpcAction$(() => ["trpc", "post", "delete"]);
 
 type Props = {
   post: Post;
