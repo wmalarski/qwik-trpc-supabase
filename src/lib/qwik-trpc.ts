@@ -2,9 +2,7 @@
 /**
  * @see https://trpc.io/blog/tinyrpc-client
  */
-import { implicit$FirstArg, type QRL } from "@builder.io/qwik";
 import {
-  globalAction$,
   type Action,
   type RequestEventCommon,
   type RequestEventLoader,
@@ -21,7 +19,7 @@ import type {
 } from "@trpc/server";
 import type { ZodIssue } from "zod";
 import { getTrpcFromEvent } from "~/server/loaders";
-import type { ServerFunction, TypedServerFunction } from "~/utils/types";
+import type { TypedServerFunction } from "~/utils/types";
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -81,73 +79,6 @@ type HandleRequestArgs = {
   dotPath: string[];
 };
 
-export const trpcRequestHandlerQrl = (
-  getTrpc: QRL<
-    (event: RequestEventCommon) => ReturnType<typeof getTrpcFromEvent>
-  >
-) => {
-  return async ({ event, args, dotPath }: HandleRequestArgs) => {
-    const trpcGetter = await getTrpc.resolve();
-    const trpc = await trpcGetter(event);
-
-    const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
-
-    const safeParse = (data: string) => {
-      try {
-        return JSON.parse(data);
-      } catch {
-        return data;
-      }
-    };
-
-    try {
-      const result = await fnc(args);
-
-      return { result, status: "success" };
-    } catch (err) {
-      const trpcError = err as TRPCError;
-      const error = {
-        code: trpcError.code,
-        issues: safeParse(trpcError.message),
-        status: "error",
-      };
-      return error;
-    }
-  };
-};
-
-export const trpcRequestHandler$ = implicit$FirstArg(trpcRequestHandlerQrl);
-
-// export const handleRequest = $(
-//   async ({ event, args, dotPath }: HandleRequestArgs) => {
-//     const trpc = await getTrpcFromEvent(event);
-
-//     const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
-
-//     const safeParse = (data: string) => {
-//       try {
-//         return JSON.parse(data);
-//       } catch {
-//         return data;
-//       }
-//     };
-
-//     try {
-//       const result = await fnc(args);
-
-//       return { result, status: "success" };
-//     } catch (err) {
-//       const trpcError = err as TRPCError;
-//       const error = {
-//         code: trpcError.code,
-//         issues: safeParse(trpcError.message),
-//         status: "error",
-//       };
-//       return error;
-//     }
-//   }
-// );
-
 export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
@@ -203,34 +134,5 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
 
       return handleRequest({ args, dotPath, event });
     }
-    if (action === "query" || action === "mutate") {
-      const serverFnc: ServerFunction = function (args) {
-        return handleRequest({ args, dotPath, event: this });
-      };
-      return serverFnc;
-    }
   }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 };
-
-export const trpcActionQrl = (action: QRL<() => string[]>) => {
-  // eslint-disable-next-line qwik/loader-location
-  return globalAction$(async (args, event) => {
-    console.log("trpcAction", args);
-
-    const fnc = await action.resolve();
-
-    console.log("trpcAction", fnc);
-
-    const dotPath = fnc();
-
-    console.log("trpcAction", dotPath);
-
-    const result = await handleRequest({ args, dotPath, event });
-
-    console.log("trpcAction", result);
-
-    return result;
-  });
-};
-
-export const trpcAction$ = implicit$FirstArg(trpcActionQrl);

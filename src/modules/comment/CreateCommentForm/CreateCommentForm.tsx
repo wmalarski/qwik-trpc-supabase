@@ -1,12 +1,8 @@
 import { component$ } from "@builder.io/qwik";
-import { trpcAction$ } from "~/lib/qwik-trpc";
+import { trpcAction$ } from "~/lib/qwik-trpc2";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-export const useCreateComment = trpcAction$(() => [
-  "trpc",
-  "comment",
-  "create",
-]);
+export const useCreateComment = trpcAction$(() => ["comment", "create"]);
 
 type Props = {
   parentId: string | null;
