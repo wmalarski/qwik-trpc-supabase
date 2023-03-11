@@ -9,12 +9,12 @@ export const useAnonymousRoute = routeLoader$(async (event) => {
   const user = await getUserFromEvent(event);
 
   if (user) {
-    event.redirect(302, paths.index);
+    throw event.redirect(302, paths.index);
   }
 });
 
 export default component$(() => {
-  useAnonymousRoute();
+  // useAnonymousRoute();
 
   return (
     <div class="flex flex-col gap-2">

@@ -2,7 +2,7 @@
 /**
  * @see https://trpc.io/blog/tinyrpc-client
  */
-import { implicit$FirstArg, type QRL } from "@builder.io/qwik";
+import { $, implicit$FirstArg, type QRL } from "@builder.io/qwik";
 import {
   globalAction$,
   server$,
@@ -231,26 +231,19 @@ export const trpcActionQrl = (action: QRL<() => string[]>) => {
 
 export const trpcAction$ = implicit$FirstArg(trpcActionQrl);
 
-export const trpcFetchQrl = (action: QRL<() => string[]>) => {
-  // eslint-disable-next-line qwik/loader-location, prefer-arrow-callback
-  return server$(async function (args) {
-    console.log("trpcFetch", args);
-
-    const fnc = await action.resolve();
-
-    console.log("trpcFetch", fnc);
-
-    const dotPath = fnc();
-
-    console.log("trpcFetch", dotPath);
+export const trpcFetchQrl = (dotPathQrl: QRL<() => string[]>) => {
+  // eslint-disable-next-line prefer-arrow-callback
+  const fnc = server$(function (args: any) {
+    const dotPath = args.__dotPath;
 
     const handler = trpcRequestHandler$((event) => getTrpcFromEvent(event));
 
-    const result = await handler({ args, dotPath, event: this });
+    return handler({ args, dotPath, event: this });
+  });
 
-    console.log("trpcFetch", result);
-
-    return result;
+  return $(async (args: any) => {
+    const dotPath = await dotPathQrl();
+    return fnc({ ...args, __dotPath: dotPath });
   });
 };
 

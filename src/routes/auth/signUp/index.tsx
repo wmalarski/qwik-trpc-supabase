@@ -12,7 +12,7 @@ export const useAnonymousRoute = routeLoader$(async (event) => {
 });
 
 export default component$(() => {
-  useAnonymousRoute();
+  // useAnonymousRoute();
 
   return (
     <div class="flex flex-col gap-2">
