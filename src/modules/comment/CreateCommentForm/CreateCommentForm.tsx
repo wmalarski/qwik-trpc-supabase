@@ -2,8 +2,6 @@ import { component$ } from "@builder.io/qwik";
 import { trpcAction$ } from "~/lib/qwik-trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-// export const useCreateComment = trpc.comment.create.action$();
-
 export const useCreateComment = trpcAction$(() => [
   "trpc",
   "comment",

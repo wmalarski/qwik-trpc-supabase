@@ -2,10 +2,9 @@
 /**
  * @see https://trpc.io/blog/tinyrpc-client
  */
-import { $, implicit$FirstArg, type QRL } from "@builder.io/qwik";
+import { implicit$FirstArg, type QRL } from "@builder.io/qwik";
 import {
   globalAction$,
-  routeAction$,
   type Action,
   type RequestEventCommon,
   type RequestEventLoader,
@@ -82,8 +81,91 @@ type HandleRequestArgs = {
   dotPath: string[];
 };
 
-export const handleRequest = $(
-  async ({ event, args, dotPath }: HandleRequestArgs) => {
+export const trpcRequestHandlerQrl = (
+  getTrpc: QRL<
+    (event: RequestEventCommon) => ReturnType<typeof getTrpcFromEvent>
+  >
+) => {
+  return async ({ event, args, dotPath }: HandleRequestArgs) => {
+    const trpcGetter = await getTrpc.resolve();
+    const trpc = await trpcGetter(event);
+
+    const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
+
+    const safeParse = (data: string) => {
+      try {
+        return JSON.parse(data);
+      } catch {
+        return data;
+      }
+    };
+
+    try {
+      const result = await fnc(args);
+
+      return { result, status: "success" };
+    } catch (err) {
+      const trpcError = err as TRPCError;
+      const error = {
+        code: trpcError.code,
+        issues: safeParse(trpcError.message),
+        status: "error",
+      };
+      return error;
+    }
+  };
+};
+
+export const trpcRequestHandler$ = implicit$FirstArg(trpcRequestHandlerQrl);
+
+// export const handleRequest = $(
+//   async ({ event, args, dotPath }: HandleRequestArgs) => {
+//     const trpc = await getTrpcFromEvent(event);
+
+//     const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
+
+//     const safeParse = (data: string) => {
+//       try {
+//         return JSON.parse(data);
+//       } catch {
+//         return data;
+//       }
+//     };
+
+//     try {
+//       const result = await fnc(args);
+
+//       return { result, status: "success" };
+//     } catch (err) {
+//       const trpcError = err as TRPCError;
+//       const error = {
+//         code: trpcError.code,
+//         issues: safeParse(trpcError.message),
+//         status: "error",
+//       };
+//       return error;
+//     }
+//   }
+// );
+
+export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
+  const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
+    const proxy: unknown = new Proxy(() => void 0, {
+      apply(_1, _2, args) {
+        return callback({ args, path });
+      },
+      get(_obj, key) {
+        if (typeof key !== "string") {
+          return undefined;
+        }
+        return createRecursiveProxy(callback, [...path, key]);
+      },
+    });
+
+    return proxy;
+  };
+
+  const handleRequest = async ({ event, args, dotPath }: HandleRequestArgs) => {
     const trpc = await getTrpcFromEvent(event);
 
     const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
@@ -109,24 +191,6 @@ export const handleRequest = $(
       };
       return error;
     }
-  }
-);
-
-export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
-  const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
-    const proxy: unknown = new Proxy(() => void 0, {
-      apply(_1, _2, args) {
-        return callback({ args, path });
-      },
-      get(_obj, key) {
-        if (typeof key !== "string") {
-          return undefined;
-        }
-        return createRecursiveProxy(callback, [...path, key]);
-      },
-    });
-
-    return proxy;
   };
 
   return createRecursiveProxy((opts) => {
@@ -138,18 +202,6 @@ export const createTrpcServerApi = <TRouter extends AnyRouter>() => {
       const args = opts.args[1];
 
       return handleRequest({ args, dotPath, event });
-    }
-    if (action === "action$") {
-      // eslint-disable-next-line qwik/loader-location
-      return routeAction$(
-        (args, event) => {
-          const [, ...rest] = event.query.get("qaction")?.split("_") || [];
-          const dotPath = rest.join("_").split(".") || [];
-
-          return handleRequest({ args, dotPath, event });
-        },
-        { id: dotPath.join(".") }
-      );
     }
     if (action === "query" || action === "mutate") {
       const serverFnc: ServerFunction = function (args) {

@@ -3,8 +3,6 @@ import type { Post } from "@prisma/client";
 import { trpcAction$ } from "~/lib/qwik-trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
-// export const useUpdatePostAction = trpc.post.update.action$();
-
 export const useUpdatePostAction = trpcAction$(() => [
   "trpc",
   "post",

@@ -4,8 +4,6 @@ import type { Post } from "@prisma/client";
 import { trpcAction$ } from "~/lib/qwik-trpc";
 import { paths } from "~/utils/paths";
 
-// export const useDeletePost = trpc.post.delete.action$();
-
 export const useDeletePost = trpcAction$(() => ["trpc", "post", "delete"]);
 
 type Props = {

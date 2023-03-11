@@ -17,8 +17,6 @@ type PostListItemProps = {
   post: Post;
 };
 
-// export const useCreatePostAction = trpc.post.create.action$();
-
 export const useCreatePostAction = trpcAction$(() => [
   "trpc",
   "post",

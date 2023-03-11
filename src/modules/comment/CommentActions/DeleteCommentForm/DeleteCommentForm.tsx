@@ -14,8 +14,6 @@ export const useDeleteCommentAction = trpcAction$(() => [
   "delete",
 ]);
 
-// export const useDeleteCommentAction = trpc.comment.delete.action$();
-
 export const DeleteCommentForm = component$<Props>((props) => {
   const action = useDeleteCommentAction();
 
