@@ -32,9 +32,10 @@ export const PostCard = component$<PostCardProps>((props) => {
   const collection = useSignal<Comment[]>([]);
   const page = useSignal(0);
 
-  useTask$(() => {
-    if (comments.value.status === "success") {
-      collection.value = comments.value.result.comments;
+  useTask$(({ track }) => {
+    const trackedComments = track(() => comments.value);
+    if (trackedComments.status === "success") {
+      collection.value = trackedComments.result.comments;
       page.value = 0;
     }
   });
@@ -49,7 +50,7 @@ export const PostCard = component$<PostCardProps>((props) => {
       <CreateCommentForm parentId={null} postId={props.post.id} />
       {comments.value.status === "success" ? (
         <CommentsList
-          comments={comments.value.result.comments}
+          comments={collection.value}
           count={comments.value.result.count}
         />
       ) : null}

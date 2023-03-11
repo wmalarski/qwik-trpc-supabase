@@ -1,7 +1,7 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
-import { trpcAction$, trpcFetch$ } from "~/lib/qwik-trpc2";
+import { trpcFetch$, trpcRouteAction$ } from "~/lib/qwik-trpc2";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { trpc } from "~/server/trpc/api";
 import { paths } from "~/utils/paths";
@@ -17,7 +17,7 @@ type PostListItemProps = {
   post: Post;
 };
 
-export const useCreatePostAction = trpcAction$(() => ["post", "create"]);
+export const useCreatePostAction = trpcRouteAction$(() => ["post", "create"]);
 
 export const PostListItem = component$<PostListItemProps>((props) => {
   return (
@@ -41,9 +41,10 @@ export default component$(() => {
   const collection = useSignal<Post[]>([]);
   const page = useSignal(0);
 
-  useTask$(() => {
-    if (posts.value?.status === "success") {
-      collection.value = posts.value.result.posts;
+  useTask$(({ track }) => {
+    const trackedPosts = track(() => posts.value);
+    if (trackedPosts?.status === "success") {
+      collection.value = trackedPosts.result.posts;
       page.value = 0;
     }
   });

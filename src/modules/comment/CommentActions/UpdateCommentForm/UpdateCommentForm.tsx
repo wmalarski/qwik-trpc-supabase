@@ -1,9 +1,12 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
-import { trpcAction$ } from "~/lib/qwik-trpc2";
+import { trpcGlobalAction$ } from "~/lib/qwik-trpc2";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
-export const useUpdateCommentAction = trpcAction$(() => ["comment", "update"]);
+export const useUpdateCommentAction = trpcGlobalAction$(() => [
+  "comment",
+  "update",
+]);
 
 type Props = {
   comment: Comment;

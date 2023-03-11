@@ -5,6 +5,7 @@
 import { $, implicit$FirstArg, type QRL } from "@builder.io/qwik";
 import {
   globalAction$,
+  routeAction$,
   server$,
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
@@ -206,30 +207,31 @@ export const trpcRequestHandler$ = implicit$FirstArg(trpcRequestHandlerQrl);
 //   // }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 // };
 
-export const trpcActionQrl = (action: QRL<() => string[]>) => {
+export const trpcGlobalActionQrl = (dotPathQrl: QRL<() => string[]>) => {
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(async (args, event) => {
-    console.log("trpcAction", args);
-
-    const fnc = await action.resolve();
-
-    console.log("trpcAction", fnc);
-
-    const dotPath = fnc();
-
-    console.log("trpcAction", dotPath);
+    const dotPath = await dotPathQrl();
 
     const handler = trpcRequestHandler$((event) => getTrpcFromEvent(event));
 
-    const result = await handler({ args, dotPath, event });
-
-    console.log("trpcAction", result);
-
-    return result;
+    return handler({ args, dotPath, event });
   });
 };
 
-export const trpcAction$ = implicit$FirstArg(trpcActionQrl);
+export const trpcGlobalAction$ = implicit$FirstArg(trpcGlobalActionQrl);
+
+export const trpcRouteActionQrl = (dotPathQrl: QRL<() => string[]>) => {
+  // eslint-disable-next-line qwik/loader-location
+  return routeAction$(async (args, event) => {
+    const dotPath = await dotPathQrl();
+
+    const handler = trpcRequestHandler$((event) => getTrpcFromEvent(event));
+
+    return handler({ args, dotPath, event });
+  });
+};
+
+export const trpcRouteAction$ = implicit$FirstArg(trpcRouteActionQrl);
 
 export const trpcFetchQrl = (dotPathQrl: QRL<() => string[]>) => {
   // eslint-disable-next-line prefer-arrow-callback
