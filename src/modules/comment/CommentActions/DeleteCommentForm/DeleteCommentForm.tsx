@@ -2,16 +2,17 @@ import { component$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { trpcGlobalAction$ } from "~/lib/qwik-trpc2";
+import { getTrpcFromEvent } from "~/server/loaders";
 import { paths } from "~/utils/paths";
 
 type Props = {
   comment: Comment;
 };
 
-export const useDeleteCommentAction = trpcGlobalAction$(() => [
-  "comment",
-  "delete",
-]);
+export const useDeleteCommentAction = trpcGlobalAction$(async (event) => ({
+  caller: await getTrpcFromEvent(event),
+  dotPath: ["comment", "delete"],
+}));
 
 export const DeleteCommentForm = component$<Props>((props) => {
   const action = useDeleteCommentAction();

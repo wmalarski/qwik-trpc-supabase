@@ -11,6 +11,7 @@ import {
 } from "@builder.io/qwik-city";
 import type { TRPCError } from "@trpc/server";
 import { getTrpcFromEvent } from "~/server/loaders";
+import type { appRouter } from "~/server/trpc/router";
 
 // type ProxyCallbackOptions = {
 //   path: string[];
@@ -107,35 +108,54 @@ export const trpcRequestHandlerQrl = (
 
 export const trpcRequestHandler$ = implicit$FirstArg(trpcRequestHandlerQrl);
 
-// export const handleRequest = $(
-//   async ({ event, args, dotPath }: HandleRequestArgs) => {
-//     const trpc = await getTrpcFromEvent(event);
+type TrpcHandlerArgs = {
+  event: RequestEventCommon;
+  args: any;
+};
 
-//     const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
+type TrpcHandlerConfig = {
+  dotPath: string[];
+  caller: ReturnType<typeof appRouter.createCaller>;
+};
 
-//     const safeParse = (data: string) => {
-//       try {
-//         return JSON.parse(data);
-//       } catch {
-//         return data;
-//       }
-//     };
+export const trpcHandlerQrl = (
+  trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
+) => {
+  return $(async ({ args, event }: TrpcHandlerArgs) => {
+    const config = await trpcQrl(event);
 
-//     try {
-//       const result = await fnc(args);
+    console.log("trpcHandlerQrl", config.dotPath);
 
-//       return { result, status: "success" };
-//     } catch (err) {
-//       const trpcError = err as TRPCError;
-//       const error = {
-//         code: trpcError.code,
-//         issues: safeParse(trpcError.message),
-//         status: "error",
-//       };
-//       return error;
-//     }
-//   }
-// );
+    const fnc = config.dotPath.reduce(
+      (prev, curr) => prev[curr],
+      config.caller as any
+    );
+
+    const safeParse = (data: string) => {
+      try {
+        return JSON.parse(data);
+      } catch {
+        return data;
+      }
+    };
+
+    try {
+      const result = await fnc(args);
+
+      return { result, status: "success" };
+    } catch (err) {
+      const trpcError = err as TRPCError;
+      const error = {
+        code: trpcError.code,
+        issues: safeParse(trpcError.message),
+        status: "error",
+      };
+      return error;
+    }
+  });
+};
+
+export const trpcHandler$ = implicit$FirstArg(trpcHandlerQrl);
 
 // export const createTrpcServerApiQrl = <TRouter extends AnyRouter>(
 //   getTrpc: QRL<
@@ -207,27 +227,47 @@ export const trpcRequestHandler$ = implicit$FirstArg(trpcRequestHandlerQrl);
 //   // }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 // };
 
-export const trpcGlobalActionQrl = (dotPathQrl: QRL<() => string[]>) => {
+// if (action === "action$") {
+//   // eslint-disable-next-line qwik/loader-location
+//   return routeAction$(
+//     (args, event) => {
+//       const [, ...rest] = event.query.get("qaction")?.split("_") || [];
+//       const dotPath = rest.join("_").split(".") || [];
+
+//       return handleRequest({ args, dotPath, event });
+//     },
+//     { id: dotPath.join(".") }
+//   );
+// }
+
+// type TrpcGlobalActionQrlArgs = {
+//   dotPath: string[];
+//   trpcQrl: QRL<
+//     (
+//       event: RequestEventCommon
+//     ) => Promise<ReturnType<typeof appRouter.createCaller>>
+//   >;
+// };
+
+export const trpcGlobalActionQrl = (
+  trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
+) => {
   // eslint-disable-next-line qwik/loader-location
-  return globalAction$(async (args, event) => {
-    const dotPath = await dotPathQrl();
-
-    const handler = trpcRequestHandler$((event) => getTrpcFromEvent(event));
-
-    return handler({ args, dotPath, event });
+  return globalAction$((args, event) => {
+    const handler = trpcHandler$((event) => trpcQrl(event));
+    return handler({ args, event });
   });
 };
 
 export const trpcGlobalAction$ = implicit$FirstArg(trpcGlobalActionQrl);
 
-export const trpcRouteActionQrl = (dotPathQrl: QRL<() => string[]>) => {
+export const trpcRouteActionQrl = (
+  trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
+) => {
   // eslint-disable-next-line qwik/loader-location
-  return routeAction$(async (args, event) => {
-    const dotPath = await dotPathQrl();
-
-    const handler = trpcRequestHandler$((event) => getTrpcFromEvent(event));
-
-    return handler({ args, dotPath, event });
+  return routeAction$((args, event) => {
+    const handler = trpcHandler$((event) => trpcQrl(event));
+    return handler({ args, event });
   });
 };
 
