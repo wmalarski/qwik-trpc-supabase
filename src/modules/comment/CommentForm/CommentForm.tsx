@@ -17,8 +17,8 @@ export const CommentForm = component$<Props>((props) => {
     <form
       preventdefault:submit
       class="flex flex-col gap-2"
-      onSubmit$={(event) => {
-        const form = new FormData(event.target as HTMLFormElement);
+      onSubmit$={(_event, element) => {
+        const form = new FormData(element);
         const content = form.get("content") as string;
         onSubmit$({ content });
       }}
