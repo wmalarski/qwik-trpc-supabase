@@ -6,11 +6,11 @@ import { $, implicit$FirstArg, type QRL } from "@builder.io/qwik";
 import {
   globalAction$,
   routeAction$,
-  server$,
+  type RequestEvent,
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
 import type { TRPCError } from "@trpc/server";
-import { getTrpcFromEvent } from "~/server/loaders";
+import type { getTrpcFromEvent } from "~/server/loaders";
 import type { appRouter } from "~/server/trpc/router";
 
 // type ProxyCallbackOptions = {
@@ -249,14 +249,21 @@ export const trpcHandler$ = implicit$FirstArg(trpcHandlerQrl);
 //   >;
 // };
 
+export const getRandomActionId = () => {
+  return String(Math.floor(Math.random() * 1e11));
+};
+
 export const trpcGlobalActionQrl = (
   trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
 ) => {
   // eslint-disable-next-line qwik/loader-location
-  return globalAction$((args, event) => {
-    const handler = trpcHandler$((event) => trpcQrl(event));
-    return handler({ args, event });
-  });
+  return globalAction$(
+    (args, event) => {
+      const handler = trpcHandler$((event) => trpcQrl(event));
+      return handler({ args, event });
+    },
+    { id: getRandomActionId() }
+  );
 };
 
 export const trpcGlobalAction$ = implicit$FirstArg(trpcGlobalActionQrl);
@@ -265,28 +272,86 @@ export const trpcRouteActionQrl = (
   trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
 ) => {
   // eslint-disable-next-line qwik/loader-location
-  return routeAction$((args, event) => {
-    const handler = trpcHandler$((event) => trpcQrl(event));
-    return handler({ args, event });
-  });
+  return routeAction$(
+    (args, event) => {
+      const handler = trpcHandler$((event) => trpcQrl(event));
+      return handler({ args, event });
+    },
+    { id: getRandomActionId() }
+  );
 };
 
 export const trpcRouteAction$ = implicit$FirstArg(trpcRouteActionQrl);
 
 export const trpcFetchQrl = (dotPathQrl: QRL<() => string[]>) => {
   // eslint-disable-next-line prefer-arrow-callback
-  const fnc = server$(function (args: any) {
-    const dotPath = args.__dotPath;
-
-    const handler = trpcRequestHandler$((event) => getTrpcFromEvent(event));
-
-    return handler({ args, dotPath, event: this });
-  });
 
   return $(async (args: any) => {
     const dotPath = await dotPathQrl();
+    const response = await fetch(`/api/trpc/${dotPath}`, {});
     return fnc({ ...args, __dotPath: dotPath });
   });
 };
 
 export const trpcFetch$ = implicit$FirstArg(trpcFetchQrl);
+
+/*
+
+import { RequestHandler } from "@builder.io/qwik-city";
+import { resolveHTTPResponse } from "@trpc/server/http";
+import { createContext } from "~/server/trpc/context";
+import { appRouter } from "~/server/trpc/router/index";
+
+const handler: RequestHandler = async (ev) => {
+  const headers: Record<string, string> = {};
+  ev.request.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+
+  try {
+    const res = await resolveHTTPResponse({
+      createContext: () => createContext(ev),
+      path: ev.params.trpc,
+      req: {
+        body: await ev.request.text(),
+        headers,
+        method: ev.request.method,
+        query: new URL(ev.request.url).searchParams,
+      },
+      router: appRouter,
+    });
+
+    for (const key in res.headers) {
+      const value = res.headers[key] as string;
+      ev.headers.set(key, value);
+    }
+
+    ev.status(res.status);
+    return JSON.parse(res.body as string);
+  } catch (error) {
+    ev.status(500);
+    return "Internal Server Error";
+  }
+};
+
+export const onGet = handler;
+export const onPost = handler;
+export const onPut = handler;
+export const onDelete = handler;
+export const onPatch = handler;
+export const onHead = handler;
+export const onOptions = handler;
+
+
+*/
+export const trpcOnRequestQrl = (
+  trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
+) => {
+  return $(async (event: RequestEvent) => {
+    const handler = trpcHandler$((event) => trpcQrl(event));
+    const args = await event.request.text();
+    return handler({ args, event });
+  });
+};
+
+export const trpcOnRequest$ = implicit$FirstArg(trpcOnRequestQrl);
