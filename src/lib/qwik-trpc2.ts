@@ -10,7 +10,6 @@ import {
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
 import type { TRPCError } from "@trpc/server";
-import type { getTrpcFromEvent } from "~/server/loaders";
 import type { appRouter } from "~/server/trpc/router";
 
 // type ProxyCallbackOptions = {
@@ -65,20 +64,21 @@ import type { appRouter } from "~/server/trpc/router";
 //     : never;
 // };
 
-type HandleRequestArgs = {
+type TrpcCallerFactory = QRL<
+  (
+    event: RequestEventCommon
+  ) => Promise<ReturnType<typeof appRouter.createCaller>>
+>;
+
+type TrpcHandleRequestArgs = {
   event: RequestEventCommon;
   args: any;
   dotPath: string[];
 };
 
-export const trpcRequestHandlerQrl = (
-  getTrpc: QRL<
-    (event: RequestEventCommon) => ReturnType<typeof getTrpcFromEvent>
-  >
-) => {
-  return async ({ event, args, dotPath }: HandleRequestArgs) => {
-    const trpcGetter = await getTrpc.resolve();
-    const trpc = await trpcGetter(event);
+export const trpcRequestHandlerQrl = (getTrpc: TrpcCallerFactory) => {
+  return async ({ event, args, dotPath }: TrpcHandleRequestArgs) => {
+    const trpc = await getTrpc(event);
 
     const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
 
@@ -108,54 +108,54 @@ export const trpcRequestHandlerQrl = (
 
 export const trpcRequestHandler$ = implicit$FirstArg(trpcRequestHandlerQrl);
 
-type TrpcHandlerArgs = {
-  event: RequestEventCommon;
-  args: any;
-};
+// type TrpcHandlerArgs = {
+//   event: RequestEventCommon;
+//   args: any;
+// };
 
 type TrpcHandlerConfig = {
   dotPath: string[];
-  caller: ReturnType<typeof appRouter.createCaller>;
+  caller: TrpcCallerFactory;
 };
 
-export const trpcHandlerQrl = (
-  trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
-) => {
-  return $(async ({ args, event }: TrpcHandlerArgs) => {
-    const config = await trpcQrl(event);
+// export const trpcHandlerQrl = (
+//   trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
+// ) => {
+//   return $(async ({ args, event }: TrpcHandlerArgs) => {
+//     const config = await trpcQrl(event);
 
-    console.log("trpcHandlerQrl", config.dotPath);
+//     console.log("trpcHandlerQrl", config.dotPath);
 
-    const fnc = config.dotPath.reduce(
-      (prev, curr) => prev[curr],
-      config.caller as any
-    );
+//     const fnc = config.dotPath.reduce(
+//       (prev, curr) => prev[curr],
+//       config.caller as any
+//     );
 
-    const safeParse = (data: string) => {
-      try {
-        return JSON.parse(data);
-      } catch {
-        return data;
-      }
-    };
+//     const safeParse = (data: string) => {
+//       try {
+//         return JSON.parse(data);
+//       } catch {
+//         return data;
+//       }
+//     };
 
-    try {
-      const result = await fnc(args);
+//     try {
+//       const result = await fnc(args);
 
-      return { result, status: "success" };
-    } catch (err) {
-      const trpcError = err as TRPCError;
-      const error = {
-        code: trpcError.code,
-        issues: safeParse(trpcError.message),
-        status: "error",
-      };
-      return error;
-    }
-  });
-};
+//       return { result, status: "success" };
+//     } catch (err) {
+//       const trpcError = err as TRPCError;
+//       const error = {
+//         code: trpcError.code,
+//         issues: safeParse(trpcError.message),
+//         status: "error",
+//       };
+//       return error;
+//     }
+//   });
+// };
 
-export const trpcHandler$ = implicit$FirstArg(trpcHandlerQrl);
+// export const trpcHandler$ = implicit$FirstArg(trpcHandlerQrl);
 
 // export const createTrpcServerApiQrl = <TRouter extends AnyRouter>(
 //   getTrpc: QRL<
@@ -254,13 +254,14 @@ export const getRandomActionId = () => {
 };
 
 export const trpcGlobalActionQrl = (
-  trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
+  trpcQrl: QRL<(event: RequestEventCommon) => TrpcHandlerConfig>
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
-    (args, event) => {
-      const handler = trpcHandler$((event) => trpcQrl(event));
-      return handler({ args, event });
+    async (args, event) => {
+      const { caller, dotPath } = await trpcQrl(event);
+      const handler = trpcRequestHandler$((event) => caller(event));
+      return handler({ args, dotPath, event });
     },
     { id: getRandomActionId() }
   );
@@ -273,9 +274,10 @@ export const trpcRouteActionQrl = (
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return routeAction$(
-    (args, event) => {
-      const handler = trpcHandler$((event) => trpcQrl(event));
-      return handler({ args, event });
+    async (args, event) => {
+      const { caller, dotPath } = await trpcQrl(event);
+      const handler = trpcRequestHandler$((event) => caller(event));
+      return handler({ args, dotPath, event });
     },
     { id: getRandomActionId() }
   );
@@ -288,8 +290,13 @@ export const trpcFetchQrl = (dotPathQrl: QRL<() => string[]>) => {
 
   return $(async (args: any) => {
     const dotPath = await dotPathQrl();
-    const response = await fetch(`/api/trpc/${dotPath}`, {});
-    return fnc({ ...args, __dotPath: dotPath });
+    const body = JSON.stringify(args);
+
+    console.log({ body, dotPath });
+
+    const response = await fetch(`/api/trpc/${dotPath}`, { body });
+    return response.json();
+    // return fnc({ ...args, __dotPath: dotPath });
   });
 };
 
@@ -344,13 +351,15 @@ export const onOptions = handler;
 
 
 */
-export const trpcOnRequestQrl = (
-  trpcQrl: QRL<(event: RequestEventCommon) => Promise<TrpcHandlerConfig>>
-) => {
+
+export const trpcOnRequestQrl = (trpcQrl: TrpcCallerFactory) => {
   return $(async (event: RequestEvent) => {
-    const handler = trpcHandler$((event) => trpcQrl(event));
+    const handler = trpcRequestHandler$((event) => trpcQrl(event));
     const args = await event.request.text();
-    return handler({ args, event });
+
+    console.log({ args, url: event.url });
+
+    return handler({ args, dotPath: ["post", "updates"], event });
   });
 };
 

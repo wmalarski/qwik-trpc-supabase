@@ -1,11 +1,11 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { $, component$, useSignal } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
 import { trpcGlobalAction$ } from "~/lib/qwik-trpc2";
 import { getTrpcFromEvent } from "~/server/loaders";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
-export const useUpdateCommentAction = trpcGlobalAction$(async (event) => ({
-  caller: await getTrpcFromEvent(event),
+export const useUpdateCommentAction = trpcGlobalAction$(() => ({
+  caller: $((event) => getTrpcFromEvent(event)),
   dotPath: ["comment", "update"],
 }));
 

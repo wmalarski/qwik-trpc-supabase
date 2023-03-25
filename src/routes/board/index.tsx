@@ -1,4 +1,4 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { $, component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { trpcFetch$, trpcGlobalAction$ } from "~/lib/qwik-trpc2";
@@ -18,8 +18,8 @@ type PostListItemProps = {
   post: Post;
 };
 
-export const useCreatePostAction = trpcGlobalAction$(async (event) => ({
-  caller: await getTrpcFromEvent(event),
+export const useCreatePostAction = trpcGlobalAction$(() => ({
+  caller: $((event) => getTrpcFromEvent(event)),
   dotPath: ["post", "create"],
 }));
 
