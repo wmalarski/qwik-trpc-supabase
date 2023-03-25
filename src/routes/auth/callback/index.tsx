@@ -1,6 +1,6 @@
-import { $, component$, useTask$ } from "@builder.io/qwik";
+import { $, component$, useVisibleTask$ } from "@builder.io/qwik";
 import {
-  routeAction$,
+  globalAction$,
   useNavigate,
   z,
   zod$,
@@ -10,7 +10,7 @@ import { isBrowser } from "@builder.io/qwik/build";
 import { updateAuthCookies } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
-export const useSetSessionAction = routeAction$(
+export const useSetSessionAction = globalAction$(
   (data, event) => {
     updateAuthCookies(event, data);
   },
@@ -42,7 +42,7 @@ export default component$(() => {
       return;
     }
 
-    await action.run({
+    await action.submit({
       access_token,
       expires_in: +expires_in,
       refresh_token,
@@ -55,7 +55,7 @@ export default component$(() => {
     navigate(paths.index);
   });
 
-  useTask$(() => {
+  useVisibleTask$(() => {
     if (isBrowser) {
       handleSendSession();
     }

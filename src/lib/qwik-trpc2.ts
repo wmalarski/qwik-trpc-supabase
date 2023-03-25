@@ -259,8 +259,11 @@ export const trpcGlobalActionQrl = (
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
     async (args, event) => {
+      console.log("globalAction$-0", args, event);
       const { caller, dotPath } = await trpcQrl(event);
+      console.log("globalAction$-1", caller, dotPath);
       const handler = trpcRequestHandler$((event) => caller(event));
+      console.log("globalAction$-2", handler);
       return handler({ args, dotPath, event });
     },
     { id: getRandomActionId() }
