@@ -1,14 +1,12 @@
-import { $, component$ } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
-import { trpcGlobalAction$ } from "~/lib/qwik-trpc2";
-import { getTrpcFromEvent } from "~/server/loaders";
+import { trpcPlugin } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
-export const useDeletePost = trpcGlobalAction$(() => ({
-  caller: $((event) => getTrpcFromEvent(event)),
+export const useDeletePost = trpcPlugin({
   dotPath: ["post", "delete"],
-}));
+});
 
 type Props = {
   post: Post;

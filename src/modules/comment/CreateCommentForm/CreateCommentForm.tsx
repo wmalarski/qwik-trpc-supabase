@@ -1,12 +1,10 @@
-import { $, component$ } from "@builder.io/qwik";
-import { trpcGlobalAction$ } from "~/lib/qwik-trpc2";
-import { getTrpcFromEvent } from "~/server/loaders";
+import { component$ } from "@builder.io/qwik";
+import { trpcPlugin } from "~/routes/plugin@trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-export const useCreateComment = trpcGlobalAction$(() => ({
-  caller: $((event) => getTrpcFromEvent(event)),
+export const useCreateComment = trpcPlugin({
   dotPath: ["comment", "create"],
-}));
+});
 
 type Props = {
   parentId: string | null;

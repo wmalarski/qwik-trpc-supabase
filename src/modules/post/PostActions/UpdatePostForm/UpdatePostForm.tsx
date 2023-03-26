@@ -1,13 +1,11 @@
-import { $, component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
-import { trpcGlobalAction$ } from "~/lib/qwik-trpc2";
-import { getTrpcFromEvent } from "~/server/loaders";
+import { trpcPlugin } from "~/routes/plugin@trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
-export const useUpdatePostAction = trpcGlobalAction$(() => ({
-  caller: $((event) => getTrpcFromEvent(event)),
+export const useUpdatePostAction = trpcPlugin({
   dotPath: ["post", "update"],
-}));
+});
 
 type Props = {
   post: Post;

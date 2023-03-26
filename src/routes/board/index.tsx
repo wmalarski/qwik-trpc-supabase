@@ -1,11 +1,11 @@
-import { $, component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
-import { trpcFetch$, trpcGlobalAction$ } from "~/lib/qwik-trpc2";
+import { trpcFetch$ } from "~/lib/qwik-trpc2";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { getTrpcFromEvent } from "~/server/loaders";
 import { trpc } from "~/server/trpc/api";
 import { paths } from "~/utils/paths";
+import { trpcPlugin } from "../plugin@trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
 export const usePosts = routeLoader$((event) =>
@@ -18,10 +18,9 @@ type PostListItemProps = {
   post: Post;
 };
 
-export const useCreatePostAction = trpcGlobalAction$(() => ({
-  caller: $((event) => getTrpcFromEvent(event)),
+export const useCreatePostAction = trpcPlugin({
   dotPath: ["post", "create"],
-}));
+});
 
 export const PostListItem = component$<PostListItemProps>((props) => {
   return (
