@@ -4,24 +4,24 @@ import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
-import { trpcPlugin } from "~/routes/plugin@trpc";
+import { trpc } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
 export const useComment = routeLoader$((event) => {
-  return trpcPlugin.comment.get.loader(event, {
+  return trpc.comment.get.loader(event, {
     id: event.params.commentId,
   });
 });
 
 export const useComments = routeLoader$((event) => {
-  return trpcPlugin.comment.listForParent.loader(event, {
+  return trpc.comment.listForParent.loader(event, {
     parentId: event.params.commentId,
     skip: 0,
     take: 10,
   });
 });
 
-const queryMoreComments = trpcPlugin.comment.listForParent.fetch();
+const queryMoreComments = trpc.comment.listForParent.query();
 
 type CommentCardProps = {
   comment: Comment;

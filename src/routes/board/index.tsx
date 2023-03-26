@@ -3,16 +3,16 @@ import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { paths } from "~/utils/paths";
-import { trpcPlugin } from "../plugin@trpc";
+import { trpc } from "../plugin@trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
 export const usePosts = routeLoader$((event) => {
-  return trpcPlugin.post.list.loader(event, { skip: 0, take: 10 });
+  return trpc.post.list.loader(event, { skip: 0, take: 10 });
 });
 
-const queryMorePosts = trpcPlugin.post.list.fetch();
+const queryMorePosts = trpc.post.list.query();
 
-export const useCreatePostAction = trpcPlugin.post.create.globalAction();
+export const useCreatePostAction = trpc.post.create.globalAction$();
 
 type PostListItemProps = {
   post: Post;

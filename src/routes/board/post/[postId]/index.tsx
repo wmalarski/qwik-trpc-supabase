@@ -4,22 +4,22 @@ import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { trpcPlugin } from "~/routes/plugin@trpc";
+import { trpc } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
 export const usePost = routeLoader$((event) => {
-  return trpcPlugin.post.get.loader(event, { id: event.params.postId });
+  return trpc.post.get.loader(event, { id: event.params.postId });
 });
 
 export const useComments = routeLoader$((event) => {
-  return trpcPlugin.comment.listForPost.loader(event, {
+  return trpc.comment.listForPost.loader(event, {
     postId: event.params.postId,
     skip: 0,
     take: 10,
   });
 });
 
-const queryMoreComments = trpcPlugin.comment.listForPost.fetch();
+const queryMoreComments = trpc.comment.listForPost.query();
 
 type PostCardProps = {
   post: Post;

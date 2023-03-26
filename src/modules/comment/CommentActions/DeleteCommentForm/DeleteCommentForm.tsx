@@ -1,14 +1,14 @@
 import { component$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
-import { trpcPlugin } from "~/routes/plugin@trpc";
+import { trpc } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
 type Props = {
   comment: Comment;
 };
 
-export const useDeleteCommentAction = trpcPlugin.comment.delete.globalAction();
+export const useDeleteCommentAction = trpc.comment.delete.globalAction$();
 
 export const DeleteCommentForm = component$<Props>((props) => {
   const action = useDeleteCommentAction();

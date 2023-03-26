@@ -49,23 +49,23 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
           event: RequestEventLoader,
           input: inferProcedureInput<TProcedure>
         ) => TrpcProcedureOutput<TProcedure>;
-        fetch: () => (
+        query: () => (
           input: inferProcedureInput<TProcedure>
         ) => Promise<TrpcProcedureOutput<TProcedure>>;
       }
     : TProcedure extends AnyMutationProcedure
     ? {
-        globalAction: () => Action<
+        globalAction$: () => Action<
           TrpcProcedureOutput<TProcedure>,
           inferProcedureInput<TProcedure>,
           false
         >;
-        routeAction: () => Action<
+        routeAction$: () => Action<
           TrpcProcedureOutput<TProcedure>,
           inferProcedureInput<TProcedure>,
           false
         >;
-        fetch: () => (
+        mutate: () => (
           input: inferProcedureInput<TProcedure>
         ) => Promise<TrpcProcedureOutput<TProcedure>>;
       }
@@ -199,12 +199,12 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         event.json(200, result);
       }
     },
-    trpcPlugin: createRecursiveProxy((opts) => {
+    trpc: createRecursiveProxy((opts) => {
       const dotPath = opts.path.slice(0, -1);
       const action = opts.path[opts.path.length - 1];
 
       switch (action) {
-        case "fetch": {
+        case "query": {
           return async (args: any) => {
             const path = dotPath.join(".");
 
@@ -216,7 +216,19 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
             return response.json();
           };
         }
-        case "globalAction": {
+        case "mutate": {
+          return async (args: any) => {
+            const path = dotPath.join(".");
+
+            const response = await fetch(`${options.prefix}/${path}`, {
+              body: JSON.stringify(args),
+              method: "POST",
+            });
+
+            return response.json();
+          };
+        }
+        case "globalAction$": {
           return trpcGlobalActionResolver$(
             () => ({ callerQrl, dotPath }),
             dotPath
@@ -233,7 +245,7 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
 
           return task();
         }
-        case "routeAction": {
+        case "routeAction$": {
           return trpcRouteActionResolver$(
             () => ({ callerQrl, dotPath }),
             dotPath

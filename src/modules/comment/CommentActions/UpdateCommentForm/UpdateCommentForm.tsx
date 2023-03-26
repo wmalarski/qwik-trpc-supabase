@@ -1,9 +1,9 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
-import { trpcPlugin } from "~/routes/plugin@trpc";
+import { trpc } from "~/routes/plugin@trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
-export const useUpdateCommentAction = trpcPlugin.comment.update.globalAction();
+export const useUpdateCommentAction = trpc.comment.update.globalAction$();
 
 type Props = {
   comment: Comment;
