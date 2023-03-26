@@ -21,8 +21,6 @@ export const useComments = routeLoader$((event) => {
   });
 });
 
-const queryMoreComments = trpc.comment.listForParent.query();
-
 type CommentCardProps = {
   comment: Comment;
 };
@@ -65,7 +63,7 @@ export const CommentCard = component$<CommentCardProps>((props) => {
       <button
         class="btn"
         onClick$={async () => {
-          const value = await queryMoreComments({
+          const value = await trpc.comment.listForParent.query({
             parentId: props.comment.id,
             skip: (page.value + 1) * 10,
             take: 10,

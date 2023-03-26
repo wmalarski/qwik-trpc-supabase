@@ -49,7 +49,7 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
           event: RequestEventLoader,
           input: inferProcedureInput<TProcedure>
         ) => TrpcProcedureOutput<TProcedure>;
-        query: () => (
+        query: (
           input: inferProcedureInput<TProcedure>
         ) => Promise<TrpcProcedureOutput<TProcedure>>;
       }
@@ -65,7 +65,7 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
           inferProcedureInput<TProcedure>,
           false
         >;
-        mutate: () => (
+        mutate: (
           input: inferProcedureInput<TProcedure>
         ) => Promise<TrpcProcedureOutput<TProcedure>>;
       }
@@ -205,28 +205,30 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
 
       switch (action) {
         case "query": {
-          return async (args: any) => {
-            const path = dotPath.join(".");
+          const args = opts.args[0];
+          const path = dotPath.join(".");
 
+          const task = async () => {
             const response = await fetch(`${options.prefix}/${path}`, {
               body: JSON.stringify(args),
               method: "POST",
             });
-
             return response.json();
           };
+          return task();
         }
         case "mutate": {
-          return async (args: any) => {
-            const path = dotPath.join(".");
+          const args = opts.args[0];
+          const path = dotPath.join(".");
 
+          const task = async () => {
             const response = await fetch(`${options.prefix}/${path}`, {
               body: JSON.stringify(args),
               method: "POST",
             });
-
             return response.json();
           };
+          return task();
         }
         case "globalAction$": {
           return trpcGlobalActionResolver$(

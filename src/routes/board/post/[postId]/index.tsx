@@ -19,8 +19,6 @@ export const useComments = routeLoader$((event) => {
   });
 });
 
-const queryMoreComments = trpc.comment.listForPost.query();
-
 type PostCardProps = {
   post: Post;
 };
@@ -56,7 +54,7 @@ export const PostCard = component$<PostCardProps>((props) => {
       <button
         class="btn"
         onClick$={async () => {
-          const value = await queryMoreComments({
+          const value = await trpc.comment.listForPost.query({
             postId: props.post.id,
             skip: (page.value + 1) * 10,
             take: 10,

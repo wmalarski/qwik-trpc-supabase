@@ -10,8 +10,6 @@ export const usePosts = routeLoader$((event) => {
   return trpc.post.list.loader(event, { skip: 0, take: 10 });
 });
 
-const queryMorePosts = trpc.post.list.query();
-
 export const useCreatePostAction = trpc.post.create.globalAction$();
 
 type PostListItemProps = {
@@ -59,7 +57,7 @@ export default component$(() => {
         <button
           class="btn"
           onClick$={async () => {
-            const value = await queryMorePosts({
+            const value = await trpc.post.list.query({
               skip: (page.value + 1) * 10,
               take: 10,
             });
