@@ -10,7 +10,7 @@ type Props = {
 
 export const useDeleteCommentAction = trpcPlugin({
   dotPath: ["comment", "delete"],
-});
+}).globalAction();
 
 export const DeleteCommentForm = component$<Props>((props) => {
   const action = useDeleteCommentAction();

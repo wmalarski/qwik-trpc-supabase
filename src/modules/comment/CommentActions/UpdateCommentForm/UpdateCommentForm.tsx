@@ -5,7 +5,7 @@ import { CommentForm } from "../../CommentForm/CommentForm";
 
 export const useUpdateCommentAction = trpcPlugin({
   dotPath: ["comment", "update"],
-});
+}).globalAction();
 
 type Props = {
   comment: Comment;

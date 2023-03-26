@@ -20,7 +20,7 @@ type PostListItemProps = {
 
 export const useCreatePostAction = trpcPlugin({
   dotPath: ["post", "create"],
-});
+}).globalAction();
 
 export const PostListItem = component$<PostListItemProps>((props) => {
   return (

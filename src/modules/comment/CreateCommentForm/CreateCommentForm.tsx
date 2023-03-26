@@ -4,7 +4,7 @@ import { CommentForm } from "../CommentForm/CommentForm";
 
 export const useCreateComment = trpcPlugin({
   dotPath: ["comment", "create"],
-});
+}).globalAction();
 
 type Props = {
   parentId: string | null;

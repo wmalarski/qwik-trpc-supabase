@@ -5,7 +5,7 @@ import { PostForm } from "../../PostForm/PostForm";
 
 export const useUpdatePostAction = trpcPlugin({
   dotPath: ["post", "update"],
-});
+}).globalAction();
 
 type Props = {
   post: Post;

@@ -3,8 +3,11 @@
  * @see https://trpc.io/blog/tinyrpc-client
  */
 import { implicit$FirstArg, type QRL } from "@builder.io/qwik";
-import { globalAction$, type RequestEventCommon } from "@builder.io/qwik-city";
-import { isServer } from "@builder.io/qwik/build";
+import {
+  globalAction$,
+  routeAction$,
+  type RequestEventCommon,
+} from "@builder.io/qwik-city";
 import type { appRouter } from "~/server/trpc/router";
 
 type TrpcCallerFactory = (
@@ -20,62 +23,62 @@ type TrpcResolver = {
   factory: QRL<TrpcCallerFactory>;
 };
 
-export const trpcResolverQrl = (
+export const trpcGlobalActionResolverQrl = (
   resolverQrl: QRL<() => TrpcResolver>,
   config: TrpcConfig
 ) => {
-  if (!isServer) {
-    console.log("NOT SERVER - trpcResolverQrl");
-  }
-
-  console.log("trpcResolverQrl-1", config);
   const id = config.dotPath.join(".");
-  console.log("trpcResolverQrl-2", id);
 
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
     async (args, event) => {
-      if (!isServer) {
-        console.log("NOT SERVER - globalAction");
-      }
-
-      console.log("ARGS", args);
-
       const resolver = await resolverQrl();
-
-      console.log("RESOLVER", resolver);
-
       const caller = await resolver.factory(event);
 
-      const fnc = resolver.config.dotPath.reduce(
+      return resolver.config.dotPath.reduce(
         (prev, curr) => prev[curr],
         caller as any
-      );
-
-      const result = await fnc(args);
-
-      console.log("RESULT", result);
-
-      return result;
+      )(args);
     },
     { id }
   );
-  //
 };
 
-export const trpcResolver$ = /*#__PURE__*/ implicit$FirstArg(trpcResolverQrl);
+export const trpcGlobalActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
+  trpcGlobalActionResolverQrl
+);
+
+export const trpcRouteActionResolverQrl = (
+  resolverQrl: QRL<() => TrpcResolver>,
+  config: TrpcConfig
+) => {
+  const id = config.dotPath.join(".");
+
+  // eslint-disable-next-line qwik/loader-location
+  return routeAction$(
+    async (args, event) => {
+      const resolver = await resolverQrl();
+      const caller = await resolver.factory(event);
+
+      return resolver.config.dotPath.reduce(
+        (prev, curr) => prev[curr],
+        caller as any
+      )(args);
+    },
+    { id }
+  );
+};
+
+export const trpcRouteActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
+  trpcRouteActionResolverQrl
+);
 
 export const serverTrpcQrl = (factory: QRL<TrpcCallerFactory>) => {
-  if (!isServer) {
-    console.log("NOT SERVER - serverTrpcQrl");
-  }
-
   return (config: TrpcConfig) => {
-    if (!isServer) {
-      console.log("NOT SERVER - config");
-    }
-
-    return trpcResolver$(() => ({ config, factory }), config);
+    return {
+      globalAction: () =>
+        trpcGlobalActionResolver$(() => ({ config, factory }), config),
+    };
   };
 };
 
