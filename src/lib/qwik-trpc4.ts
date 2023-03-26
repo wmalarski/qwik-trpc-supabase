@@ -177,50 +177,52 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
       const dotPath = opts.path.slice(0, -1);
       const action = opts.path[opts.path.length - 1];
 
-      console.log({ action, dotPath });
+      switch (action) {
+        case "fetch": {
+          return async (args: any) => {
+            const path = dotPath.join(".");
 
-      return null;
+            const response = await fetch(`${options.prefix}/${path}`, {
+              body: JSON.stringify(args),
+              method: "POST",
+            });
+
+            const result = await response.json();
+
+            return { result, status: "success" };
+          };
+        }
+        case "globalAction": {
+          return trpcGlobalActionResolver$(
+            () => ({ callerQrl, dotPath }),
+            dotPath
+          );
+        }
+        case "loader": {
+          const event = opts.args[0] as RequestEventLoader;
+          const args = opts.args[1];
+
+          const task = async () => {
+            const caller = await callerQrl(event);
+
+            const result = await dotPath.reduce(
+              (prev, curr) => prev[curr],
+              caller as any
+            )(args);
+
+            return { result, status: "success" };
+          };
+
+          return task();
+        }
+        case "routeAction": {
+          return trpcRouteActionResolver$(
+            () => ({ callerQrl, dotPath }),
+            dotPath
+          );
+        }
+      }
     }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>,
-    // trpcPlugin: (dotPath: string[]) => {
-    //   return {
-    //     fetch: () => {
-    //       return async (args: any) => {
-    //         const path = dotPath.join(".");
-    //         const result = await fetch(`${options.prefix}/${path}`, {
-    //           body: JSON.stringify(args),
-    //           method: "POST",
-    //         });
-    //         const result = await result.json();
-    //
-    //         return { status: "success", result };
-    //       };
-    //     },
-    //     globalAction: () => {
-    //       return trpcGlobalActionResolver$(
-    //         () => ({ callerQrl, dotPath }),
-    //         dotPath
-    //       );
-    //     },
-    //     loader: async (event: RequestEventLoader, args: any) => {
-    //       if (isServer) {
-    //         const caller = await callerQrl(event);
-    //
-    //         const result = await dotPath.reduce(
-    //           (prev, curr) => prev[curr],
-    //           caller as any
-    //         )(args);
-    //
-    //         return { status: "success", result };
-    //       }
-    //     },
-    //     routeAction: () => {
-    //       return trpcRouteActionResolver$(
-    //         () => ({ callerQrl, dotPath }),
-    //         dotPath
-    //       );
-    //     },
-    //   };
-    // },
   };
 };
 
