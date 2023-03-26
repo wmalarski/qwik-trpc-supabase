@@ -27,8 +27,6 @@ export const trpcGlobalActionResolverQrl = (
   resolverQrl: QRL<() => TrpcResolver>,
   config: TrpcConfig
 ) => {
-  const id = config.dotPath.join(".");
-
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
     async (args, event) => {
@@ -40,7 +38,7 @@ export const trpcGlobalActionResolverQrl = (
         caller as any
       )(args);
     },
-    { id }
+    { id: config.dotPath.join(".") }
   );
 };
 
@@ -52,8 +50,6 @@ export const trpcRouteActionResolverQrl = (
   resolverQrl: QRL<() => TrpcResolver>,
   config: TrpcConfig
 ) => {
-  const id = config.dotPath.join(".");
-
   // eslint-disable-next-line qwik/loader-location
   return routeAction$(
     async (args, event) => {
@@ -65,7 +61,7 @@ export const trpcRouteActionResolverQrl = (
         caller as any
       )(args);
     },
-    { id }
+    { id: config.dotPath.join(".") }
   );
 };
 
@@ -78,6 +74,8 @@ export const serverTrpcQrl = (factory: QRL<TrpcCallerFactory>) => {
     return {
       globalAction: () =>
         trpcGlobalActionResolver$(() => ({ config, factory }), config),
+      routeAction: () =>
+        trpcRouteActionResolver$(() => ({ config, factory }), config),
     };
   };
 };
