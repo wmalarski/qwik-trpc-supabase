@@ -23,7 +23,6 @@ import type {
   TRPCError,
 } from "@trpc/server";
 import type { ZodIssue } from "zod";
-import type { appRouter } from "~/server/trpc/router";
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -80,19 +79,21 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
     : never;
 };
 
-type TrpcCaller = ReturnType<typeof appRouter.createCaller>;
+type TrpcCaller<TRouter extends AnyRouter> = ReturnType<
+  TRouter["createCaller"]
+>;
 
 type TrpcCallerOptions = {
   prefix: string;
 };
 
-type TrpcResolver = {
+type TrpcResolver<TRouter extends AnyRouter> = {
   dotPath: string[];
-  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller>>;
+  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller<TRouter>>>;
 };
 
-export const trpcResolver = async (
-  caller: TrpcCaller,
+export const trpcResolver = async <TRouter extends AnyRouter>(
+  caller: TrpcCaller<TRouter>,
   dotPath: string[],
   args: any
 ) => {
@@ -121,8 +122,8 @@ export const trpcResolver = async (
   }
 };
 
-export const trpcGlobalActionResolverQrl = (
-  contextQrl: QRL<() => TrpcResolver>,
+export const trpcGlobalActionResolverQrl = <TRouter extends AnyRouter>(
+  contextQrl: QRL<() => TrpcResolver<TRouter>>,
   dotPath: string[]
 ) => {
   // eslint-disable-next-line qwik/loader-location
@@ -140,8 +141,8 @@ export const trpcGlobalActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
   trpcGlobalActionResolverQrl
 );
 
-export const trpcRouteActionResolverQrl = (
-  contextQrl: QRL<() => TrpcResolver>,
+export const trpcRouteActionResolverQrl = <TRouter extends AnyRouter>(
+  contextQrl: QRL<() => TrpcResolver<TRouter>>,
   dotPath: string[]
 ) => {
   // eslint-disable-next-line qwik/loader-location
@@ -160,7 +161,7 @@ export const trpcRouteActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
 );
 
 export const serverTrpcQrl = <TRouter extends AnyRouter>(
-  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller>>,
+  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller<TRouter>>>,
   options: TrpcCallerOptions
 ) => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
