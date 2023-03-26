@@ -21,7 +21,7 @@ export const CreateCommentForm = component$<Props>((props) => {
       <CommentForm
         isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.run({
+          action.submit({
             content,
             parentId: props.parentId,
             postId: props.postId,

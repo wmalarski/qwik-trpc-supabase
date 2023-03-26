@@ -35,7 +35,7 @@ export const UpdateCommentForm = component$<Props>((props) => {
             initialValue={props.comment}
             isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.run({ content, id: props.comment.id });
+              await action.submit({ content, id: props.comment.id });
               isOpen.value = false;
             }}
           />

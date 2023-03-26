@@ -23,7 +23,7 @@ export const DeleteCommentForm = component$<Props>((props) => {
     <form
       preventdefault:submit
       onSubmit$={async () => {
-        await action.run({ id: props.comment.id });
+        await action.submit({ id: props.comment.id });
         navigate(
           props.comment.parentId
             ? paths.comment(props.comment.parentId)

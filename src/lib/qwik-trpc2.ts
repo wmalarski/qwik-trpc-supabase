@@ -80,6 +80,8 @@ export const trpcRequestHandlerQrl = (getTrpc: TrpcCallerFactory) => {
   return async ({ event, args, dotPath }: TrpcHandleRequestArgs) => {
     const trpc = await getTrpc(event);
 
+    console.log({ args, trpc, dotPath });
+
     const fnc = dotPath.reduce((prev, curr) => prev[curr], trpc as any);
 
     const safeParse = (data: string) => {
@@ -259,12 +261,14 @@ export const trpcGlobalActionQrl = (
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
     async (args, event) => {
-      console.log("globalAction$-0", args, event);
+      console.log("globalAction$-0", args);
       const { caller, dotPath } = await trpcQrl(event);
-      console.log("globalAction$-1", caller, dotPath);
+      console.log("globalAction$-1", dotPath);
       const handler = trpcRequestHandler$((event) => caller(event));
-      console.log("globalAction$-2", handler);
-      return handler({ args, dotPath, event });
+      console.log("globalAction$-2");
+      const result = await handler({ args, dotPath, event });
+      console.log("globalAction$-3", result);
+      return result;
     },
     { id: getRandomActionId() }
   );

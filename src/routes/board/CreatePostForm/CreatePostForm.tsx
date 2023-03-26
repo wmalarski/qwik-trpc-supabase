@@ -10,7 +10,7 @@ export const CreatePostForm = component$(() => {
       <PostForm
         isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.run({ content });
+          action.submit({ content });
         }}
       />
       {action.value?.status === "success" ? (
