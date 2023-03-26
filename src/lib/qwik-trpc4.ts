@@ -20,6 +20,7 @@ import type {
   inferProcedureInput,
   inferProcedureOutput,
   ProcedureRouterRecord,
+  TRPCError,
 } from "@trpc/server";
 import type { ZodIssue } from "zod";
 import type { appRouter } from "~/server/trpc/router";
@@ -90,6 +91,36 @@ type TrpcResolver = {
   callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller>>;
 };
 
+export const trpcResolver = async (
+  caller: TrpcCaller,
+  dotPath: string[],
+  args: any
+) => {
+  const fnc = dotPath.reduce((prev, curr) => prev[curr], caller as any);
+
+  const safeParse = (data: string) => {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return data;
+    }
+  };
+
+  try {
+    const result = await fnc(args);
+
+    return { result, status: "success" };
+  } catch (err) {
+    const trpcError = err as TRPCError;
+    const error = {
+      code: trpcError.code,
+      issues: safeParse(trpcError.message),
+      status: "error",
+    };
+    return error;
+  }
+};
+
 export const trpcGlobalActionResolverQrl = (
   contextQrl: QRL<() => TrpcResolver>,
   dotPath: string[]
@@ -99,8 +130,7 @@ export const trpcGlobalActionResolverQrl = (
     async (args, event) => {
       const context = await contextQrl();
       const caller = await context.callerQrl(event);
-
-      return dotPath.reduce((prev, curr) => prev[curr], caller as any)(args);
+      return trpcResolver(caller, dotPath, args);
     },
     { id: dotPath.join(".") }
   );
@@ -119,8 +149,7 @@ export const trpcRouteActionResolverQrl = (
     async (args, event) => {
       const context = await contextQrl();
       const caller = await context.callerQrl(event);
-
-      return dotPath.reduce((prev, curr) => prev[curr], caller as any)(args);
+      return trpcResolver(caller, dotPath, args);
     },
     { id: dotPath.join(".") }
   );
@@ -162,13 +191,9 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         const [, trpcPath] = pathname.split(prefixPath);
         const dotPath = trpcPath.split(".");
         const args = await event.request.json();
-
         const caller = await callerQrl(event);
 
-        const result = await dotPath.reduce(
-          (prev, curr) => prev[curr],
-          caller as any
-        )(args);
+        const result = await trpcResolver(caller, dotPath, args);
 
         event.json(200, result);
       }
@@ -187,9 +212,7 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
               method: "POST",
             });
 
-            const result = await response.json();
-
-            return { result, status: "success" };
+            return response.json();
           };
         }
         case "globalAction": {
@@ -204,13 +227,7 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
 
           const task = async () => {
             const caller = await callerQrl(event);
-
-            const result = await dotPath.reduce(
-              (prev, curr) => prev[curr],
-              caller as any
-            )(args);
-
-            return { result, status: "success" };
+            return trpcResolver(caller, dotPath, args);
           };
 
           return task();
