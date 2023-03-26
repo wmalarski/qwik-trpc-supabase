@@ -1,4 +1,4 @@
-import { serverTrpc$ } from "~/lib/qwik-trpc4";
+import { serverTrpc$ } from "~/lib/qwik-trpc";
 import type { AppRouter } from "~/server/trpc/router";
 
 export const { trpcPlugin, onRequest } = serverTrpc$<AppRouter>(
