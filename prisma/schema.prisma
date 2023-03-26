@@ -25,10 +25,10 @@ model Comment {
   content     String
   createdById String
   postId      String
-  post        Post     @relation(fields: [postId], references: [id], onDelete: NoAction)
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   parentId String?
-  parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: NoAction)
+  parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
   comments Comment[] @relation("CommentToComment")
 
   @@map("comments")

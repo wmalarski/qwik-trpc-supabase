@@ -31,6 +31,7 @@ module.exports = {
     "no-await-in-loop": "error",
     "no-constant-binary-expression": "error",
     "no-duplicate-imports": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
     "no-self-compare": "error",
     "no-use-before-define": "error",
     curly: "error",

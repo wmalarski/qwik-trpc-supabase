@@ -1,20 +1,20 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, loader$ } from "@builder.io/qwik-city";
+import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getUserFromEvent } from "~/server/loaders";
 import { paths } from "~/utils/paths";
 import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
 import { PasswordForm } from "./PasswordForm/PasswordForm";
 
-export const useAnonymousRoute = loader$(async (event) => {
+export const useAnonymousRoute = routeLoader$(async (event) => {
   const user = await getUserFromEvent(event);
 
   if (user) {
-    event.redirect(302, paths.index);
+    throw event.redirect(302, paths.index);
   }
 });
 
 export default component$(() => {
-  useAnonymousRoute();
+  // useAnonymousRoute();
 
   return (
     <div class="flex flex-col gap-2">

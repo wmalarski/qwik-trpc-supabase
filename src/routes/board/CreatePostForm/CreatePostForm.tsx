@@ -1,8 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { PostForm } from "~/modules/post/PostForm/PostForm";
-import { trpc } from "~/server/trpc/api";
-
-export const useCreatePostAction = trpc.post.create.action$();
+import { useCreatePostAction } from "..";
 
 export const CreatePostForm = component$(() => {
   const action = useCreatePostAction();
@@ -12,7 +10,7 @@ export const CreatePostForm = component$(() => {
       <PostForm
         isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.run({ content });
+          action.submit({ content });
         }}
       />
       {action.value?.status === "success" ? (

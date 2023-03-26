@@ -1,9 +1,9 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import type { Comment } from "@prisma/client";
-import { trpc } from "~/server/trpc/api";
+import { trpc } from "~/routes/plugin@trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
-export const useUpdateCommentAction = trpc.comment.update.action$();
+export const useUpdateCommentAction = trpc.comment.update.globalAction$();
 
 type Props = {
   comment: Comment;
@@ -31,7 +31,7 @@ export const UpdateCommentForm = component$<Props>((props) => {
             initialValue={props.comment}
             isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.run({ content, id: props.comment.id });
+              await action.submit({ content, id: props.comment.id });
               isOpen.value = false;
             }}
           />

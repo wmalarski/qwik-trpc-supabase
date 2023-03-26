@@ -1,9 +1,9 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
-import { trpc } from "~/server/trpc/api";
+import { trpc } from "~/routes/plugin@trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
-export const useUpdatePostAction = trpc.post.update.action$();
+export const useUpdatePostAction = trpc.post.update.globalAction$();
 
 type Props = {
   post: Post;
@@ -31,7 +31,7 @@ export const UpdatePostForm = component$<Props>((props) => {
             initialValue={props.post}
             isLoading={action.isRunning}
             onSubmit$={async ({ content }) => {
-              await action.run({ content, id: props.post.id });
+              await action.submit({ content, id: props.post.id });
               isOpen.value = false;
             }}
           />

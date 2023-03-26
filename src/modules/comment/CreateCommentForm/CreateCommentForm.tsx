@@ -1,8 +1,8 @@
 import { component$ } from "@builder.io/qwik";
-import { trpc } from "~/server/trpc/api";
+import { trpc } from "~/routes/plugin@trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-export const useCreateComment = trpc.comment.create.action$();
+export const useCreateComment = trpc.comment.create.globalAction$();
 
 type Props = {
   parentId: string | null;
@@ -17,7 +17,7 @@ export const CreateCommentForm = component$<Props>((props) => {
       <CommentForm
         isLoading={action.isRunning}
         onSubmit$={({ content }) => {
-          action.run({
+          action.submit({
             content,
             parentId: props.parentId,
             postId: props.postId,

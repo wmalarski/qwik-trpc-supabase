@@ -28,15 +28,15 @@ export const RouterHead = component$(() => {
       <meta name="twitter:title" content="Qwik" />
 
       {head.meta.map((m) => (
-        <meta {...m} />
+        <meta key={m.key} {...m} />
       ))}
 
       {head.links.map((l) => (
-        <link {...l} />
+        <link key={l.key} {...l} />
       ))}
 
       {head.styles.map((s) => (
-        <style {...s.props} dangerouslySetInnerHTML={s.style} />
+        <style key={s.key} {...s.props} dangerouslySetInnerHTML={s.style} />
       ))}
     </>
   );

@@ -1,4 +1,4 @@
-import { component$, PropFunction } from "@builder.io/qwik";
+import { component$, type PropFunction } from "@builder.io/qwik";
 
 type FormResult = {
   content: string;
@@ -17,8 +17,8 @@ export const PostForm = component$<Props>((props) => {
     <form
       class="flex flex-col gap-2"
       preventdefault:submit
-      onSubmit$={(event) => {
-        const form = new FormData(event.target as HTMLFormElement);
+      onSubmit$={(_event, element) => {
+        const form = new FormData(element);
         const content = form.get("content") as string;
         onSubmit$({ content });
       }}

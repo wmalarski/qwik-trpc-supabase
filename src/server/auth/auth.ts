@@ -1,10 +1,15 @@
-import { CookieOptions, RequestEventCommon, z } from "@builder.io/qwik-city";
-import { createClient, Session } from "@supabase/supabase-js";
+import {
+  z,
+  type CookieOptions,
+  type RequestEventCommon,
+} from "@builder.io/qwik-city";
+import { createClient, type Session } from "@supabase/supabase-js";
 import { serverEnv } from "../serverEnv";
 
 export const supabase = createClient(
   serverEnv.VITE_SUPABASE_URL,
-  serverEnv.VITE_SUPABASE_ANON_KEY
+  serverEnv.VITE_SUPABASE_ANON_KEY,
+  { auth: { persistSession: false } }
 );
 
 const cookieName = "_session";
