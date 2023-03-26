@@ -7,20 +7,19 @@ import { trpcPlugin } from "../plugin@trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
 export const usePosts = routeLoader$((event) => {
-  return trpcPlugin({
-    dotPath: ["post", "list"],
-  }).loader(event, { skip: 0, take: 10 });
+  return trpcPlugin(["post", "list"]).loader(event, { skip: 0, take: 10 });
 });
 
-const queryMorePosts = trpcPlugin({ dotPath: ["post", "list"] }).fetch();
+const queryMorePosts = trpcPlugin(["post", "list"]).fetch();
 
 type PostListItemProps = {
   post: Post;
 };
 
-export const useCreatePostAction = trpcPlugin({
-  dotPath: ["post", "create"],
-}).globalAction();
+export const useCreatePostAction = trpcPlugin([
+  "post",
+  "create",
+]).globalAction();
 
 export const PostListItem = component$<PostListItemProps>((props) => {
   return (

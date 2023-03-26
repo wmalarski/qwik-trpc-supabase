@@ -8,24 +8,20 @@ import { trpcPlugin } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
 export const useComment = routeLoader$((event) => {
-  return trpcPlugin({
-    dotPath: ["comment", "get"],
-  }).loader(event, { id: event.params.commentId });
+  return trpcPlugin(["comment", "get"]).loader(event, {
+    id: event.params.commentId,
+  });
 });
 
 export const useComments = routeLoader$((event) => {
-  return trpcPlugin({
-    dotPath: ["comment", "listForParent"],
-  }).loader(event, {
+  return trpcPlugin(["comment", "listForParent"]).loader(event, {
     parentId: event.params.commentId,
     skip: 0,
     take: 10,
   });
 });
 
-const queryMoreComments = trpcPlugin({
-  dotPath: ["comment", "listForParent"],
-}).fetch();
+const queryMoreComments = trpcPlugin(["comment", "listForParent"]).fetch();
 
 type CommentCardProps = {
   comment: Comment;

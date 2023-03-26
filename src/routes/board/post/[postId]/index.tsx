@@ -8,24 +8,18 @@ import { trpcPlugin } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
 export const usePost = routeLoader$((event) => {
-  return trpcPlugin({
-    dotPath: ["post", "get"],
-  }).loader(event, { id: event.params.postId });
+  return trpcPlugin(["post", "get"]).loader(event, { id: event.params.postId });
 });
 
 export const useComments = routeLoader$((event) => {
-  return trpcPlugin({
-    dotPath: ["comment", "listForPost"],
-  }).loader(event, {
+  return trpcPlugin(["comment", "listForPost"]).loader(event, {
     postId: event.params.postId,
     skip: 0,
     take: 10,
   });
 });
 
-const queryMoreComments = trpcPlugin({
-  dotPath: ["comment", "listForPost"],
-}).fetch();
+const queryMoreComments = trpcPlugin(["comment", "listForPost"]).fetch();
 
 type PostCardProps = {
   post: Post;

@@ -3,9 +3,10 @@ import type { Comment } from "@prisma/client";
 import { trpcPlugin } from "~/routes/plugin@trpc";
 import { CommentForm } from "../../CommentForm/CommentForm";
 
-export const useUpdateCommentAction = trpcPlugin({
-  dotPath: ["comment", "update"],
-}).globalAction();
+export const useUpdateCommentAction = trpcPlugin([
+  "comment",
+  "update",
+]).globalAction();
 
 type Props = {
   comment: Comment;

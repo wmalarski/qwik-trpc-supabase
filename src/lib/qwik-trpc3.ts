@@ -19,18 +19,14 @@ type TrpcCallerOptions = {
   prefix: string;
 };
 
-type TrpcConfig = {
-  dotPath: string[];
-};
-
 type TrpcResolver = {
-  config: TrpcConfig;
+  dotPath: string[];
   callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller>>;
 };
 
 export const trpcGlobalActionResolverQrl = (
   contextQrl: QRL<() => TrpcResolver>,
-  config: TrpcConfig
+  dotPath: string[]
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
@@ -38,12 +34,9 @@ export const trpcGlobalActionResolverQrl = (
       const context = await contextQrl();
       const caller = await context.callerQrl(event);
 
-      return context.config.dotPath.reduce(
-        (prev, curr) => prev[curr],
-        caller as any
-      )(args);
+      return dotPath.reduce((prev, curr) => prev[curr], caller as any)(args);
     },
-    { id: config.dotPath.join(".") }
+    { id: dotPath.join(".") }
   );
 };
 
@@ -53,7 +46,7 @@ export const trpcGlobalActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
 
 export const trpcRouteActionResolverQrl = (
   contextQrl: QRL<() => TrpcResolver>,
-  config: TrpcConfig
+  dotPath: string[]
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return routeAction$(
@@ -61,12 +54,9 @@ export const trpcRouteActionResolverQrl = (
       const context = await contextQrl();
       const caller = await context.callerQrl(event);
 
-      return context.config.dotPath.reduce(
-        (prev, curr) => prev[curr],
-        caller as any
-      )(args);
+      return dotPath.reduce((prev, curr) => prev[curr], caller as any)(args);
     },
-    { id: config.dotPath.join(".") }
+    { id: dotPath.join(".") }
   );
 };
 
@@ -101,11 +91,11 @@ export const serverTrpcQrl = (
         event.json(200, result);
       }
     },
-    trpcPlugin: (config: TrpcConfig) => {
+    trpcPlugin: (dotPath: string[]) => {
       return {
         fetch: () => {
           return async (args: any) => {
-            const path = config.dotPath.join(".");
+            const path = dotPath.join(".");
             const result = await fetch(`${options.prefix}/${path}`, {
               body: JSON.stringify(args),
               method: "POST",
@@ -115,15 +105,15 @@ export const serverTrpcQrl = (
         },
         globalAction: () => {
           return trpcGlobalActionResolver$(
-            () => ({ callerQrl, config }),
-            config
+            () => ({ callerQrl, dotPath }),
+            dotPath
           );
         },
         loader: async (event: RequestEventLoader, args: any) => {
           if (isServer) {
             const caller = await callerQrl(event);
 
-            return config.dotPath.reduce(
+            return dotPath.reduce(
               (prev, curr) => prev[curr],
               caller as any
             )(args);
@@ -131,8 +121,8 @@ export const serverTrpcQrl = (
         },
         routeAction: () => {
           return trpcRouteActionResolver$(
-            () => ({ callerQrl, config }),
-            config
+            () => ({ callerQrl, dotPath }),
+            dotPath
           );
         },
       };

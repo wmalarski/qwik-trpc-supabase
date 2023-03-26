@@ -3,9 +3,10 @@ import type { Post } from "@prisma/client";
 import { trpcPlugin } from "~/routes/plugin@trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
-export const useUpdatePostAction = trpcPlugin({
-  dotPath: ["post", "update"],
-}).globalAction();
+export const useUpdatePostAction = trpcPlugin([
+  "post",
+  "update",
+]).globalAction();
 
 type Props = {
   post: Post;
