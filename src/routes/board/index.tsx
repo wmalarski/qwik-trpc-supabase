@@ -1,4 +1,4 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
@@ -42,6 +42,13 @@ export default component$(() => {
 
   const collection = useSignal<Post[]>(posts.value.posts);
   const page = useSignal(0);
+
+  useTask$(({ track }) => {
+    // eslint-disable-next-line qwik/valid-lexical-scope
+    const trackedPosts = track(() => posts.value);
+    collection.value = trackedPosts.posts;
+    page.value = 0;
+  });
 
   return (
     <div class="flex flex-col gap-2">

@@ -1,4 +1,4 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
@@ -36,6 +36,14 @@ export const CommentCard = component$<CommentCardProps>((props) => {
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)
     : paths.post(props.comment.postId);
+
+  useTask$(({ track }) => {
+    // eslint-disable-next-line qwik/valid-lexical-scope
+    const trackedComments = track(() => comments.value);
+
+    collection.value = trackedComments.comments;
+    page.value = 0;
+  });
 
   return (
     <div>
