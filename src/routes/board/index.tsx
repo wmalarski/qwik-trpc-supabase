@@ -1,15 +1,16 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { trpc } from "~/server/trpc/api";
 import { paths } from "~/utils/paths";
 import { trpcPlugin } from "../plugin@trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
-export const usePosts = routeLoader$((event) =>
-  trpc.post.list.loader(event, { skip: 0, take: 10 })
-);
+export const usePosts = routeLoader$((event) => {
+  return trpcPlugin({
+    dotPath: ["post", "list"],
+  }).loader(event, { skip: 0, take: 10 });
+});
 
 const queryMorePosts = trpcPlugin({ dotPath: ["post", "list"] }).fetch();
 
@@ -40,16 +41,8 @@ export const PostListItem = component$<PostListItemProps>((props) => {
 export default component$(() => {
   const posts = usePosts();
 
-  const collection = useSignal<Post[]>([]);
+  const collection = useSignal<Post[]>(posts.value.posts);
   const page = useSignal(0);
-
-  useTask$(({ track }) => {
-    const trackedPosts = track(() => posts.value);
-    if (trackedPosts?.status === "success") {
-      collection.value = trackedPosts.result.posts;
-      page.value = 0;
-    }
-  });
 
   return (
     <div class="flex flex-col gap-2">

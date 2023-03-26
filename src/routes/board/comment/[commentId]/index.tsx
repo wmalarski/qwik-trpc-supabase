@@ -1,24 +1,27 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { trpcPlugin } from "~/routes/plugin@trpc";
-import { trpc } from "~/server/trpc/api";
 import { paths } from "~/utils/paths";
 
-export const useComment = routeLoader$((event) =>
-  trpc.comment.get.loader(event, { id: event.params.commentId })
-);
+export const useComment = routeLoader$((event) => {
+  return trpcPlugin({
+    dotPath: ["comment", "get"],
+  }).loader(event, { id: event.params.commentId });
+});
 
-export const useComments = routeLoader$((event) =>
-  trpc.comment.listForParent.loader(event, {
+export const useComments = routeLoader$((event) => {
+  return trpcPlugin({
+    dotPath: ["comment", "listForParent"],
+  }).loader(event, {
     parentId: event.params.commentId,
     skip: 0,
     take: 10,
-  })
-);
+  });
+});
 
 const queryMoreComments = trpcPlugin({
   dotPath: ["comment", "listForParent"],
@@ -31,16 +34,8 @@ type CommentCardProps = {
 export const CommentCard = component$<CommentCardProps>((props) => {
   const comments = useComments();
 
-  const collection = useSignal<Comment[]>([]);
+  const collection = useSignal<Comment[]>(comments.value.comments);
   const page = useSignal(0);
-
-  useTask$(({ track }) => {
-    const trackedComments = track(() => comments.value);
-    if (trackedComments.status === "success") {
-      collection.value = trackedComments.result.comments;
-      page.value = 0;
-    }
-  });
 
   const backPath = props.comment.parentId
     ? paths.comment(props.comment.parentId)

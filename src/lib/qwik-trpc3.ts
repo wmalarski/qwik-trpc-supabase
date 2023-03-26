@@ -8,6 +8,7 @@ import {
   routeAction$,
   type RequestEvent,
   type RequestEventCommon,
+  type RequestEventLoader,
 } from "@builder.io/qwik-city";
 import { isServer } from "@builder.io/qwik/build";
 import type { appRouter } from "~/server/trpc/router";
@@ -117,6 +118,16 @@ export const serverTrpcQrl = (
             () => ({ callerQrl, config }),
             config
           );
+        },
+        loader: async (event: RequestEventLoader, args: any) => {
+          if (isServer) {
+            const caller = await callerQrl(event);
+
+            return config.dotPath.reduce(
+              (prev, curr) => prev[curr],
+              caller as any
+            )(args);
+          }
         },
         routeAction: () => {
           return trpcRouteActionResolver$(
