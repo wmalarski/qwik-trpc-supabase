@@ -7,19 +7,16 @@ import { trpcPlugin } from "../plugin@trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
 export const usePosts = routeLoader$((event) => {
-  return trpcPlugin(["post", "list"]).loader(event, { skip: 0, take: 10 });
+  return trpcPlugin.post.list.loader(event, { skip: 0, take: 10 });
 });
 
-const queryMorePosts = trpcPlugin(["post", "list"]).fetch();
+const queryMorePosts = trpcPlugin.post.list.fetch();
+
+export const useCreatePostAction = trpcPlugin.post.create.globalAction();
 
 type PostListItemProps = {
   post: Post;
 };
-
-export const useCreatePostAction = trpcPlugin([
-  "post",
-  "create",
-]).globalAction();
 
 export const PostListItem = component$<PostListItemProps>((props) => {
   return (
@@ -40,14 +37,15 @@ export const PostListItem = component$<PostListItemProps>((props) => {
 export default component$(() => {
   const posts = usePosts();
 
-  const collection = useSignal<Post[]>(posts.value.posts);
+  const collection = useSignal<Post[]>([]);
   const page = useSignal(0);
 
   useTask$(({ track }) => {
-    // eslint-disable-next-line qwik/valid-lexical-scope
     const trackedPosts = track(() => posts.value);
-    collection.value = trackedPosts.posts;
-    page.value = 0;
+    if (trackedPosts.status === "success") {
+      collection.value = trackedPosts.result.posts;
+      page.value = 0;
+    }
   });
 
   return (
@@ -65,13 +63,12 @@ export default component$(() => {
               skip: (page.value + 1) * 10,
               take: 10,
             });
-            console.log({ value });
-            // if (value.status === "success") {
-            //   const nextCollection = [...collection.value];
-            //   nextCollection.push(...value.result.posts);
-            //   collection.value = nextCollection;
-            //   page.value += 1;
-            // }
+            if (value.status === "success") {
+              const nextCollection = [...collection.value];
+              nextCollection.push(...value.result.posts);
+              collection.value = nextCollection;
+              page.value += 1;
+            }
           }}
         >
           Load more

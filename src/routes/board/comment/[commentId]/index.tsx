@@ -8,20 +8,20 @@ import { trpcPlugin } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
 export const useComment = routeLoader$((event) => {
-  return trpcPlugin(["comment", "get"]).loader(event, {
+  return trpcPlugin.comment.get.loader(event, {
     id: event.params.commentId,
   });
 });
 
 export const useComments = routeLoader$((event) => {
-  return trpcPlugin(["comment", "listForParent"]).loader(event, {
+  return trpcPlugin.comment.listForParent.loader(event, {
     parentId: event.params.commentId,
     skip: 0,
     take: 10,
   });
 });
 
-const queryMoreComments = trpcPlugin(["comment", "listForParent"]).fetch();
+const queryMoreComments = trpcPlugin.comment.listForParent.fetch();
 
 type CommentCardProps = {
   comment: Comment;
@@ -30,7 +30,7 @@ type CommentCardProps = {
 export const CommentCard = component$<CommentCardProps>((props) => {
   const comments = useComments();
 
-  const collection = useSignal<Comment[]>(comments.value.comments);
+  const collection = useSignal<Comment[]>([]);
   const page = useSignal(0);
 
   const backPath = props.comment.parentId
@@ -38,11 +38,11 @@ export const CommentCard = component$<CommentCardProps>((props) => {
     : paths.post(props.comment.postId);
 
   useTask$(({ track }) => {
-    // eslint-disable-next-line qwik/valid-lexical-scope
     const trackedComments = track(() => comments.value);
-
-    collection.value = trackedComments.comments;
-    page.value = 0;
+    if (trackedComments.status === "success") {
+      collection.value = trackedComments.result.comments;
+      page.value = 0;
+    }
   });
 
   return (
@@ -70,13 +70,12 @@ export const CommentCard = component$<CommentCardProps>((props) => {
             skip: (page.value + 1) * 10,
             take: 10,
           });
-          console.log({ value });
-          // if (value.status === "success") {
-          //   const nextCollection = [...collection.value];
-          //   nextCollection.push(...value.result.comments);
-          //   collection.value = nextCollection;
-          //   page.value += 1;
-          // }
+          if (value.status === "success") {
+            const nextCollection = [...collection.value];
+            nextCollection.push(...value.result.comments);
+            collection.value = nextCollection;
+            page.value += 1;
+          }
         }}
       >
         Load more

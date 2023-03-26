@@ -1,6 +1,7 @@
-import { serverTrpc$ } from "~/lib/qwik-trpc3";
+import { serverTrpc$ } from "~/lib/qwik-trpc4";
+import type { AppRouter } from "~/server/trpc/router";
 
-export const { trpcPlugin, onRequest } = serverTrpc$(
+export const { trpcPlugin, onRequest } = serverTrpc$<AppRouter>(
   async (event) => {
     const { getTrpcFromEvent } = await import("~/server/loaders");
     return getTrpcFromEvent(event);
