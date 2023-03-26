@@ -12,9 +12,11 @@ import {
 import { isServer } from "@builder.io/qwik/build";
 import type { appRouter } from "~/server/trpc/router";
 
-type TrpcCallerFactory = (
-  event: RequestEventCommon
-) => Promise<ReturnType<typeof appRouter.createCaller>>;
+type TrpcCaller = ReturnType<typeof appRouter.createCaller>;
+
+type TrpcCallerOptions = {
+  prefix: string;
+};
 
 type TrpcConfig = {
   dotPath: string[];
@@ -22,20 +24,20 @@ type TrpcConfig = {
 
 type TrpcResolver = {
   config: TrpcConfig;
-  factory: QRL<TrpcCallerFactory>;
+  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller>>;
 };
 
 export const trpcGlobalActionResolverQrl = (
-  resolverQrl: QRL<() => TrpcResolver>,
+  contextQrl: QRL<() => TrpcResolver>,
   config: TrpcConfig
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
     async (args, event) => {
-      const resolver = await resolverQrl();
-      const caller = await resolver.factory(event);
+      const context = await contextQrl();
+      const caller = await context.callerQrl(event);
 
-      return resolver.config.dotPath.reduce(
+      return context.config.dotPath.reduce(
         (prev, curr) => prev[curr],
         caller as any
       )(args);
@@ -49,16 +51,16 @@ export const trpcGlobalActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
 );
 
 export const trpcRouteActionResolverQrl = (
-  resolverQrl: QRL<() => TrpcResolver>,
+  contextQrl: QRL<() => TrpcResolver>,
   config: TrpcConfig
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return routeAction$(
     async (args, event) => {
-      const resolver = await resolverQrl();
-      const caller = await resolver.factory(event);
+      const context = await contextQrl();
+      const caller = await context.callerQrl(event);
 
-      return resolver.config.dotPath.reduce(
+      return context.config.dotPath.reduce(
         (prev, curr) => prev[curr],
         caller as any
       )(args);
@@ -71,11 +73,13 @@ export const trpcRouteActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
   trpcRouteActionResolverQrl
 );
 
-export const serverTrpcQrl = (factory: QRL<TrpcCallerFactory>) => {
+export const serverTrpcQrl = (
+  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller>>,
+  options: TrpcCallerOptions
+) => {
   return {
     onRequest: async (event: RequestEvent) => {
-      const prefix = "/api/trpc";
-      const prefixPath = `${prefix}/`;
+      const prefixPath = `${options.prefix}/`;
       const pathname = event.url.pathname;
       if (
         isServer &&
@@ -86,7 +90,7 @@ export const serverTrpcQrl = (factory: QRL<TrpcCallerFactory>) => {
         const dotPath = trpcPath.split(".");
         const args = await event.request.json();
 
-        const caller = await factory(event);
+        const caller = await callerQrl(event);
 
         const result = await dotPath.reduce(
           (prev, curr) => prev[curr],
@@ -101,20 +105,25 @@ export const serverTrpcQrl = (factory: QRL<TrpcCallerFactory>) => {
         fetch: () => {
           return async (args: any) => {
             const path = config.dotPath.join(".");
-            const prefix = "/api/trpc";
-
-            const result = await fetch(`${prefix}/${path}`, {
+            const result = await fetch(`${options.prefix}/${path}`, {
               body: JSON.stringify(args),
               method: "POST",
             });
-
             return result.json();
           };
         },
-        globalAction: () =>
-          trpcGlobalActionResolver$(() => ({ config, factory }), config),
-        routeAction: () =>
-          trpcRouteActionResolver$(() => ({ config, factory }), config),
+        globalAction: () => {
+          return trpcGlobalActionResolver$(
+            () => ({ callerQrl, config }),
+            config
+          );
+        },
+        routeAction: () => {
+          return trpcRouteActionResolver$(
+            () => ({ callerQrl, config }),
+            config
+          );
+        },
       };
     },
   };
