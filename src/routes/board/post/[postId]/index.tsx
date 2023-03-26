@@ -1,10 +1,10 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Comment, Post } from "@prisma/client";
-import { trpcFetch$ } from "~/lib/qwik-trpc2";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
+import { trpcPlugin } from "~/routes/plugin@trpc";
 import { trpc } from "~/server/trpc/api";
 import { paths } from "~/utils/paths";
 
@@ -20,7 +20,9 @@ export const useComments = routeLoader$((event) =>
   })
 );
 
-const queryMoreComments = trpcFetch$(() => ["comment", "listForPost"]);
+const queryMoreComments = trpcPlugin({
+  dotPath: ["comment", "listForPost"],
+}).fetch();
 
 type PostCardProps = {
   post: Post;

@@ -6,8 +6,10 @@ import { implicit$FirstArg, type QRL } from "@builder.io/qwik";
 import {
   globalAction$,
   routeAction$,
+  type RequestEvent,
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
+import { isServer } from "@builder.io/qwik/build";
 import type { appRouter } from "~/server/trpc/router";
 
 type TrpcCallerFactory = (
@@ -70,13 +72,51 @@ export const trpcRouteActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
 );
 
 export const serverTrpcQrl = (factory: QRL<TrpcCallerFactory>) => {
-  return (config: TrpcConfig) => {
-    return {
-      globalAction: () =>
-        trpcGlobalActionResolver$(() => ({ config, factory }), config),
-      routeAction: () =>
-        trpcRouteActionResolver$(() => ({ config, factory }), config),
-    };
+  return {
+    onRequest: async (event: RequestEvent) => {
+      const prefix = "/api/trpc";
+      const prefixPath = `${prefix}/`;
+      const pathname = event.url.pathname;
+      if (
+        isServer &&
+        pathname.startsWith(prefixPath) &&
+        event.method === "POST"
+      ) {
+        const [, trpcPath] = pathname.split(prefixPath);
+        const dotPath = trpcPath.split(".");
+        const args = await event.request.json();
+
+        const caller = await factory(event);
+
+        const result = await dotPath.reduce(
+          (prev, curr) => prev[curr],
+          caller as any
+        )(args);
+
+        event.json(200, result);
+      }
+    },
+    trpcPlugin: (config: TrpcConfig) => {
+      return {
+        fetch: () => {
+          return async (args: any) => {
+            const path = config.dotPath.join(".");
+            const prefix = "/api/trpc";
+
+            const result = await fetch(`${prefix}/${path}`, {
+              body: JSON.stringify(args),
+              method: "POST",
+            });
+
+            return result.json();
+          };
+        },
+        globalAction: () =>
+          trpcGlobalActionResolver$(() => ({ config, factory }), config),
+        routeAction: () =>
+          trpcRouteActionResolver$(() => ({ config, factory }), config),
+      };
+    },
   };
 };
 

@@ -1,7 +1,6 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
-import { trpcFetch$ } from "~/lib/qwik-trpc2";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { trpc } from "~/server/trpc/api";
 import { paths } from "~/utils/paths";
@@ -12,7 +11,7 @@ export const usePosts = routeLoader$((event) =>
   trpc.post.list.loader(event, { skip: 0, take: 10 })
 );
 
-const queryMorePosts = trpcFetch$(() => ["post", "list"]);
+const queryMorePosts = trpcPlugin({ dotPath: ["post", "list"] }).fetch();
 
 type PostListItemProps = {
   post: Post;
