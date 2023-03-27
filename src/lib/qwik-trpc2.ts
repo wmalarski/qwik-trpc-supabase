@@ -73,8 +73,8 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         const [, trpcPath] = pathname.split(prefixPath);
         const dotPath = trpcPath.split(".");
         const args = await event.request.json();
-        const caller = await callerQrl(event);
 
+        const caller = await callerQrl(event);
         const result = await trpcResolver(caller, dotPath, args);
 
         event.json(200, result);
@@ -82,7 +82,7 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
     },
     trpcFetch: (getPath: () => string[]) => {
       return async (args: any) => {
-        const path = getPath();
+        const path = getPath().join(".");
         const response = await fetch(`${options.prefix}/${path}`, {
           body: JSON.stringify(args),
           method: "POST",
