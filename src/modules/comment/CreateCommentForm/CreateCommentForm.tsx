@@ -1,8 +1,10 @@
 import { component$ } from "@builder.io/qwik";
-import { trpc } from "~/routes/plugin@trpc";
+import { trpcGlobalAction } from "~/routes/plugin@trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-export const useCreateComment = trpc.comment.create.globalAction$();
+export const useCreateComment = trpcGlobalAction(() => ["comment", "create"]);
+
+// export const useCreateComment = trpc.comment.create.globalAction$();
 
 type Props = {
   parentId: string | null;

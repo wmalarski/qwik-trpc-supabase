@@ -113,7 +113,7 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
       );
       //
     },
-    trpcRouteLoader: (
+    trpcRouteLoaderQrl: (
       configQrl: QRL<(event: RequestEventLoader) => TrpcRouteLoaderConfig>
     ) => {
       // eslint-disable-next-line qwik/loader-location

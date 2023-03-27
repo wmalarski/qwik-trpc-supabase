@@ -1,9 +1,11 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import type { Post } from "@prisma/client";
-import { trpc } from "~/routes/plugin@trpc";
+import { trpcGlobalAction } from "~/routes/plugin@trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
-export const useUpdatePostAction = trpc.post.update.globalAction$();
+export const useUpdatePostAction = trpcGlobalAction(() => ["post", "update"]);
+
+// export const useUpdatePostAction = trpc.post.update.globalAction$();
 
 type Props = {
   post: Post;

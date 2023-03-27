@@ -1,16 +1,27 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { Link, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
+import {
+  trpcFetch,
+  trpcGlobalAction,
+  trpcRouteLoader$,
+} from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
-import { trpc } from "../plugin@trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
-export const usePosts = routeLoader$((event) => {
-  return trpc.post.list.loader(event, { skip: 0, take: 10 });
-});
+export const usePosts = trpcRouteLoader$(() => ({
+  args: { skip: 0, take: 10 },
+  path: ["post", "list"],
+}));
 
-export const useCreatePostAction = trpc.post.create.globalAction$();
+export const useCreatePostAction = trpcGlobalAction(() => ["post", "create"]);
+
+// export const usePosts = routeLoader$((event) => {
+//   return trpc.post.list.loader(event, { skip: 0, take: 10 });
+// });
+
+// export const useCreatePostAction = trpc.post.create.globalAction$();
 
 type PostListItemProps = {
   post: Post;
@@ -57,7 +68,7 @@ export default component$(() => {
         <button
           class="btn"
           onClick$={async () => {
-            const value = await trpc.post.list.query({
+            const value = await trpcFetch(() => ["post", "list"])({
               skip: (page.value + 1) * 10,
               take: 10,
             });

@@ -1,25 +1,35 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { Link, type DocumentHead } from "@builder.io/qwik-city";
 import type { Comment } from "@prisma/client";
 import { CommentActions } from "~/modules/comment/CommentActions/CommentActions";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
-import { trpc } from "~/routes/plugin@trpc";
+import { trpcFetch, trpcRouteLoader$ } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
-export const useComment = routeLoader$((event) => {
-  return trpc.comment.get.loader(event, {
-    id: event.params.commentId,
-  });
-});
+export const useComment = trpcRouteLoader$((event) => ({
+  args: { id: event.params.commentId },
+  path: ["comment", "get"],
+}));
 
-export const useComments = routeLoader$((event) => {
-  return trpc.comment.listForParent.loader(event, {
-    parentId: event.params.commentId,
-    skip: 0,
-    take: 10,
-  });
-});
+export const useComments = trpcRouteLoader$((event) => ({
+  args: { parentId: event.params.commentId, skip: 0, take: 10 },
+  path: ["comment", "listForParent"],
+}));
+
+// export const useComment = routeLoader$((event) => {
+//   return trpc.comment.get.loader(event, {
+//     id: event.params.commentId,
+//   });
+// });
+
+// export const useComments = routeLoader$((event) => {
+//   return trpc.comment.listForParent.loader(event, {
+//     parentId: event.params.commentId,
+//     skip: 0,
+//     take: 10,
+//   });
+// });
 
 type CommentCardProps = {
   comment: Comment;
@@ -63,7 +73,7 @@ export const CommentCard = component$<CommentCardProps>((props) => {
       <button
         class="btn"
         onClick$={async () => {
-          const value = await trpc.comment.listForParent.query({
+          const value = await trpcFetch(() => ["comment", "listForParent"])({
             parentId: props.comment.id,
             skip: (page.value + 1) * 10,
             take: 10,
