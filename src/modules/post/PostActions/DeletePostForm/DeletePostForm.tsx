@@ -4,7 +4,7 @@ import type { Post } from "@prisma/client";
 import { trpcGlobalAction } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
-export const useDeletePost = trpcGlobalAction(() => ["post", "delete"]);
+export const useDeletePost = trpcGlobalAction((trpc) => trpc.post.delete());
 
 // export const useDeletePost = trpc.post.delete.globalAction$();
 

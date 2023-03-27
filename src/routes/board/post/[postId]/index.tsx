@@ -64,7 +64,7 @@ export const PostCard = component$<PostCardProps>((props) => {
       <button
         class="btn"
         onClick$={async () => {
-          const value = await trpcFetch(() => ["comment", "listForPost"])({
+          const value = await trpcFetch((trpc) => trpc.comment.listForPost())({
             postId: props.post.id,
             skip: (page.value + 1) * 10,
             take: 10,

@@ -2,7 +2,9 @@ import { component$ } from "@builder.io/qwik";
 import { trpcGlobalAction } from "~/routes/plugin@trpc";
 import { CommentForm } from "../CommentForm/CommentForm";
 
-export const useCreateComment = trpcGlobalAction(() => ["comment", "create"]);
+export const useCreateComment = trpcGlobalAction((trpc) =>
+  trpc.comment.create()
+);
 
 // export const useCreateComment = trpc.comment.create.globalAction$();
 

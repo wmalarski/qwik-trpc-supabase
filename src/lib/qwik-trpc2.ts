@@ -12,7 +12,40 @@ import {
   type RequestEventLoader,
 } from "@builder.io/qwik-city";
 import { isServer } from "@builder.io/qwik/build";
-import type { AnyRouter, TRPCError } from "@trpc/server";
+import type {
+  AnyProcedure,
+  AnyRouter,
+  ProcedureRouterRecord,
+  TRPCError,
+} from "@trpc/server";
+
+type ProxyCallbackOptions = {
+  path: string[];
+  args: unknown[];
+};
+
+type ProxyCallback = (opts: ProxyCallbackOptions) => unknown;
+
+// type TrpcProcedureOutput<TProcedure extends AnyProcedure> =
+//   | {
+//       result: inferProcedureOutput<TProcedure>;
+//       status: "success";
+//     }
+//   | {
+//       code: ZodIssue["code"];
+//       status: "error";
+//       issues: ZodIssue[];
+//     };
+
+type DecorateProcedure = () => string[];
+
+type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
+  [TKey in keyof TProcedures]: TProcedures[TKey] extends AnyRouter
+    ? DecoratedProcedureRecord<TProcedures[TKey]["_def"]["record"]>
+    : TProcedures[TKey] extends AnyProcedure
+    ? DecorateProcedure
+    : never;
+};
 
 type TrpcRouteLoaderConfig = {
   path: string[];
@@ -61,6 +94,27 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
   callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller<TRouter>>>,
   options: TrpcCallerOptions
 ) => {
+  const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
+    const proxy: unknown = new Proxy(() => void 0, {
+      apply(_1, _2, args) {
+        return callback({ args, path });
+      },
+      get(_obj, key) {
+        if (typeof key !== "string") {
+          return undefined;
+        }
+        return createRecursiveProxy(callback, [...path, key]);
+      },
+    });
+
+    return proxy;
+  };
+
+  const builder = createRecursiveProxy((opts) => {
+    console.log("opts", { opts });
+    return opts.path;
+  }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
+
   return {
     onRequest: async (event: RequestEvent) => {
       const prefixPath = `${options.prefix}/`;
@@ -80,9 +134,13 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         event.json(200, result);
       }
     },
-    trpcFetch: (getPath: () => string[]) => {
+    trpcFetch: (
+      getPath: (
+        trpc: DecoratedProcedureRecord<TRouter["_def"]["record"]>
+      ) => string[]
+    ) => {
       return async (args: any) => {
-        const path = getPath().join(".");
+        const path = getPath(builder).join(".");
         const response = await fetch(`${options.prefix}/${path}`, {
           body: JSON.stringify(args),
           method: "POST",
@@ -90,9 +148,14 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         return response.json();
       };
     },
-    trpcGlobalAction: (getPath: () => string[]) => {
-      const path = getPath();
+    trpcGlobalAction: (
+      getPath: (
+        trpc: DecoratedProcedureRecord<TRouter["_def"]["record"]>
+      ) => string[]
+    ) => {
+      const path = getPath(builder);
       // eslint-disable-next-line qwik/loader-location
+      console.log("path", path);
       return globalAction$(
         async (args, event) => {
           const caller = await callerQrl(event);
@@ -101,8 +164,12 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         { id: path.join(".") }
       );
     },
-    trpcRouteAction: (getPath: () => string[]) => {
-      const path = getPath();
+    trpcRouteAction: (
+      getPath: (
+        trpc: DecoratedProcedureRecord<TRouter["_def"]["record"]>
+      ) => string[]
+    ) => {
+      const path = getPath(builder);
       // eslint-disable-next-line qwik/loader-location
       return routeAction$(
         async (args, event) => {

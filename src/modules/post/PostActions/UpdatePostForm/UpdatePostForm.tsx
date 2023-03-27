@@ -3,7 +3,9 @@ import type { Post } from "@prisma/client";
 import { trpcGlobalAction } from "~/routes/plugin@trpc";
 import { PostForm } from "../../PostForm/PostForm";
 
-export const useUpdatePostAction = trpcGlobalAction(() => ["post", "update"]);
+export const useUpdatePostAction = trpcGlobalAction((trpc) =>
+  trpc.post.update()
+);
 
 // export const useUpdatePostAction = trpc.post.update.globalAction$();
 

@@ -15,7 +15,9 @@ export const usePosts = trpcRouteLoader$(() => ({
   path: ["post", "list"],
 }));
 
-export const useCreatePostAction = trpcGlobalAction(() => ["post", "create"]);
+export const useCreatePostAction = trpcGlobalAction((trpc) =>
+  trpc.post.create()
+);
 
 // export const usePosts = routeLoader$((event) => {
 //   return trpc.post.list.loader(event, { skip: 0, take: 10 });
@@ -68,7 +70,7 @@ export default component$(() => {
         <button
           class="btn"
           onClick$={async () => {
-            const value = await trpcFetch(() => ["post", "list"])({
+            const value = await trpcFetch((trpc) => trpc.post.list())({
               skip: (page.value + 1) * 10,
               take: 10,
             });
