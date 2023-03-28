@@ -14,7 +14,9 @@ import {
 import { isServer } from "@builder.io/qwik/build";
 import type {
   AnyProcedure,
+  AnyQueryProcedure,
   AnyRouter,
+  inferProcedureInput,
   ProcedureRouterRecord,
   TRPCError,
 } from "@trpc/server";
@@ -51,6 +53,19 @@ type TrpcRouteLoaderConfig = {
   path: string[];
   args: any;
 };
+
+type DecorateLoaderProcedure<TProcedure extends AnyQueryProcedure> = (
+  input: inferProcedureInput<TProcedure>
+) => TrpcRouteLoaderConfig;
+
+type DecoratedLoaderProcedureRecord<TProcedures extends ProcedureRouterRecord> =
+  {
+    [TKey in keyof TProcedures]: TProcedures[TKey] extends AnyRouter
+      ? DecoratedLoaderProcedureRecord<TProcedures[TKey]["_def"]["record"]>
+      : TProcedures[TKey] extends AnyQueryProcedure
+      ? DecorateLoaderProcedure<TProcedures[TKey]>
+      : never;
+  };
 
 type TrpcCaller<TRouter extends AnyRouter> = ReturnType<
   TRouter["createCaller"]
@@ -110,10 +125,10 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
     return proxy;
   };
 
-  const builder = createRecursiveProxy((opts) => {
-    console.log("opts", { opts });
-    return opts.path;
-  }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
+  const builder = createRecursiveProxy(
+    (opts) => opts.path,
+    []
+  ) as DecoratedProcedureRecord<TRouter["_def"]["record"]>;
 
   return {
     onRequest: async (event: RequestEvent) => {
@@ -155,7 +170,6 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
     ) => {
       const path = getPath(builder);
       // eslint-disable-next-line qwik/loader-location
-      console.log("path", path);
       return globalAction$(
         async (args, event) => {
           const caller = await callerQrl(event);
@@ -181,13 +195,47 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
       //
     },
     trpcRouteLoaderQrl: (
-      configQrl: QRL<(event: RequestEventLoader) => TrpcRouteLoaderConfig>
+      configQrl: QRL<
+        (
+          trpc: DecoratedLoaderProcedureRecord<TRouter["_def"]["record"]>,
+          event: RequestEventLoader
+        ) => TrpcRouteLoaderConfig
+      >
     ) => {
       // eslint-disable-next-line qwik/loader-location
       return routeLoader$(async (event) => {
-        const config = await configQrl(event);
+        const createRecursiveProxy = (
+          callback: ProxyCallback,
+          path: string[]
+        ) => {
+          const proxy: unknown = new Proxy(() => void 0, {
+            apply(_1, _2, args) {
+              return callback({ args, path });
+            },
+            get(_obj, key) {
+              if (typeof key !== "string") {
+                return undefined;
+              }
+              return createRecursiveProxy(callback, [...path, key]);
+            },
+          });
+
+          return proxy;
+        };
+
+        const loaderBuilder = createRecursiveProxy(
+          (opts) => ({ args: opts.args[0], path: opts.path }),
+          []
+        ) as DecoratedLoaderProcedureRecord<TRouter["_def"]["record"]>;
+
+        const config = await configQrl(loaderBuilder, event);
+
         const caller = await callerQrl(event);
-        return trpcResolver(caller, config.path, config.args);
+        const result = await trpcResolver(caller, config.path, config.args);
+
+        console.log(result);
+
+        return result;
       });
     },
   };

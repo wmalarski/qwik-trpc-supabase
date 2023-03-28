@@ -6,8 +6,6 @@ export const useCreateComment = trpcGlobalAction((trpc) =>
   trpc.comment.create()
 );
 
-// export const useCreateComment = trpc.comment.create.globalAction$();
-
 type Props = {
   parentId: string | null;
   postId: string;

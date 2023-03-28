@@ -10,20 +10,13 @@ import {
 import { paths } from "~/utils/paths";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
-export const usePosts = trpcRouteLoader$(() => ({
-  args: { skip: 0, take: 10 },
-  path: ["post", "list"],
-}));
+export const usePosts = trpcRouteLoader$((trpc) =>
+  trpc.post.list({ skip: 0, take: 10 })
+);
 
 export const useCreatePostAction = trpcGlobalAction((trpc) =>
   trpc.post.create()
 );
-
-// export const usePosts = routeLoader$((event) => {
-//   return trpc.post.list.loader(event, { skip: 0, take: 10 });
-// });
-
-// export const useCreatePostAction = trpc.post.create.globalAction$();
 
 type PostListItemProps = {
   post: Post;

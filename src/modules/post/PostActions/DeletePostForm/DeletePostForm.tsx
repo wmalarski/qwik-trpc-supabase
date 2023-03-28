@@ -6,8 +6,6 @@ import { paths } from "~/utils/paths";
 
 export const useDeletePost = trpcGlobalAction((trpc) => trpc.post.delete());
 
-// export const useDeletePost = trpc.post.delete.globalAction$();
-
 type Props = {
   post: Post;
 };

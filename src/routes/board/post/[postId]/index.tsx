@@ -7,27 +7,13 @@ import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { trpcFetch, trpcRouteLoader$ } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
-export const usePost = trpcRouteLoader$((event) => ({
-  args: { id: event.params.postId },
-  path: ["post", "get"],
-}));
+export const usePost = trpcRouteLoader$((trpc, event) =>
+  trpc.post.get({ id: event.params.postId })
+);
 
-export const useComments = trpcRouteLoader$((event) => ({
-  args: { postId: event.params.postId, skip: 0, take: 10 },
-  path: ["comment", "listForPost"],
-}));
-
-// export const usePost = routeLoader$((event) => {
-//   return trpc.post.get.loader(event, { id: event.params.postId });
-// });
-
-// export const useComments = routeLoader$((event) => {
-//   return trpc.comment.listForPost.loader(event, {
-//     postId: event.params.postId,
-//     skip: 0,
-//     take: 10,
-//   });
-// });
+export const useComments = trpcRouteLoader$((trpc, event) =>
+  trpc.comment.listForPost({ postId: event.params.postId, skip: 0, take: 10 })
+);
 
 type PostCardProps = {
   post: Post;
@@ -35,6 +21,8 @@ type PostCardProps = {
 
 export const PostCard = component$<PostCardProps>((props) => {
   const comments = useComments();
+
+  console.log({ comments: comments.value });
 
   const collection = useSignal<Comment[]>([]);
   const page = useSignal(0);
@@ -85,6 +73,8 @@ export const PostCard = component$<PostCardProps>((props) => {
 
 export default component$(() => {
   const post = usePost();
+
+  console.log({ post: post.value });
 
   return (
     <div class="flex flex-col gap-2">

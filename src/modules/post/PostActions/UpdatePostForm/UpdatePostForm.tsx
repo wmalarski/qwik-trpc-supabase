@@ -7,8 +7,6 @@ export const useUpdatePostAction = trpcGlobalAction((trpc) =>
   trpc.post.update()
 );
 
-// export const useUpdatePostAction = trpc.post.update.globalAction$();
-
 type Props = {
   post: Post;
 };

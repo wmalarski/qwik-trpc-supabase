@@ -7,29 +7,17 @@ import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCom
 import { trpcFetch, trpcRouteLoader$ } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
-export const useComment = trpcRouteLoader$((event) => ({
-  args: { id: event.params.commentId },
-  path: ["comment", "get"],
-}));
+export const useComment = trpcRouteLoader$((trpc, event) =>
+  trpc.comment.get({ id: event.params.commentId })
+);
 
-export const useComments = trpcRouteLoader$((event) => ({
-  args: { parentId: event.params.commentId, skip: 0, take: 10 },
-  path: ["comment", "listForParent"],
-}));
-
-// export const useComment = routeLoader$((event) => {
-//   return trpc.comment.get.loader(event, {
-//     id: event.params.commentId,
-//   });
-// });
-
-// export const useComments = routeLoader$((event) => {
-//   return trpc.comment.listForParent.loader(event, {
-//     parentId: event.params.commentId,
-//     skip: 0,
-//     take: 10,
-//   });
-// });
+export const useComments = trpcRouteLoader$((trpc, event) =>
+  trpc.comment.listForParent({
+    parentId: event.params.commentId,
+    skip: 0,
+    take: 10,
+  })
+);
 
 type CommentCardProps = {
   comment: Comment;

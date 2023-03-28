@@ -7,8 +7,6 @@ export const useUpdateCommentAction = trpcGlobalAction((trpc) =>
   trpc.comment.update()
 );
 
-// export const useUpdateCommentAction = trpc.comment.update.globalAction$();
-
 type Props = {
   comment: Comment;
 };
