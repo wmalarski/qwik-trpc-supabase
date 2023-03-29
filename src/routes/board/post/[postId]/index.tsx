@@ -22,8 +22,6 @@ type PostCardProps = {
 export const PostCard = component$<PostCardProps>((props) => {
   const comments = useComments();
 
-  console.log({ comments: comments.value });
-
   const collection = useSignal<Comment[]>([]);
   const page = useSignal(0);
 
@@ -73,8 +71,6 @@ export const PostCard = component$<PostCardProps>((props) => {
 
 export default component$(() => {
   const post = usePost();
-
-  console.log({ post: post.value });
 
   return (
     <div class="flex flex-col gap-2">

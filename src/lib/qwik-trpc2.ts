@@ -203,40 +203,38 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
       >
     ) => {
       // eslint-disable-next-line qwik/loader-location
-      return routeLoader$(async (event) => {
-        const createRecursiveProxy = (
-          callback: ProxyCallback,
-          path: string[]
-        ) => {
-          const proxy: unknown = new Proxy(() => void 0, {
-            apply(_1, _2, args) {
-              return callback({ args, path });
-            },
-            get(_obj, key) {
-              if (typeof key !== "string") {
-                return undefined;
-              }
-              return createRecursiveProxy(callback, [...path, key]);
-            },
-          });
+      return routeLoader$(
+        async (event) => {
+          const createRecursiveProxy = (
+            callback: ProxyCallback,
+            path: string[]
+          ) => {
+            const proxy: unknown = new Proxy(() => void 0, {
+              apply(_1, _2, args) {
+                return callback({ args, path });
+              },
+              get(_obj, key) {
+                if (typeof key !== "string") {
+                  return undefined;
+                }
+                return createRecursiveProxy(callback, [...path, key]);
+              },
+            });
 
-          return proxy;
-        };
+            return proxy;
+          };
 
-        const loaderBuilder = createRecursiveProxy(
-          (opts) => ({ args: opts.args[0], path: opts.path }),
-          []
-        ) as DecoratedLoaderProcedureRecord<TRouter["_def"]["record"]>;
+          const loaderBuilder = createRecursiveProxy(
+            (opts) => ({ args: opts.args[0], path: opts.path }),
+            []
+          ) as DecoratedLoaderProcedureRecord<TRouter["_def"]["record"]>;
 
-        const config = await configQrl(loaderBuilder, event);
-
-        const caller = await callerQrl(event);
-        const result = await trpcResolver(caller, config.path, config.args);
-
-        console.log(result);
-
-        return result;
-      });
+          const config = await configQrl(loaderBuilder, event);
+          const caller = await callerQrl(event);
+          return trpcResolver(caller, config.path, config.args);
+        },
+        { id: `trpc-${configQrl.getHash()}` }
+      );
     },
   };
 };
