@@ -1,19 +1,33 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { Link, type DocumentHead } from "@builder.io/qwik-city";
+import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { trpcFetch, trpcRouteLoader$ } from "~/routes/plugin@trpc";
+import { trpc } from "~/routes/plugin@trpc";
 import { paths } from "~/utils/paths";
 
-export const usePost = trpcRouteLoader$((trpc, event) =>
-  trpc.post.get({ id: event.params.postId })
-);
+// export const usePost = trpcRouteLoader$((event) => ({
+//   args: { id: event.params.postId },
+//   path: ["post", "get"],
+// }));
 
-export const useComments = trpcRouteLoader$((trpc, event) =>
-  trpc.comment.listForPost({ postId: event.params.postId, skip: 0, take: 10 })
-);
+// export const useComments = trpcRouteLoader$((event) => ({
+//   args: { postId: event.params.postId, skip: 0, take: 10 },
+//   path: ["comment", "listForPost"],
+// }));
+
+export const usePost = routeLoader$((event) => {
+  return trpc.post.get.loader(event, { id: event.params.postId });
+});
+
+export const useComments = routeLoader$((event) => {
+  return trpc.comment.listForPost.loader(event, {
+    postId: event.params.postId,
+    skip: 0,
+    take: 10,
+  });
+});
 
 type PostCardProps = {
   post: Post;
@@ -50,7 +64,7 @@ export const PostCard = component$<PostCardProps>((props) => {
       <button
         class="btn"
         onClick$={async () => {
-          const value = await trpcFetch((trpc) => trpc.comment.listForPost())({
+          const value = await trpc.comment.listForPost.query({
             postId: props.post.id,
             skip: (page.value + 1) * 10,
             take: 10,
