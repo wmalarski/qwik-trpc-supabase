@@ -6,11 +6,14 @@ import {
 import { createClient, type Session } from "@supabase/supabase-js";
 import { serverEnv } from "../serverEnv";
 
-export const supabase = createClient(
-  serverEnv.VITE_SUPABASE_URL,
-  serverEnv.VITE_SUPABASE_ANON_KEY,
-  { auth: { persistSession: false } }
-);
+export const createSupabase = () => {
+  console.log(serverEnv);
+  return createClient(
+    serverEnv.VITE_SUPABASE_URL,
+    serverEnv.VITE_SUPABASE_ANON_KEY,
+    { auth: { persistSession: false } }
+  );
+};
 
 const cookieName = "_session";
 
@@ -46,6 +49,8 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
   if (!parsed.success) {
     return null;
   }
+
+  const supabase = createSupabase();
 
   const userResponse = await supabase.auth.getUser(parsed.data.access_token);
 

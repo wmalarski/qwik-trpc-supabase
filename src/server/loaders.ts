@@ -2,7 +2,7 @@ import type { RequestEventCommon } from "@builder.io/qwik-city";
 import type { User } from "@supabase/supabase-js";
 import { prisma } from "~/server/db/client";
 import { appRouter } from "~/server/trpc/router";
-import { getUserByCookie, supabase } from "./auth/auth";
+import { createSupabase, getUserByCookie } from "./auth/auth";
 
 export const getUserFromEvent = (
   event: RequestEventCommon
@@ -27,9 +27,11 @@ export const getTrpcFromEvent = async (
 
   const user = await getUserFromEvent(event);
 
+  const supabase = createSupabase();
+
   const trpc = appRouter.createCaller({
     prisma,
-    supabase: supabase,
+    supabase,
     user,
   });
 

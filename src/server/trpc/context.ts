@@ -1,7 +1,7 @@
 import type { RequestEventCommon } from "@builder.io/qwik-city";
 import type { User } from "@supabase/supabase-js";
 import type * as trpc from "@trpc/server";
-import { getUserByCookie, supabase } from "../auth/auth";
+import { createSupabase, getUserByCookie } from "../auth/auth";
 import { prisma } from "../db/client";
 
 type CreateContextOptions = {
@@ -9,6 +9,7 @@ type CreateContextOptions = {
 };
 
 export const createContextInner = (opts: CreateContextOptions) => {
+  const supabase = createSupabase();
   return { prisma, supabase, user: opts.user };
 };
 
