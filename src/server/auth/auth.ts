@@ -3,17 +3,8 @@ import {
   type CookieOptions,
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
-import { createClient, type Session } from "@supabase/supabase-js";
-import { serverEnv } from "../serverEnv";
-
-export const createSupabase = () => {
-  console.log(serverEnv);
-  return createClient(
-    serverEnv.VITE_SUPABASE_URL,
-    serverEnv.VITE_SUPABASE_ANON_KEY,
-    { auth: { persistSession: false } }
-  );
-};
+import { type Session } from "@supabase/supabase-js";
+import { createSupabase } from "./supabase";
 
 const cookieName = "_session";
 
@@ -50,7 +41,7 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
     return null;
   }
 
-  const supabase = createSupabase();
+  const supabase = createSupabase(event);
 
   const userResponse = await supabase.auth.getUser(parsed.data.access_token);
 

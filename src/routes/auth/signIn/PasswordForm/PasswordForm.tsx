@@ -1,11 +1,12 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, globalAction$, z, zod$ } from "@builder.io/qwik-city";
-import { createSupabase, updateAuthCookies } from "~/server/auth/auth";
+import { updateAuthCookies } from "~/server/auth/auth";
+import { createSupabase } from "~/server/auth/supabase";
 import { paths } from "~/utils/paths";
 
 export const useSignInPasswordAction = globalAction$(
   async (data, event) => {
-    const supabase = createSupabase();
+    const supabase = createSupabase(event);
 
     const result = await supabase.auth.signInWithPassword(data);
 

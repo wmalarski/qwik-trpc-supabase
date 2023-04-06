@@ -1,17 +1,14 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, globalAction$, z, zod$ } from "@builder.io/qwik-city";
-import { createClient } from "@supabase/supabase-js";
+import { createSupabase } from "~/server/auth/supabase";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 
 export const useSignInOtpAction = globalAction$(
-  async (data) => {
+  async (data, event) => {
     console.log({ data });
 
-    const supabase = createClient(
-      "https://iyydnlpwawleikckkvca.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5eWRubHB3YXdsZWlrY2trdmNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODA4MTE0MDAsImV4cCI6MTk5NjM4NzQwMH0.ZEjvHstFlG9kDW-u1U2NDVTDQUSVLPSHlRIEcDgLWxM"
-    );
+    const supabase = createSupabase(event);
 
     const result = await supabase.auth.signInWithOtp({
       email: data.email,
