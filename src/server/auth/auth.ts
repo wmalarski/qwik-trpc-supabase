@@ -4,7 +4,7 @@ import {
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
 import { type Session } from "@supabase/supabase-js";
-import { createSupabase } from "./supabase";
+import { createSupabase as getSupabaseFromEvent } from "./supabase";
 
 const cookieName = "_session";
 
@@ -41,7 +41,7 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
     return null;
   }
 
-  const supabase = createSupabase(event);
+  const supabase = getSupabaseFromEvent(event);
 
   const userResponse = await supabase.auth.getUser(parsed.data.access_token);
 

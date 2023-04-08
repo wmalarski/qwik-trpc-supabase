@@ -31,6 +31,7 @@ export const postRouter = t.router({
       })
     )
     .query(async ({ input, ctx }) => {
+      console.log("LIST", { input, ctx });
       const [posts, count] = await Promise.all([
         ctx.prisma.post.findMany({
           orderBy: { createdAt: "desc" },
@@ -39,6 +40,7 @@ export const postRouter = t.router({
         }),
         ctx.prisma.post.count(),
       ]);
+      console.log("LIST", { count, posts });
       return { count, posts };
     }),
   update: protectedProcedure

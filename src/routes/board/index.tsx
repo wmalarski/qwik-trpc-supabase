@@ -15,8 +15,10 @@ import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 //   trpc.post.create()
 // );
 
-export const usePosts = routeLoader$((event) => {
-  return trpc.post.list.loader(event, { skip: 0, take: 10 });
+export const usePosts = routeLoader$(async (event) => {
+  const result = await trpc.post.list.loader(event, { skip: 0, take: 10 });
+  console.log("usePost", { result });
+  return result;
 });
 
 export const useCreatePostAction = trpc.post.create.globalAction$();
@@ -49,6 +51,9 @@ export default component$(() => {
 
   useTask$(({ track }) => {
     const trackedPosts = track(() => posts.value);
+
+    console.log("useTask", trackedPosts);
+
     if (trackedPosts.status === "success") {
       collection.value = trackedPosts.result.posts;
       page.value = 0;

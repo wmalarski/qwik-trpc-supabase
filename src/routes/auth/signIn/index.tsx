@@ -11,6 +11,8 @@ export const useAnonymousRoute = routeLoader$(async (event) => {
   if (user) {
     throw event.redirect(302, paths.index);
   }
+
+  return user;
 });
 
 export default component$(() => {

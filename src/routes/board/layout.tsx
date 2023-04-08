@@ -10,6 +10,8 @@ export const useProtectedRoute = routeLoader$(async (event) => {
   if (!user) {
     event.redirect(302, paths.signIn);
   }
+
+  return user;
 });
 
 export default component$(() => {
