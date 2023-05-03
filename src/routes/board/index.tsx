@@ -3,7 +3,6 @@ import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
 import { trpc } from "~/routes/plugin@trpc";
-import { getTrpcFromEvent } from "~/server/loaders";
 import { paths } from "~/utils/paths";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
@@ -16,12 +15,15 @@ import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 //   trpc.post.create()
 // );
 
-export const usePosts = routeLoader$(async (event) => {
-  const caller = await getTrpcFromEvent(event);
+export const usePosts = routeLoader$(() => {
+  // const caller = await getTrpcFromEvent(event);
   // const result = await trpc.post.list.loader(event, { skip: 0, take: 10 });
-  const result = await caller.post.list({ skip: 0, take: 10 });
-  console.log("usePost", { result });
-  return result;
+  // const result = await caller.post.list({ skip: 0, take: 10 });
+  // return result;
+
+  console.log("usePosts");
+
+  return { posts: [] };
 });
 
 export const useCreatePostAction = trpc.post.create.globalAction$();
@@ -54,13 +56,8 @@ export default component$(() => {
 
   useTask$(({ track }) => {
     const trackedPosts = track(() => posts.value);
-
-    console.log("useTask", trackedPosts);
-
-    if (trackedPosts.status === "success") {
-      collection.value = trackedPosts.result.posts;
-      page.value = 0;
-    }
+    collection.value = trackedPosts.posts;
+    page.value = 0;
   });
 
   return (

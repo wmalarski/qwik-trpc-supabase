@@ -6,16 +6,12 @@ import { paths } from "~/utils/paths";
 
 export const useSignInOtpAction = globalAction$(
   async (data, event) => {
-    console.log({ data });
-
     const supabase = createSupabase(event);
 
     const result = await supabase.auth.signInWithOtp({
       email: data.email,
       options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
     });
-
-    console.log({ result });
 
     return result;
   },

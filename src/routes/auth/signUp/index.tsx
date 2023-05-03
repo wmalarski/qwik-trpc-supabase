@@ -6,14 +6,16 @@ import { RegisterForm } from "./RegisterForm/RegisterForm";
 
 export const useAnonymousRoute = routeLoader$(async (event) => {
   const user = await getUserFromEvent(event);
+
   if (user) {
-    event.redirect(302, paths.index);
+    throw event.redirect(302, paths.index);
   }
+
   return user;
 });
 
 export default component$(() => {
-  // useAnonymousRoute();
+  useAnonymousRoute();
 
   return (
     <div class="flex flex-col gap-2">

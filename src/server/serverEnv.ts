@@ -1,15 +1,15 @@
 import { z } from "@builder.io/qwik-city";
 
 const schema = z.object({
-  VITE_SUPABASE_ANON_KEY: z.string(),
-  VITE_SUPABASE_URL: z.string().url(),
+  SUPABASE_ANON_KEY: z.string(),
+  SUPABASE_URL: z.string().url(),
 });
 
 const nodeEnv = process.env;
 const viteEnv = import.meta.env;
 
 export const serverEnv = schema.parse({
-  VITE_SUPABASE_ANON_KEY:
-    nodeEnv.VITE_SUPABASE_ANON_KEY || viteEnv.VITE_SUPABASE_ANON_KEY,
-  VITE_SUPABASE_URL: nodeEnv.VITE_SUPABASE_URL || viteEnv.VITE_SUPABASE_URL,
+  SUPABASE_ANON_KEY:
+    nodeEnv.PUBLIC_SUPABASE_ANON_KEY || viteEnv.PUBLIC_SUPABASE_ANON_KEY,
+  SUPABASE_URL: nodeEnv.PUBLIC_SUPABASE_URL || viteEnv.PUBLIC_SUPABASE_URL,
 });
