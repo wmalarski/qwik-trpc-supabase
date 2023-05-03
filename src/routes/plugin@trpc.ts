@@ -19,7 +19,7 @@ export const { trpc, onRequest, client } = serverTrpc$<AppRouter>(
     return {
       appRouter,
       createContext: async () => {
-        const { getUserFromEvent } = await import("~/server/loaders");
+        const { getUserFromEvent } = await import("~/server/auth/auth");
         const { createSupabase } = await import("~/server/auth/supabase");
         const { prisma } = await import("~/server/db/client");
 

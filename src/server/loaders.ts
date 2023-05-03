@@ -1,22 +1,8 @@
 import type { RequestEventCommon } from "@builder.io/qwik-city";
-import type { User } from "@supabase/supabase-js";
 import { prisma } from "~/server/db/client";
 import { appRouter } from "~/server/trpc/router";
-import { getUserByCookie } from "./auth/auth";
+import { getUserFromEvent } from "./auth/auth";
 import { createSupabase } from "./auth/supabase";
-
-export const getUserFromEvent = (
-  event: RequestEventCommon
-): Promise<User | null> => {
-  const cachedPromise = event.sharedMap.get("user");
-  if (cachedPromise) {
-    return cachedPromise;
-  }
-
-  const promise = getUserByCookie(event);
-  event.sharedMap.set("user", promise);
-  return promise;
-};
 
 export const getTrpcFromEvent = async (
   event: RequestEventCommon

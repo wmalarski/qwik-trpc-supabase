@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import { getUserFromEvent } from "~/server/loaders";
+import { getUserFromEvent } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
 import { PasswordForm } from "./PasswordForm/PasswordForm";

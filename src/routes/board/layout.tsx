@@ -1,7 +1,7 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
-import { getUserFromEvent } from "~/server/loaders";
+import { getUserFromEvent } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
 
 export const useProtectedRoute = routeLoader$(async (event) => {

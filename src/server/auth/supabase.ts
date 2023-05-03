@@ -1,6 +1,5 @@
 import type { RequestEventCommon } from "@builder.io/qwik-city";
-import { type SupabaseClient } from "@supabase/supabase-js";
-import { createServerClient } from "supabase-auth-helpers-qwik";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseMapKey = "__supabase";
 
@@ -18,7 +17,9 @@ export const createSupabase = (event: RequestEventCommon): SupabaseClient => {
     throw new Error("NO ENV VARIABLES");
   }
 
-  const client = createServerClient(url, key, event);
+  const client = createClient(url, key, { auth: { persistSession: false } });
+
+  // const client = createServerClient(url, key, event, {options: {}});
 
   event.sharedMap.set(supabaseMapKey, client);
 
