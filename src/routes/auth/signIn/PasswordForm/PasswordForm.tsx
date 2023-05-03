@@ -6,17 +6,9 @@ import { paths } from "~/utils/paths";
 
 export const useSignInPasswordAction = globalAction$(
   async (data, event) => {
-    console.log("useSignInPasswordAction", data);
-
     const supabase = createSupabase(event);
 
-    console.log("supabase1", supabase);
-
-    // supabase.auth.setSession();
-
     const result = await supabase.auth.signInWithPassword(data);
-
-    console.log("supabase2", result);
 
     if (result.error || !result.data.session) {
       const status = result.error?.status || 400;
@@ -25,11 +17,7 @@ export const useSignInPasswordAction = globalAction$(
       });
     }
 
-    console.log("supabase3");
-
     updateAuthCookies(event, result.data.session);
-
-    console.log("supabase4");
 
     event.redirect(302, paths.index);
   },
@@ -84,3 +72,6 @@ export const PasswordForm = component$(() => {
     </Form>
   );
 });
+/*
+
+*/

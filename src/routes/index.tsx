@@ -4,7 +4,9 @@ import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeade
 import { PublicHeader } from "~/modules/layout/PublicHeader/PublicHeader";
 import { getUserFromEvent } from "~/server/auth/auth";
 
-export const useUser = routeLoader$((event) => getUserFromEvent(event));
+export const useUser = routeLoader$((event) => {
+  return getUserFromEvent(event);
+});
 
 export default component$(() => {
   const user = useUser();

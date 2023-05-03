@@ -8,8 +8,6 @@ export const t = initTRPC.context<Context>().create({
 });
 
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  console.log("protectedProcedure", ctx);
-
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }

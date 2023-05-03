@@ -5,6 +5,7 @@ import { CommentActions } from "~/modules/comment/CommentActions/CommentActions"
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { trpc } from "~/routes/plugin@trpc";
+import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
 
 // export const useComment = trpcRouteLoader$((event) => ({
@@ -17,14 +18,16 @@ import { paths } from "~/utils/paths";
 //   path: ["comment", "listForParent"],
 // }));
 
-export const useComment = routeLoader$((event) => {
-  return trpc.comment.get.loader(event, {
+export const useComment = routeLoader$(async (event) => {
+  const trpc = await getTrpcFromEvent(event);
+  return trpc.comment.get({
     id: event.params.commentId,
   });
 });
 
-export const useComments = routeLoader$((event) => {
-  return trpc.comment.listForParent.loader(event, {
+export const useComments = routeLoader$(async (event) => {
+  const trpc = await getTrpcFromEvent(event);
+  return trpc.comment.listForParent({
     parentId: event.params.commentId,
     skip: 0,
     take: 10,
@@ -47,10 +50,8 @@ export const CommentCard = component$<CommentCardProps>((props) => {
 
   useTask$(({ track }) => {
     const trackedComments = track(() => comments.value);
-    if (trackedComments.status === "success") {
-      collection.value = trackedComments.result.comments;
-      page.value = 0;
-    }
+    collection.value = trackedComments.comments;
+    page.value = 0;
   });
 
   return (
@@ -64,12 +65,7 @@ export const CommentCard = component$<CommentCardProps>((props) => {
         parentId={props.comment.id}
         postId={props.comment.postId}
       />
-      {comments.value.status === "success" ? (
-        <CommentsList
-          comments={collection.value}
-          count={comments.value.result.count}
-        />
-      ) : null}
+      <CommentsList comments={collection.value} count={comments.value.count} />
       <button
         class="btn"
         onClick$={async () => {
@@ -98,9 +94,7 @@ export default component$(() => {
   return (
     <div class="flex flex-col gap-2">
       <h1>Comment</h1>
-      {comment.value.status === "success" ? (
-        <CommentCard comment={comment.value.result} />
-      ) : null}
+      <CommentCard comment={comment.value} />
     </div>
   );
 });

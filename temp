@@ -1,0 +1,170 @@
+
+> my-qwik-basic-starter@ dev /home/wojciech/Projects/qwik-social-tests
+> vite --mode ssr
+
+
+  VITE v4.3.4  ready in 925 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+
+  ❗️ Expect significant performance loss in development.
+  ❗️ Disabling the browser's cache results in waterfall requests.
+LIST { input: { skip: 0, take: 10 } }
+LIST {
+  count: 32,
+  posts: [
+    {
+      id: 'clfpgk3xw0002i0xqu65go3gr',
+      createdAt: 2023-03-26T13:50:47.540Z,
+      content: 'bb22ds22',
+      videoId: null,
+      createdById: 'e6a9099a-aebe-444f-92fe-40cb0d508cd4'
+    },
+    {
+      id: 'clfpgjexr0000i0xqunhphsg7',
+      createdAt: 2023-03-26T13:50:15.135Z,
+      content: 'bb',
+      videoId: null,
+      createdById: 'e6a9099a-aebe-444f-92fe-40cb0d508cd4'
+    },
+    {
+      id: 'clfogf7t80006i0zrayvfncvm',
+      createdAt: 2023-03-25T20:59:13.101Z,
+      content: 'aa',
+      videoId: null,
+      createdById: 'e6a9099a-aebe-444f-92fe-40cb0d508cd4'
+    },
+    {
+      id: 'clf5w88n50002i039jd1kjgvy',
+      createdAt: 2023-03-12T21:14:04.097Z,
+      content: 'dsdsa111111',
+      videoId: null,
+      createdById: '1af98214-f3a9-4afd-92d9-d43ba816f563'
+    },
+    {
+      id: 'clf40xvr10002i0x2zqn02tql',
+      createdAt: 2023-03-11T13:50:26.558Z,
+      content: 'hellofdfd',
+      videoId: null,
+      createdById: '1af98214-f3a9-4afd-92d9-d43ba816f563'
+    },
+    {
+      id: 'clf40xonq0000i0x2c433f07b',
+      createdAt: 2023-03-11T13:50:17.366Z,
+      content: 'hello',
+      videoId: null,
+      createdById: '1af98214-f3a9-4afd-92d9-d43ba816f563'
+    },
+    {
+      id: 'clesyczbf0000i0iudqn3xk30',
+      createdAt: 2023-03-03T19:52:44.236Z,
+      content: 'next one',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    },
+    {
+      id: 'clea2km9f0000i0fvjbt5c59a',
+      createdAt: 2023-02-18T14:43:01.683Z,
+      content: 'sssdsds',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    },
+    {
+      id: 'clea1pb9g0006i08c0rfmtiqy',
+      createdAt: 2023-02-18T14:18:41.093Z,
+      content: 'ss',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    },
+    {
+      id: 'clea1bl8q0004i08c7qn80bn9',
+      createdAt: 2023-02-18T14:08:00.842Z,
+      content: 'dsds',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    }
+  ]
+}
+usePosts {
+  count: 32,
+  posts: [
+    {
+      id: 'clfpgk3xw0002i0xqu65go3gr',
+      createdAt: 2023-03-26T13:50:47.540Z,
+      content: 'bb22ds22',
+      videoId: null,
+      createdById: 'e6a9099a-aebe-444f-92fe-40cb0d508cd4'
+    },
+    {
+      id: 'clfpgjexr0000i0xqunhphsg7',
+      createdAt: 2023-03-26T13:50:15.135Z,
+      content: 'bb',
+      videoId: null,
+      createdById: 'e6a9099a-aebe-444f-92fe-40cb0d508cd4'
+    },
+    {
+      id: 'clfogf7t80006i0zrayvfncvm',
+      createdAt: 2023-03-25T20:59:13.101Z,
+      content: 'aa',
+      videoId: null,
+      createdById: 'e6a9099a-aebe-444f-92fe-40cb0d508cd4'
+    },
+    {
+      id: 'clf5w88n50002i039jd1kjgvy',
+      createdAt: 2023-03-12T21:14:04.097Z,
+      content: 'dsdsa111111',
+      videoId: null,
+      createdById: '1af98214-f3a9-4afd-92d9-d43ba816f563'
+    },
+    {
+      id: 'clf40xvr10002i0x2zqn02tql',
+      createdAt: 2023-03-11T13:50:26.558Z,
+      content: 'hellofdfd',
+      videoId: null,
+      createdById: '1af98214-f3a9-4afd-92d9-d43ba816f563'
+    },
+    {
+      id: 'clf40xonq0000i0x2c433f07b',
+      createdAt: 2023-03-11T13:50:17.366Z,
+      content: 'hello',
+      videoId: null,
+      createdById: '1af98214-f3a9-4afd-92d9-d43ba816f563'
+    },
+    {
+      id: 'clesyczbf0000i0iudqn3xk30',
+      createdAt: 2023-03-03T19:52:44.236Z,
+      content: 'next one',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    },
+    {
+      id: 'clea2km9f0000i0fvjbt5c59a',
+      createdAt: 2023-02-18T14:43:01.683Z,
+      content: 'sssdsds',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    },
+    {
+      id: 'clea1pb9g0006i08c0rfmtiqy',
+      createdAt: 2023-02-18T14:18:41.093Z,
+      content: 'ss',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    },
+    {
+      id: 'clea1bl8q0004i08c7qn80bn9',
+      createdAt: 2023-02-18T14:08:00.842Z,
+      content: 'dsds',
+      videoId: null,
+      createdById: 'ae2c8c24-1b3e-4af3-8306-ad50d6c30a50'
+    }
+  ]
+}
+
+[35m🌼 daisyUI components 2.51.6[0m [0m https://daisyui.com
+  [32m✔︎ Including:[0m [0m base, components, 2 themes, utilities
+  [32m❤︎ Support daisyUI: [0m https://opencollective.com/daisyui [0m
+  
+ ELIFECYCLE  Command failed with exit code 1.

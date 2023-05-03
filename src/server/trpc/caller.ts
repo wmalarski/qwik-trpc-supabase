@@ -1,8 +1,6 @@
 import type { RequestEventCommon } from "@builder.io/qwik-city";
-import { prisma } from "~/server/db/client";
 import { appRouter } from "~/server/trpc/router";
-import { getUserFromEvent } from "./auth/auth";
-import { createSupabase } from "./auth/supabase";
+import { createContext } from "./context";
 
 export const getTrpcFromEvent = async (
   event: RequestEventCommon
@@ -12,15 +10,8 @@ export const getTrpcFromEvent = async (
     return cachedTrpc;
   }
 
-  const user = await getUserFromEvent(event);
-
-  const supabase = createSupabase(event);
-
-  const trpc = appRouter.createCaller({
-    prisma,
-    supabase,
-    user,
-  });
+  const context = await createContext(event);
+  const trpc = appRouter.createCaller(context);
 
   event.sharedMap.set("trpc", trpc);
 
