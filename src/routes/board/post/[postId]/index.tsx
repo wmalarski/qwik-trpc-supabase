@@ -4,7 +4,7 @@ import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { trpc } from "~/routes/plugin@trpc";
+import { client } from "~/routes/plugin@trpc";
 import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
 
@@ -60,17 +60,15 @@ export const PostCard = component$<PostCardProps>((props) => {
       <button
         class="btn"
         onClick$={async () => {
-          const value = await trpc.comment.listForPost.query({
+          const value = await client.comment.listForPost.query({
             postId: props.post.id,
             skip: (page.value + 1) * 10,
             take: 10,
           });
-          if (value.status === "success") {
-            const nextCollection = [...collection.value];
-            nextCollection.push(...value.result.comments);
-            collection.value = nextCollection;
-            page.value += 1;
-          }
+          const nextCollection = [...collection.value];
+          nextCollection.push(...value.comments);
+          collection.value = nextCollection;
+          page.value += 1;
         }}
       >
         Load more

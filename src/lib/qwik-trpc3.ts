@@ -9,7 +9,6 @@ import {
   type Action,
   type RequestEvent,
   type RequestEventCommon,
-  type RequestEventLoader,
 } from "@builder.io/qwik-city";
 import { isServer } from "@builder.io/qwik/build";
 import {
@@ -51,10 +50,6 @@ type TrpcProcedureOutput<TProcedure extends AnyProcedure> =
 type DecorateProcedure<TProcedure extends AnyProcedure> =
   TProcedure extends AnyQueryProcedure
     ? {
-        loader: (
-          event: RequestEventLoader,
-          input: inferProcedureInput<TProcedure>
-        ) => TrpcProcedureOutput<TProcedure>;
         query: (
           input: inferProcedureInput<TProcedure>
         ) => Promise<TrpcProcedureOutput<TProcedure>>;
@@ -223,20 +218,37 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
     onRequest: async (event: RequestEvent) => {
       const prefixPath = `${options.prefix}/`;
       const pathname = event.url.pathname;
+
+      console.log({ prefixPath, pathname });
+
       if (!pathname.startsWith(prefixPath) || !isServer) {
         return;
       }
 
+      console.log({ event });
+
       const { resolveHTTPResponse } = await import("@trpc/server/http");
 
       const { createContext, appRouter } = await configQrl(event);
+
+      const body = await event.request.text();
+
+      console.log("event", {
+        path: event.params.trpc,
+        req: {
+          body,
+          headers: event.request.headers as unknown as HTTPHeaders,
+          method: event.request.method,
+          query: new URL(event.request.url).searchParams,
+        },
+      });
 
       try {
         const httpResponse = await resolveHTTPResponse({
           createContext,
           path: event.params.trpc,
           req: {
-            body: await event.request.text(),
+            body,
             headers: event.request.headers as unknown as HTTPHeaders,
             method: event.request.method,
             query: new URL(event.request.url).searchParams,
@@ -286,21 +298,6 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
             () => ({ configQrl, dotPath }),
             dotPath
           );
-        }
-        case "loader": {
-          const event = opts.args[0] as RequestEventLoader;
-          const args = opts.args[1];
-
-          const task = async () => {
-            // const { appRouter, createContext } = await configQrl(event);
-
-            console.log({ args });
-
-            // return trpcResolver({ appRouter, args, createContext, dotPath });
-            return { status: "failure" };
-          };
-
-          return task();
         }
         case "routeAction$": {
           return trpcRouteActionResolver$(

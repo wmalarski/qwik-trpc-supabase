@@ -1,4 +1,5 @@
 import { httpBatchLink } from "@trpc/client";
+import superjson from "superjson";
 import { serverTrpc$ } from "~/lib/qwik-trpc3";
 import type { AppRouter } from "~/server/trpc/router";
 
@@ -32,6 +33,7 @@ export const { trpc, onRequest, client } = serverTrpc$<AppRouter>(
           // You can pass any HTTP headers you wish here
         }),
       ],
+      transformer: superjson,
     },
     prefix: "/api/trpc",
   }
