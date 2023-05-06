@@ -8,7 +8,7 @@
 - [x] Magic link Supabase auth
 - [x] Password Supabase auth
 - [x] Sign out
-- [ ] Auth refresh token
+- [x] Auth refresh token
 - [x] Redirect navigation after login
 - [x] Protected routes
 - [x] tRPC setup
@@ -19,11 +19,8 @@
 - [x] Protected tRPC procedures
 - [x] Crud on Post model
 - [x] Crud on Comments
-- [x] Cache invalidation after mutations
 - [ ] Optimistic updates
 - [x] Tailwind setup + DaisyUI
-- [x] Opinionated eslint setup
-- [ ] Deploy damn thing
 
 ## Project Structure
 

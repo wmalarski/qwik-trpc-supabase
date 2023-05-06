@@ -4,15 +4,18 @@ import type { Comment, Post } from "@prisma/client";
 import { CommentsList } from "~/modules/comment/CommentsList/CommentsList";
 import { CreateCommentForm } from "~/modules/comment/CreateCommentForm/CreateCommentForm";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { trpc } from "~/routes/plugin@trpc";
+import { clientTrpc } from "~/routes/plugin@trpc";
+import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
 
-export const usePost = routeLoader$((event) => {
-  return trpc.post.get.loader(event, { id: event.params.postId });
+export const usePost = routeLoader$(async (event) => {
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.post.get({ id: event.params.postId });
 });
 
-export const useComments = routeLoader$((event) => {
-  return trpc.comment.listForPost.loader(event, {
+export const useComments = routeLoader$(async (event) => {
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.comment.listForPost({
     postId: event.params.postId,
     skip: 0,
     take: 10,
@@ -31,10 +34,8 @@ export const PostCard = component$<PostCardProps>((props) => {
 
   useTask$(({ track }) => {
     const trackedComments = track(() => comments.value);
-    if (trackedComments.status === "success") {
-      collection.value = trackedComments.result.comments;
-      page.value = 0;
-    }
+    collection.value = trackedComments.comments;
+    page.value = 0;
   });
 
   return (
@@ -45,26 +46,19 @@ export const PostCard = component$<PostCardProps>((props) => {
       <pre>{JSON.stringify(props.post, null, 2)}</pre>
       <PostActions post={props.post} />
       <CreateCommentForm parentId={null} postId={props.post.id} />
-      {comments.value.status === "success" ? (
-        <CommentsList
-          comments={collection.value}
-          count={comments.value.result.count}
-        />
-      ) : null}
+      <CommentsList comments={collection.value} count={comments.value.count} />
       <button
         class="btn"
         onClick$={async () => {
-          const value = await trpc.comment.listForPost.query({
+          const value = await clientTrpc.comment.listForPost.query({
             postId: props.post.id,
             skip: (page.value + 1) * 10,
             take: 10,
           });
-          if (value.status === "success") {
-            const nextCollection = [...collection.value];
-            nextCollection.push(...value.result.comments);
-            collection.value = nextCollection;
-            page.value += 1;
-          }
+          const nextCollection = [...collection.value];
+          nextCollection.push(...value.comments);
+          collection.value = nextCollection;
+          page.value += 1;
         }}
       >
         Load more
@@ -79,9 +73,7 @@ export default component$(() => {
   return (
     <div class="flex flex-col gap-2">
       <h1>Post</h1>
-      {post.value.status === "success" ? (
-        <PostCard post={post.value.result} />
-      ) : null}
+      <PostCard post={post.value} />
     </div>
   );
 });

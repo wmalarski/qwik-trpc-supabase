@@ -3,14 +3,8 @@ import {
   type CookieOptions,
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
-import { createClient, type Session } from "@supabase/supabase-js";
-import { serverEnv } from "../serverEnv";
-
-export const supabase = createClient(
-  serverEnv.VITE_SUPABASE_URL,
-  serverEnv.VITE_SUPABASE_ANON_KEY,
-  { auth: { persistSession: false } }
-);
+import type { Session, User } from "@supabase/supabase-js";
+import { createSupabase } from "./supabase";
 
 const cookieName = "_session";
 
@@ -26,14 +20,10 @@ export const updateAuthCookies = (
   session: Pick<Session, "refresh_token" | "expires_in" | "access_token">
 ) => {
   event.cookie.set(cookieName, session, options);
-  // somehow cookie.set is not working right now
-  event.headers.set("Set-Cookie", event.cookie.headers()[0]);
 };
 
 export const removeAuthCookies = (event: RequestEventCommon) => {
   event.cookie.delete(cookieName, options);
-  // somehow cookie.delete is not working right now
-  event.headers.set("Set-Cookie", event.cookie.headers()[0]);
 };
 
 export const getUserByCookie = async (event: RequestEventCommon) => {
@@ -46,6 +36,8 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
   if (!parsed.success) {
     return null;
   }
+
+  const supabase = createSupabase(event);
 
   const userResponse = await supabase.auth.getUser(parsed.data.access_token);
 
@@ -66,4 +58,18 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
   updateAuthCookies(event, session);
 
   return session.user;
+};
+
+export const getUserFromEvent = (
+  event: RequestEventCommon
+): Promise<User | null> => {
+  const cachedPromise = event.sharedMap.get("user");
+  if (cachedPromise) {
+    return cachedPromise;
+  }
+
+  const promise = getUserByCookie(event);
+  event.sharedMap.set("user", promise);
+
+  return promise;
 };

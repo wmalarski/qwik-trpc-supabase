@@ -1,10 +1,13 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, globalAction$, z, zod$ } from "@builder.io/qwik-city";
-import { supabase, updateAuthCookies } from "~/server/auth/auth";
+import { updateAuthCookies } from "~/server/auth/auth";
+import { createSupabase } from "~/server/auth/supabase";
 import { paths } from "~/utils/paths";
 
 export const useSignInPasswordAction = globalAction$(
   async (data, event) => {
+    const supabase = createSupabase(event);
+
     const result = await supabase.auth.signInWithPassword(data);
 
     if (result.error || !result.data.session) {
@@ -16,7 +19,7 @@ export const useSignInPasswordAction = globalAction$(
 
     updateAuthCookies(event, result.data.session);
 
-    event.redirect(302, paths.index);
+    throw event.redirect(302, paths.index);
   },
   zod$({
     email: z.string().email(),
@@ -69,3 +72,6 @@ export const PasswordForm = component$(() => {
     </Form>
   );
 });
+/*
+
+*/

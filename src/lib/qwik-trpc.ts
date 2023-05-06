@@ -9,16 +9,20 @@ import {
   type Action,
   type RequestEvent,
   type RequestEventCommon,
-  type RequestEventLoader,
 } from "@builder.io/qwik-city";
 import { isServer } from "@builder.io/qwik/build";
+import {
+  createTRPCProxyClient,
+  type CreateTRPCClientOptions,
+  type HTTPHeaders,
+} from "@trpc/client";
 import type {
   AnyMutationProcedure,
   AnyProcedure,
-  AnyQueryProcedure,
   AnyRouter,
   inferProcedureInput,
   inferProcedureOutput,
+  inferRouterContext,
   ProcedureRouterRecord,
   TRPCError,
 } from "@trpc/server";
@@ -43,17 +47,7 @@ type TrpcProcedureOutput<TProcedure extends AnyProcedure> =
     };
 
 type DecorateProcedure<TProcedure extends AnyProcedure> =
-  TProcedure extends AnyQueryProcedure
-    ? {
-        loader: (
-          event: RequestEventLoader,
-          input: inferProcedureInput<TProcedure>
-        ) => TrpcProcedureOutput<TProcedure>;
-        query: (
-          input: inferProcedureInput<TProcedure>
-        ) => Promise<TrpcProcedureOutput<TProcedure>>;
-      }
-    : TProcedure extends AnyMutationProcedure
+  TProcedure extends AnyMutationProcedure
     ? {
         globalAction$: () => Action<
           TrpcProcedureOutput<TProcedure>,
@@ -65,9 +59,6 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
           inferProcedureInput<TProcedure>,
           false
         >;
-        mutate: (
-          input: inferProcedureInput<TProcedure>
-        ) => Promise<TrpcProcedureOutput<TProcedure>>;
       }
     : never;
 
@@ -79,24 +70,26 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
     : never;
 };
 
-type TrpcCaller<TRouter extends AnyRouter> = ReturnType<
-  TRouter["createCaller"]
->;
-
-type TrpcCallerOptions = {
-  prefix: string;
+type ServerTrpcConfig<TRouter extends AnyRouter> = {
+  appRouter: TRouter;
+  createContext: () => Promise<inferRouterContext<TRouter>>;
 };
 
-type TrpcResolver<TRouter extends AnyRouter> = {
+type TrpcResolverArgs<TRouter extends AnyRouter> = {
+  appRouter: TRouter;
+  args: any;
+  createContext: () => Promise<inferRouterContext<TRouter>>;
   dotPath: string[];
-  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller<TRouter>>>;
 };
 
-export const trpcResolver = async <TRouter extends AnyRouter>(
-  caller: TrpcCaller<TRouter>,
-  dotPath: string[],
-  args: any
-) => {
+export const trpcResolver = async <TRouter extends AnyRouter>({
+  dotPath,
+  appRouter,
+  createContext,
+  args,
+}: TrpcResolverArgs<TRouter>) => {
+  const context = await createContext();
+  const caller = appRouter.createCaller(context);
   const fnc = dotPath.reduce((prev, curr) => prev[curr], caller as any);
 
   const safeParse = (data: string) => {
@@ -109,17 +102,21 @@ export const trpcResolver = async <TRouter extends AnyRouter>(
 
   try {
     const result = await fnc(args);
-
     return { result, status: "success" };
   } catch (err) {
     const trpcError = err as TRPCError;
-    const error = {
+
+    return {
       code: trpcError.code,
       issues: safeParse(trpcError.message),
       status: "error",
     };
-    return error;
   }
+};
+
+type TrpcResolver<TRouter extends AnyRouter> = {
+  dotPath: string[];
+  configQrl: QRL<(event: RequestEventCommon) => ServerTrpcConfig<TRouter>>;
 };
 
 export const trpcGlobalActionResolverQrl = <TRouter extends AnyRouter>(
@@ -130,8 +127,8 @@ export const trpcGlobalActionResolverQrl = <TRouter extends AnyRouter>(
   return globalAction$(
     async (args, event) => {
       const context = await contextQrl();
-      const caller = await context.callerQrl(event);
-      return trpcResolver(caller, dotPath, args);
+      const { appRouter, createContext } = await context.configQrl(event);
+      return trpcResolver({ appRouter, args, createContext, dotPath });
     },
     { id: dotPath.join(".") }
   );
@@ -149,8 +146,8 @@ export const trpcRouteActionResolverQrl = <TRouter extends AnyRouter>(
   return routeAction$(
     async (args, event) => {
       const context = await contextQrl();
-      const caller = await context.callerQrl(event);
-      return trpcResolver(caller, dotPath, args);
+      const { appRouter, createContext } = await context.configQrl(event);
+      return trpcResolver({ appRouter, args, createContext, dotPath });
     },
     { id: dotPath.join(".") }
   );
@@ -160,9 +157,14 @@ export const trpcRouteActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
   trpcRouteActionResolverQrl
 );
 
+type TrpcCallerOptions<TRouter extends AnyRouter> = {
+  prefix: string;
+  client: CreateTRPCClientOptions<TRouter>;
+};
+
 export const serverTrpcQrl = <TRouter extends AnyRouter>(
-  callerQrl: QRL<(event: RequestEventCommon) => Promise<TrpcCaller<TRouter>>>,
-  options: TrpcCallerOptions
+  configQrl: QRL<(event: RequestEventCommon) => ServerTrpcConfig<TRouter>>,
+  options: TrpcCallerOptions<TRouter>
 ) => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
@@ -180,81 +182,61 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
     return proxy;
   };
 
+  const clientTrpc = createTRPCProxyClient<TRouter>(options.client);
+
   return {
-    onRequest: async (event: RequestEvent) => {
-      const prefixPath = `${options.prefix}/`;
-      const pathname = event.url.pathname;
-      if (
-        isServer &&
-        pathname.startsWith(prefixPath) &&
-        event.method === "POST"
-      ) {
-        const [, trpcPath] = pathname.split(prefixPath);
-        const dotPath = trpcPath.split(".");
-        const args = await event.request.json();
-        const caller = await callerQrl(event);
-
-        const result = await trpcResolver(caller, dotPath, args);
-
-        event.json(200, result);
-      }
-    },
-    trpc: createRecursiveProxy((opts) => {
+    actionTrpc: createRecursiveProxy((opts) => {
       const dotPath = opts.path.slice(0, -1);
       const action = opts.path[opts.path.length - 1];
 
       switch (action) {
-        case "query": {
-          const args = opts.args[0];
-          const path = dotPath.join(".");
-
-          const task = async () => {
-            const response = await fetch(`${options.prefix}/${path}`, {
-              body: JSON.stringify(args),
-              method: "POST",
-            });
-            return response.json();
-          };
-          return task();
-        }
-        case "mutate": {
-          const args = opts.args[0];
-          const path = dotPath.join(".");
-
-          const task = async () => {
-            const response = await fetch(`${options.prefix}/${path}`, {
-              body: JSON.stringify(args),
-              method: "POST",
-            });
-            return response.json();
-          };
-          return task();
-        }
         case "globalAction$": {
           return trpcGlobalActionResolver$(
-            () => ({ callerQrl, dotPath }),
+            () => ({ configQrl, dotPath }),
             dotPath
           );
         }
-        case "loader": {
-          const event = opts.args[0] as RequestEventLoader;
-          const args = opts.args[1];
-
-          const task = async () => {
-            const caller = await callerQrl(event);
-            return trpcResolver(caller, dotPath, args);
-          };
-
-          return task();
-        }
         case "routeAction$": {
           return trpcRouteActionResolver$(
-            () => ({ callerQrl, dotPath }),
+            () => ({ configQrl, dotPath }),
             dotPath
           );
         }
       }
     }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>,
+    clientTrpc,
+    onRequest: async (event: RequestEvent) => {
+      const prefixPath = `${options.prefix}/`;
+      const pathname = event.url.pathname;
+
+      if (!pathname.startsWith(prefixPath) || !isServer) {
+        return;
+      }
+
+      const { resolveHTTPResponse } = await import("@trpc/server/http");
+      const { createContext, appRouter } = await configQrl(event);
+
+      try {
+        const httpResponse = await resolveHTTPResponse({
+          createContext,
+          path: pathname.slice(prefixPath.length),
+          req: {
+            body: await event.request.text(),
+            headers: event.request.headers as unknown as HTTPHeaders,
+            method: event.request.method,
+            query: new URL(event.request.url).searchParams,
+          },
+          router: appRouter,
+        });
+
+        event.json(httpResponse.status, JSON.parse(httpResponse.body || "{}"));
+
+        return;
+      } catch (error: any) {
+        event.error(500, "Internal Server Error");
+        return;
+      }
+    },
   };
 };
 

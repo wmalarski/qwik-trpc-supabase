@@ -2,15 +2,17 @@ import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
+import { actionTrpc, clientTrpc } from "~/routes/plugin@trpc";
+import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
-import { trpc } from "../plugin@trpc";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
-export const usePosts = routeLoader$((event) => {
-  return trpc.post.list.loader(event, { skip: 0, take: 10 });
+export const usePosts = routeLoader$(async (event) => {
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.post.list({ skip: 0, take: 10 });
 });
 
-export const useCreatePostAction = trpc.post.create.globalAction$();
+export const useCreatePostAction = actionTrpc.post.create.globalAction$();
 
 type PostListItemProps = {
   post: Post;
@@ -40,10 +42,8 @@ export default component$(() => {
 
   useTask$(({ track }) => {
     const trackedPosts = track(() => posts.value);
-    if (trackedPosts.status === "success") {
-      collection.value = trackedPosts.result.posts;
-      page.value = 0;
-    }
+    collection.value = trackedPosts.posts;
+    page.value = 0;
   });
 
   return (
@@ -57,16 +57,15 @@ export default component$(() => {
         <button
           class="btn"
           onClick$={async () => {
-            const value = await trpc.post.list.query({
+            const value = await clientTrpc.post.list.query({
               skip: (page.value + 1) * 10,
               take: 10,
             });
-            if (value.status === "success") {
-              const nextCollection = [...collection.value];
-              nextCollection.push(...value.result.posts);
-              collection.value = nextCollection;
-              page.value += 1;
-            }
+
+            const nextCollection = [...collection.value];
+            nextCollection.push(...value.posts);
+            collection.value = nextCollection;
+            page.value += 1;
           }}
         >
           Load more
