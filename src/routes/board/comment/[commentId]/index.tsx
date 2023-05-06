@@ -8,26 +8,14 @@ import { client } from "~/routes/plugin@trpc";
 import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
 
-// export const useComment = trpcRouteLoader$((event) => ({
-//   args: { id: event.params.commentId },
-//   path: ["comment", "get"],
-// }));
-
-// export const useComments = trpcRouteLoader$((event) => ({
-//   args: { parentId: event.params.commentId, skip: 0, take: 10 },
-//   path: ["comment", "listForParent"],
-// }));
-
 export const useComment = routeLoader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.comment.get({
-    id: event.params.commentId,
-  });
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.comment.get({ id: event.params.commentId });
 });
 
 export const useComments = routeLoader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.comment.listForParent({
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.comment.listForParent({
     parentId: event.params.commentId,
     skip: 0,
     take: 10,

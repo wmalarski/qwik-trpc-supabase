@@ -19,8 +19,6 @@ export const createSupabase = (event: RequestEventCommon): SupabaseClient => {
 
   const client = createClient(url, key, { auth: { persistSession: false } });
 
-  // const client = createServerClient(url, key, event, {options: {}});
-
   event.sharedMap.set(supabaseMapKey, client);
 
   return client;

@@ -7,18 +7,9 @@ import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
 
-// export const usePosts = trpcRouteLoader$(() => ({
-//   args: { skip: 0, take: 10 },
-//   path: ["post", "list"],
-// }));
-
-// export const useCreatePostAction = trpcGlobalAction((trpc) =>
-//   trpc.post.create()
-// );
-
 export const usePosts = routeLoader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.post.list({ skip: 0, take: 10 });
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.post.list({ skip: 0, take: 10 });
 });
 
 export const useCreatePostAction = trpc.post.create.globalAction$();

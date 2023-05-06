@@ -20,14 +20,10 @@ export const updateAuthCookies = (
   session: Pick<Session, "refresh_token" | "expires_in" | "access_token">
 ) => {
   event.cookie.set(cookieName, session, options);
-  // somehow cookie.set is not working right now
-  event.headers.set("Set-Cookie", event.cookie.headers()[0]);
 };
 
 export const removeAuthCookies = (event: RequestEventCommon) => {
   event.cookie.delete(cookieName, options);
-  // somehow cookie.delete is not working right now
-  event.headers.set("Set-Cookie", event.cookie.headers()[0]);
 };
 
 export const getUserByCookie = async (event: RequestEventCommon) => {

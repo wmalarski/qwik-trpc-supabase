@@ -98,15 +98,9 @@ export const trpcResolver = async <TRouter extends AnyRouter>({
   createContext,
   args,
 }: TrpcResolverArgs<TRouter>) => {
-  console.log("trpcResolver", { dotPath });
   const context = await createContext();
-  console.log("context", { dotPath, appRouter });
   const caller = appRouter.createCaller(context);
-
-  console.log("caller", { dotPath, caller });
-
   const fnc = dotPath.reduce((prev, curr) => prev[curr], caller as any);
-  console.log("fnc", { dotPath, args, fnc });
 
   const safeParse = (data: string) => {
     try {
@@ -118,32 +112,21 @@ export const trpcResolver = async <TRouter extends AnyRouter>({
 
   try {
     const result = await fnc(args);
-
-    console.log("result", { result, args });
-
     return { result, status: "success" };
   } catch (err) {
     const trpcError = err as TRPCError;
 
-    console.log("err", { err });
-
-    const error = {
+    return {
       code: trpcError.code,
       issues: safeParse(trpcError.message),
       status: "error",
     };
-
-    console.log("err", { error });
-
-    return error;
   }
 };
 
 type TrpcResolver<TRouter extends AnyRouter> = {
   dotPath: string[];
-  configQrl: QRL<
-    (event: RequestEventCommon) => Promise<ServerTrpcConfig<TRouter>>
-  >;
+  configQrl: QRL<(event: RequestEventCommon) => ServerTrpcConfig<TRouter>>;
 };
 
 export const trpcGlobalActionResolverQrl = <TRouter extends AnyRouter>(
@@ -190,9 +173,7 @@ type TrpcCallerOptions<TRouter extends AnyRouter> = {
 };
 
 export const serverTrpcQrl = <TRouter extends AnyRouter>(
-  configQrl: QRL<
-    (event: RequestEventCommon) => Promise<ServerTrpcConfig<TRouter>>
-  >,
+  configQrl: QRL<(event: RequestEventCommon) => ServerTrpcConfig<TRouter>>,
   options: TrpcCallerOptions<TRouter>
 ) => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
@@ -218,8 +199,6 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
     onRequest: async (event: RequestEvent) => {
       const prefixPath = `${options.prefix}/`;
       const pathname = event.url.pathname;
-
-      console.log({ prefixPath, pathname });
 
       if (!pathname.startsWith(prefixPath) || !isServer) {
         return;

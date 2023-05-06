@@ -8,24 +8,14 @@ import { client } from "~/routes/plugin@trpc";
 import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
 
-// export const usePost = trpcRouteLoader$((event) => ({
-//   args: { id: event.params.postId },
-//   path: ["post", "get"],
-// }));
-
-// export const useComments = trpcRouteLoader$((event) => ({
-//   args: { postId: event.params.postId, skip: 0, take: 10 },
-//   path: ["comment", "listForPost"],
-// }));
-
 export const usePost = routeLoader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.post.get({ id: event.params.postId });
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.post.get({ id: event.params.postId });
 });
 
 export const useComments = routeLoader$(async (event) => {
-  const trpc = await getTrpcFromEvent(event);
-  return trpc.comment.listForPost({
+  const serverTrpc = await getTrpcFromEvent(event);
+  return serverTrpc.comment.listForPost({
     postId: event.params.postId,
     skip: 0,
     take: 10,
