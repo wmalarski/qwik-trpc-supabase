@@ -2,7 +2,7 @@ import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import type { Post } from "@prisma/client";
 import { PostActions } from "~/modules/post/PostActions/PostActions";
-import { client, trpc } from "~/routes/plugin@trpc";
+import { actionTrpc, clientTrpc } from "~/routes/plugin@trpc";
 import { getTrpcFromEvent } from "~/server/trpc/caller";
 import { paths } from "~/utils/paths";
 import { CreatePostForm } from "./CreatePostForm/CreatePostForm";
@@ -12,7 +12,7 @@ export const usePosts = routeLoader$(async (event) => {
   return serverTrpc.post.list({ skip: 0, take: 10 });
 });
 
-export const useCreatePostAction = trpc.post.create.globalAction$();
+export const useCreatePostAction = actionTrpc.post.create.globalAction$();
 
 type PostListItemProps = {
   post: Post;
@@ -57,12 +57,10 @@ export default component$(() => {
         <button
           class="btn"
           onClick$={async () => {
-            const value = await client.post.list.query({
+            const value = await clientTrpc.post.list.query({
               skip: (page.value + 1) * 10,
               take: 10,
             });
-
-            console.log({ value });
 
             const nextCollection = [...collection.value];
             nextCollection.push(...value.posts);

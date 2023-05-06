@@ -5,7 +5,7 @@ import { createContext } from "~/server/trpc/context";
 import { appRouter, type AppRouter } from "~/server/trpc/router";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 
-export const { trpc, onRequest, client } = serverTrpc$<AppRouter>(
+export const { actionTrpc, onRequest, clientTrpc } = serverTrpc$<AppRouter>(
   (event) => ({
     appRouter,
     createContext: () => createContext(event),

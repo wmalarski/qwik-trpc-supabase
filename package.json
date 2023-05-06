@@ -63,7 +63,6 @@
     "@trpc/server": "10.23.0",
     "cookie": "^0.5.0",
     "daisyui": "^2.51.6",
-    "supabase-auth-helpers-qwik": "^0.0.2",
     "superjson": "^1.12.3",
     "undici": "^5.22.0",
     "zod": "^3.21.4"

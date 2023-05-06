@@ -19,7 +19,6 @@ import {
 import type {
   AnyMutationProcedure,
   AnyProcedure,
-  AnyQueryProcedure,
   AnyRouter,
   inferProcedureInput,
   inferProcedureOutput,
@@ -48,13 +47,7 @@ type TrpcProcedureOutput<TProcedure extends AnyProcedure> =
     };
 
 type DecorateProcedure<TProcedure extends AnyProcedure> =
-  TProcedure extends AnyQueryProcedure
-    ? {
-        query: (
-          input: inferProcedureInput<TProcedure>
-        ) => Promise<TrpcProcedureOutput<TProcedure>>;
-      }
-    : TProcedure extends AnyMutationProcedure
+  TProcedure extends AnyMutationProcedure
     ? {
         globalAction$: () => Action<
           TrpcProcedureOutput<TProcedure>,
@@ -66,9 +59,6 @@ type DecorateProcedure<TProcedure extends AnyProcedure> =
           inferProcedureInput<TProcedure>,
           false
         >;
-        mutate: (
-          input: inferProcedureInput<TProcedure>
-        ) => Promise<TrpcProcedureOutput<TProcedure>>;
       }
     : never;
 
@@ -192,86 +182,14 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
     return proxy;
   };
 
-  const client = createTRPCProxyClient<TRouter>(options.client);
+  const clientTrpc = createTRPCProxyClient<TRouter>(options.client);
 
   return {
-    client,
-    onRequest: async (event: RequestEvent) => {
-      const prefixPath = `${options.prefix}/`;
-      const pathname = event.url.pathname;
-
-      if (!pathname.startsWith(prefixPath) || !isServer) {
-        return;
-      }
-
-      console.log({ event });
-
-      const { resolveHTTPResponse } = await import("@trpc/server/http");
-
-      const { createContext, appRouter } = await configQrl(event);
-
-      const body = await event.request.text();
-
-      console.log("event", {
-        path: event.params.trpc,
-        req: {
-          body,
-          headers: event.request.headers as unknown as HTTPHeaders,
-          method: event.request.method,
-          query: new URL(event.request.url).searchParams,
-        },
-      });
-
-      try {
-        const httpResponse = await resolveHTTPResponse({
-          createContext,
-          path: event.params.trpc,
-          req: {
-            body,
-            headers: event.request.headers as unknown as HTTPHeaders,
-            method: event.request.method,
-            query: new URL(event.request.url).searchParams,
-          },
-          router: appRouter,
-        });
-        event.json(httpResponse.status, JSON.parse(httpResponse.body || "{}"));
-        return;
-      } catch (error: any) {
-        event.error(500, "Internal Server Error");
-        return;
-      }
-    },
-    trpc: createRecursiveProxy((opts) => {
+    actionTrpc: createRecursiveProxy((opts) => {
       const dotPath = opts.path.slice(0, -1);
       const action = opts.path[opts.path.length - 1];
 
       switch (action) {
-        case "query": {
-          const args = opts.args[0];
-          const path = dotPath.join(".");
-
-          const task = async () => {
-            const response = await fetch(`${options.prefix}/${path}`, {
-              body: JSON.stringify(args),
-              method: "POST",
-            });
-            return response.json();
-          };
-          return task();
-        }
-        case "mutate": {
-          const args = opts.args[0];
-          const path = dotPath.join(".");
-
-          const task = async () => {
-            const response = await fetch(`${options.prefix}/${path}`, {
-              body: JSON.stringify(args),
-              method: "POST",
-            });
-            return response.json();
-          };
-          return task();
-        }
         case "globalAction$": {
           return trpcGlobalActionResolver$(
             () => ({ configQrl, dotPath }),
@@ -286,6 +204,39 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         }
       }
     }, []) as DecoratedProcedureRecord<TRouter["_def"]["record"]>,
+    clientTrpc,
+    onRequest: async (event: RequestEvent) => {
+      const prefixPath = `${options.prefix}/`;
+      const pathname = event.url.pathname;
+
+      if (!pathname.startsWith(prefixPath) || !isServer) {
+        return;
+      }
+
+      const { resolveHTTPResponse } = await import("@trpc/server/http");
+      const { createContext, appRouter } = await configQrl(event);
+
+      try {
+        const httpResponse = await resolveHTTPResponse({
+          createContext,
+          path: pathname.slice(prefixPath.length),
+          req: {
+            body: await event.request.text(),
+            headers: event.request.headers as unknown as HTTPHeaders,
+            method: event.request.method,
+            query: new URL(event.request.url).searchParams,
+          },
+          router: appRouter,
+        });
+
+        event.json(httpResponse.status, JSON.parse(httpResponse.body || "{}"));
+
+        return;
+      } catch (error: any) {
+        event.error(500, "Internal Server Error");
+        return;
+      }
+    },
   };
 };
 
