@@ -1,6 +1,6 @@
 import { httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
-import { serverTrpc$ } from "~/lib/qwik-trpc3";
+import { serverTrpc$ } from "~/lib/qwik-trpc";
 import { createContext } from "~/server/trpc/context";
 import { appRouter, type AppRouter } from "~/server/trpc/router";
 import { getBaseUrl } from "~/utils/getBaseUrl";
