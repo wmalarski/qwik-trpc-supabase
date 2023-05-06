@@ -8,7 +8,7 @@ export const useProtectedRoute = routeLoader$(async (event) => {
   const user = await getUserFromEvent(event);
 
   if (!user) {
-    event.redirect(302, paths.signIn);
+    throw event.redirect(302, paths.signIn);
   }
 
   return user;

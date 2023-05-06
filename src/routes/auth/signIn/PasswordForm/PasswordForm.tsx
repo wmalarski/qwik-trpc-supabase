@@ -19,7 +19,7 @@ export const useSignInPasswordAction = globalAction$(
 
     updateAuthCookies(event, result.data.session);
 
-    event.redirect(302, paths.index);
+    throw event.redirect(302, paths.index);
   },
   zod$({
     email: z.string().email(),
