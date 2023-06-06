@@ -4,7 +4,7 @@ import { createSupabase } from "~/server/auth/supabase";
 import { getBaseUrl } from "~/utils/getBaseUrl";
 import { paths } from "~/utils/paths";
 
-export const useSignInOtpAction = globalAction$(async (_data, event) => {
+export const useSignInGoogleAction = globalAction$(async (_data, event) => {
   const supabase = createSupabase(event);
 
   const result = await supabase.auth.signInWithOAuth({
@@ -21,7 +21,7 @@ export const useSignInOtpAction = globalAction$(async (_data, event) => {
 });
 
 export const GoogleForm = component$(() => {
-  const action = useSignInOtpAction();
+  const action = useSignInGoogleAction();
 
   return (
     <Form class="flex flex-col gap-2" action={action}>
