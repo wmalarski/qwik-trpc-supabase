@@ -2,6 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getUserFromEvent } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
+import { GoogleForm } from "./GoogleForm/GoogleForm";
 import { MagicLinkForm } from "./MagicLinkForm/MagicLinkForm";
 import { PasswordForm } from "./PasswordForm/PasswordForm";
 
@@ -22,6 +23,7 @@ export default component$(() => {
     <div class="flex flex-col gap-2">
       <h1>Sign In</h1>
       <div class="flex flex-col gap-6">
+        <GoogleForm />
         <MagicLinkForm />
         <PasswordForm />
       </div>
