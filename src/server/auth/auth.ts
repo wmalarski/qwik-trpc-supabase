@@ -26,7 +26,7 @@ export const removeAuthCookies = (event: RequestEventCommon) => {
   event.cookie.delete(cookieName, options);
 };
 
-export const getUserByCookie = async (event: RequestEventCommon) => {
+const getUserByCookie = async (event: RequestEventCommon) => {
   const value = event.cookie.get(cookieName)?.json();
 
   const parsed = z
@@ -39,7 +39,7 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
 
   const supabase = createSupabase(event);
 
-  const userResponse = await supabase.auth.getUser(parsed.data.access_token);
+  const userResponse = await supabase.auth.setSession(parsed.data);
 
   if (userResponse.data.user) {
     return userResponse.data.user;
@@ -65,11 +65,11 @@ export const getUserFromEvent = (
 ): Promise<User | null> => {
   const cachedPromise = event.sharedMap.get("user");
   if (cachedPromise) {
-    return cachedPromise;
+    return cachedPromise.promise;
   }
 
   const promise = getUserByCookie(event);
-  event.sharedMap.set("user", promise);
+  event.sharedMap.set("user", { promise });
 
   return promise;
 };
