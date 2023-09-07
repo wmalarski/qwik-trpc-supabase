@@ -72,13 +72,17 @@ type DecoratedProcedureRecord<TProcedures extends ProcedureRouterRecord> = {
 
 type ServerTrpcConfig<TRouter extends AnyRouter> = {
   appRouter: TRouter;
-  createContext: () => Promise<inferRouterContext<TRouter>>;
+  createContext: () =>
+    | inferRouterContext<TRouter>
+    | Promise<inferRouterContext<TRouter>>;
 };
 
 type TrpcResolverArgs<TRouter extends AnyRouter> = {
   appRouter: TRouter;
   args: any;
-  createContext: () => Promise<inferRouterContext<TRouter>>;
+  createContext: () =>
+    | inferRouterContext<TRouter>
+    | Promise<inferRouterContext<TRouter>>;
   dotPath: string[];
 };
 
@@ -121,7 +125,7 @@ type TrpcResolver<TRouter extends AnyRouter> = {
 
 export const trpcGlobalActionResolverQrl = <TRouter extends AnyRouter>(
   contextQrl: QRL<() => TrpcResolver<TRouter>>,
-  dotPath: string[]
+  dotPath: string[],
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return globalAction$(
@@ -130,17 +134,17 @@ export const trpcGlobalActionResolverQrl = <TRouter extends AnyRouter>(
       const { appRouter, createContext } = await context.configQrl(event);
       return trpcResolver({ appRouter, args, createContext, dotPath });
     },
-    { id: dotPath.join(".") }
+    { id: dotPath.join(".") },
   );
 };
 
 export const trpcGlobalActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
-  trpcGlobalActionResolverQrl
+  trpcGlobalActionResolverQrl,
 );
 
 export const trpcRouteActionResolverQrl = <TRouter extends AnyRouter>(
   contextQrl: QRL<() => TrpcResolver<TRouter>>,
-  dotPath: string[]
+  dotPath: string[],
 ) => {
   // eslint-disable-next-line qwik/loader-location
   return routeAction$(
@@ -149,12 +153,12 @@ export const trpcRouteActionResolverQrl = <TRouter extends AnyRouter>(
       const { appRouter, createContext } = await context.configQrl(event);
       return trpcResolver({ appRouter, args, createContext, dotPath });
     },
-    { id: dotPath.join(".") }
+    { id: dotPath.join(".") },
   );
 };
 
 export const trpcRouteActionResolver$ = /*#__PURE__*/ implicit$FirstArg(
-  trpcRouteActionResolverQrl
+  trpcRouteActionResolverQrl,
 );
 
 type TrpcCallerOptions<TRouter extends AnyRouter> = {
@@ -164,7 +168,7 @@ type TrpcCallerOptions<TRouter extends AnyRouter> = {
 
 export const serverTrpcQrl = <TRouter extends AnyRouter>(
   configQrl: QRL<(event: RequestEventCommon) => ServerTrpcConfig<TRouter>>,
-  options: TrpcCallerOptions<TRouter>
+  options: TrpcCallerOptions<TRouter>,
 ) => {
   const createRecursiveProxy = (callback: ProxyCallback, path: string[]) => {
     const proxy: unknown = new Proxy(() => void 0, {
@@ -193,13 +197,13 @@ export const serverTrpcQrl = <TRouter extends AnyRouter>(
         case "globalAction$": {
           return trpcGlobalActionResolver$(
             () => ({ configQrl, dotPath }),
-            dotPath
+            dotPath,
           );
         }
         case "routeAction$": {
           return trpcRouteActionResolver$(
             () => ({ configQrl, dotPath }),
-            dotPath
+            dotPath,
           );
         }
       }

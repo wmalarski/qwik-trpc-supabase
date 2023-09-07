@@ -3,7 +3,7 @@ import { appRouter } from "~/server/trpc/router";
 import { createContext } from "./context";
 
 export const getTrpcFromEvent = async (
-  event: RequestEventCommon
+  event: RequestEventCommon,
 ): Promise<ReturnType<typeof appRouter.createCaller>> => {
   const cachedTrpc = event.sharedMap.get("trpc");
   if (cachedTrpc) {

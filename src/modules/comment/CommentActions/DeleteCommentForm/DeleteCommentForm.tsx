@@ -23,7 +23,7 @@ export const DeleteCommentForm = component$<Props>((props) => {
         navigate(
           props.comment.parentId
             ? paths.comment(props.comment.parentId)
-            : paths.post(props.comment.postId)
+            : paths.post(props.comment.postId),
         );
       }}
     >

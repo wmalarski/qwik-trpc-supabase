@@ -107,31 +107,6 @@ export const serverSupabaseQrl = <
     }),
   );
 
-  const useSupabaseSignInWithOAuth = globalAction$(
-    async (data, event) => {
-      const config = await supabaseOptions(event);
-
-      const supabase = event.sharedMap.get(supabaseSharedKey) as Supabase;
-
-      const result = await supabase.auth.signInWithOAuth({
-        options: { redirectTo: config.emailRedirectTo },
-        provider: data.provider as Provider,
-      });
-
-      if (result.error) {
-        const status = result.error?.status || 400;
-        return event.fail(status, {
-          formErrors: [result.error?.message],
-        });
-      }
-
-      throw event.redirect(302, result.data.url);
-    },
-    zod$({
-      provider: z.string(),
-    }),
-  );
-
   const useSupabaseSignInWithOtp = globalAction$(
     async (data, event) => {
       const config = await supabaseOptions(event);
@@ -158,6 +133,34 @@ export const serverSupabaseQrl = <
     },
     zod$({
       email: z.string().email(),
+    }),
+  );
+
+  const useSupabaseSignInWithOAuth = globalAction$(
+    async (data, event) => {
+      const config = await supabaseOptions(event);
+
+      const supabase = event.sharedMap.get(supabaseSharedKey) as Supabase;
+
+      const result = await supabase.auth.signInWithOAuth({
+        options: { redirectTo: config.emailRedirectTo },
+        provider: data.provider as Provider,
+      });
+
+      if (result.error) {
+        const status = result.error?.status || 400;
+        return event.fail(status, {
+          formErrors: [result.error?.message],
+        });
+      }
+
+      // cross origin policy that does not allow internal redirect to an external url.
+      // event.redirect(302, result.data.url);
+
+      return result.data;
+    },
+    zod$({
+      provider: z.string(),
     }),
   );
 

@@ -6,9 +6,9 @@ export const {
   getSupabaseInstance,
   getSupabaseSession,
   onRequest,
-  useSupabaseSignInWithOAuth,
   useSupabaseSignInWithOtp,
   useSupabaseSignInWithPassword,
+  useSupabaseSignInWithOAuth,
   useSupabaseSignOut,
   useSupabaseSignUp,
 } = serverSupabase$(async (event) => {
