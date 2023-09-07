@@ -42,7 +42,7 @@ const options: CookieOptions = {
 };
 
 export const getCookieStorage = (
-  event: RequestEventCommon
+  event: RequestEventCommon,
 ): SupabaseAuthClientOptions["storage"] => {
   return {
     getItem(key: string): string | Promise<string | null> | null {
@@ -64,15 +64,15 @@ export const serverSupabaseQrl = <
     : string & keyof Database,
   Schema extends GenericSchema = Database[SchemaName] extends GenericSchema
     ? Database[SchemaName]
-    : any
+    : any,
 >(
   supabaseOptions: QRL<
     (
-      ev: RequestEventCommon
+      ev: RequestEventCommon,
     ) =>
       | QwikSupabaseConfig<SchemaName>
       | Promise<QwikSupabaseConfig<SchemaName>>
-  >
+  >,
 ) => {
   type Supabase = SupabaseClient<Database, SchemaName, Schema>;
 
@@ -104,7 +104,7 @@ export const serverSupabaseQrl = <
     zod$({
       email: z.string().email(),
       password: z.string(),
-    })
+    }),
   );
 
   const useSupabaseSignInWithOAuth = globalAction$(
@@ -129,7 +129,7 @@ export const serverSupabaseQrl = <
     },
     zod$({
       provider: z.string(),
-    })
+    }),
   );
 
   const useSupabaseSignInWithOtp = globalAction$(
@@ -157,8 +157,8 @@ export const serverSupabaseQrl = <
       event.json(200, result.data);
     },
     zod$({
-      email: z.string(),
-    })
+      email: z.string().email(),
+    }),
   );
 
   const useSupabaseSignUp = globalAction$(
@@ -182,7 +182,7 @@ export const serverSupabaseQrl = <
     zod$({
       email: z.string(),
       password: z.string(),
-    })
+    }),
   );
 
   const useSupabaseSignOut = globalAction$(async (_data, event) => {
@@ -212,7 +212,7 @@ export const serverSupabaseQrl = <
           storage: getCookieStorage(event),
           ...config.options?.auth,
         },
-      }
+      },
     );
 
     event.sharedMap.set(supabaseSharedKey, supabase);

@@ -1,34 +1,9 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, globalAction$, z, zod$ } from "@builder.io/qwik-city";
-import { updateAuthCookies } from "~/server/auth/auth";
-import { createSupabase } from "~/server/auth/supabase";
-import { paths } from "~/utils/paths";
-
-export const useSignInPasswordAction = globalAction$(
-  async (data, event) => {
-    const supabase = createSupabase(event);
-
-    const result = await supabase.auth.signInWithPassword(data);
-
-    if (result.error || !result.data.session) {
-      const status = result.error?.status || 400;
-      return event.fail(status, {
-        formErrors: [result.error?.message],
-      });
-    }
-
-    updateAuthCookies(event, result.data.session);
-
-    throw event.redirect(302, paths.index);
-  },
-  zod$({
-    email: z.string().email(),
-    password: z.string(),
-  })
-);
+import { Form } from "@builder.io/qwik-city";
+import { useSupabaseSignInWithPassword } from "~/routes/plugin@supabase";
 
 export const PasswordForm = component$(() => {
-  const action = useSignInPasswordAction();
+  const action = useSupabaseSignInWithPassword();
 
   return (
     <Form class="flex flex-col gap-2" action={action}>

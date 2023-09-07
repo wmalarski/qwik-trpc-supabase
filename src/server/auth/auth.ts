@@ -4,7 +4,7 @@ import {
   type RequestEventCommon,
 } from "@builder.io/qwik-city";
 import type { Session, User } from "@supabase/supabase-js";
-import { createSupabase } from "./supabase";
+import { getSupabaseInstance } from "~/routes/plugin@supabase";
 
 const cookieName = "_session";
 
@@ -17,7 +17,7 @@ const options: CookieOptions = {
 
 export const updateAuthCookies = (
   event: RequestEventCommon,
-  session: Pick<Session, "refresh_token" | "expires_in" | "access_token">
+  session: Pick<Session, "refresh_token" | "expires_in" | "access_token">,
 ) => {
   event.cookie.set(cookieName, session, options);
 };
@@ -37,7 +37,7 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
     return null;
   }
 
-  const supabase = createSupabase(event);
+  const supabase = getSupabaseInstance(event);
 
   const userResponse = await supabase.auth.setSession(parsed.data);
 
@@ -61,7 +61,7 @@ export const getUserByCookie = async (event: RequestEventCommon) => {
 };
 
 export const getUserFromEvent = (
-  event: RequestEventCommon
+  event: RequestEventCommon,
 ): Promise<User | null> => {
   const cachedPromise = event.sharedMap.get("user");
   if (cachedPromise) {

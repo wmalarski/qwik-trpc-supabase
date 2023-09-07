@@ -1,35 +1,9 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, globalAction$, z, zod$ } from "@builder.io/qwik-city";
-import { createSupabase } from "~/server/auth/supabase";
-import { getBaseUrl } from "~/utils/getBaseUrl";
-import { paths } from "~/utils/paths";
-
-export const useSignUpAction = globalAction$(
-  async (data, event) => {
-    const emailRedirectTo = `${getBaseUrl()}${paths.callback}`;
-
-    const supabase = createSupabase(event);
-
-    const result = await supabase.auth.signUp({
-      ...data,
-      options: { emailRedirectTo },
-    });
-
-    if (result.error) {
-      const status = result.error.status || 400;
-      return event.fail(status, {
-        formErrors: [result.error.message],
-      });
-    }
-  },
-  zod$({
-    email: z.string().email(),
-    password: z.string(),
-  })
-);
+import { Form } from "@builder.io/qwik-city";
+import { useSupabaseSignUp } from "~/routes/plugin@supabase";
 
 export const RegisterForm = component$(() => {
-  const signUp = useSignUpAction();
+  const signUp = useSupabaseSignUp();
 
   return (
     <Form class="flex flex-col gap-2" action={signUp}>
