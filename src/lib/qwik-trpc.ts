@@ -9,6 +9,7 @@ import {
   type Action,
   type RequestEvent,
   type RequestEventCommon,
+  type z,
 } from "@builder.io/qwik-city";
 import { isServer } from "@builder.io/qwik/build";
 import {
@@ -26,7 +27,6 @@ import type {
   ProcedureRouterRecord,
   TRPCError,
 } from "@trpc/server";
-import type { ZodIssue } from "zod";
 
 type ProxyCallbackOptions = {
   path: string[];
@@ -41,9 +41,9 @@ type TrpcProcedureOutput<TProcedure extends AnyProcedure> =
       status: "success";
     }
   | {
-      code: ZodIssue["code"];
+      code: z.ZodIssue["code"];
       status: "error";
-      issues: ZodIssue[];
+      issues: z.ZodIssue[];
     };
 
 type DecorateProcedure<TProcedure extends AnyProcedure> =

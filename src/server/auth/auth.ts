@@ -26,7 +26,7 @@ export const removeAuthCookies = (event: RequestEventCommon) => {
   event.cookie.delete(cookieName, options);
 };
 
-const getUserByCookie = async (event: RequestEventCommon) => {
+export const getUserByCookie = async (event: RequestEventCommon) => {
   const value = event.cookie.get(cookieName)?.json();
 
   const parsed = z
