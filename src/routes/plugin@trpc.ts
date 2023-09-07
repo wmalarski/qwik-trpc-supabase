@@ -16,5 +16,5 @@ export const { actionTrpc, onRequest, clientTrpc } = serverTrpc$<AppRouter>(
       transformer: superjson,
     },
     prefix: "/api/trpc",
-  }
+  },
 );

@@ -7,6 +7,9 @@
 - [x] Qwik api routes
 - [x] Magic link Supabase auth
 - [x] Password Supabase auth
+- [x] OAuth Supabase with google
+- [x] PKCE Supabase auth flow
+- [x] Supabase as plugin
 - [x] Sign out
 - [x] Auth refresh token
 - [x] Redirect navigation after login
@@ -21,6 +24,20 @@
 - [x] Crud on Comments
 - [ ] Optimistic updates
 - [x] Tailwind setup + DaisyUI
+
+## qwik-supabase
+
+This project includes an alternative approach to using `Supabase` in `Qwik` project. The standard way of doing this is by using official supabase integration[supabase-auth-helpers-qwik](https://qwik.builder.io/docs/integrations/supabase/) that uses [@supabase/auth-helpers](https://github.com/supabase/auth-helpers) under the hood.
+
+I'm not using any helper libraries and only rely on `supabase-js` sdk. The code for integration is located here `src/lib/qwik-supabase.ts`. This way I can provide better integration with qwik `routeAction$` and `plugin` middleware features.
+
+Available `routeAction$` actions:
+
+- `useSupabaseSignInWithOtp`,
+- `useSupabaseSignInWithPassword`,
+- `useSupabaseSignInWithOAuth`,
+- `useSupabaseSignOut`,
+- `useSupabaseSignUp`,
 
 ## Project Structure
 

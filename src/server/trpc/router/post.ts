@@ -28,7 +28,7 @@ export const postRouter = t.router({
       z.object({
         skip: z.number().min(0),
         take: z.number().min(0).max(100),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const [posts, count] = await Promise.all([

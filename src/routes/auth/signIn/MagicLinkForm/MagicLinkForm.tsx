@@ -1,27 +1,9 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, globalAction$, z, zod$ } from "@builder.io/qwik-city";
-import { createSupabase } from "~/server/auth/supabase";
-import { getBaseUrl } from "~/utils/getBaseUrl";
-import { paths } from "~/utils/paths";
-
-export const useSignInOtpAction = globalAction$(
-  async (data, event) => {
-    const supabase = createSupabase(event);
-
-    const result = await supabase.auth.signInWithOtp({
-      email: data.email,
-      options: { emailRedirectTo: `${getBaseUrl()}${paths.callback}` },
-    });
-
-    return result;
-  },
-  zod$({
-    email: z.string().email(),
-  })
-);
+import { Form } from "@builder.io/qwik-city";
+import { useSupabaseSignInWithOtp } from "~/routes/plugin@supabase";
 
 export const MagicLinkForm = component$(() => {
-  const action = useSignInOtpAction();
+  const action = useSupabaseSignInWithOtp();
 
   return (
     <Form class="flex flex-col gap-2" action={action}>

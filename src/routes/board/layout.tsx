@@ -1,17 +1,17 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { ProtectedHeader } from "~/modules/layout/ProtectedHeader/ProtectedHeader";
-import { getUserFromEvent } from "~/server/auth/auth";
 import { paths } from "~/utils/paths";
+import { getSupabaseSession } from "../plugin@supabase";
 
-export const useProtectedRoute = routeLoader$(async (event) => {
-  const user = await getUserFromEvent(event);
+export const useProtectedRoute = routeLoader$((event) => {
+  const session = getSupabaseSession(event);
 
-  if (!user) {
+  if (!session) {
     throw event.redirect(302, paths.signIn);
   }
 
-  return user;
+  return session;
 });
 
 export default component$(() => {

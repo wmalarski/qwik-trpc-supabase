@@ -8,7 +8,7 @@ export const commentRouter = t.router({
         content: z.string(),
         parentId: z.string().cuid().nullable(),
         postId: z.string().cuid(),
-      })
+      }),
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.comment.create({
@@ -40,7 +40,7 @@ export const commentRouter = t.router({
         parentId: z.string().cuid().nullable(),
         skip: z.number().min(0),
         take: z.number().min(0).max(100),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const [comments, count] = await Promise.all([
@@ -62,7 +62,7 @@ export const commentRouter = t.router({
         postId: z.string().cuid(),
         skip: z.number().min(0),
         take: z.number().min(0).max(100),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const [comments, count] = await Promise.all([
